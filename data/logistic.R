@@ -1,9 +1,9 @@
-data <- read.csv2("~/Documents/abschlussarbeit/data/logistic.csv", sep = ",", header = TRUE)
+data <- read.csv2("~/Documents/abschlussarbeit/data/sample.csv", sep = ",", header = TRUE)
 
-xmin <- min(data$x)
-xmax <- max(data$x)
+xmin <- min(data$money)
+xmax <- max(data$money)
 
-modell <- as.formula("y ~ x")
+modell <- as.formula("prime ~ money")
 logit <- glm(modell, family = binomial, data = data)
 
 print(logit)
@@ -16,4 +16,4 @@ logitFunction <- function(x){
 }
 
 plot(logitFunction, xlim = c(xmin - 1, xmax + 1), ylim = c(-0.2, 1.2))
-lines(data$x, data$y, type="p")
+lines(data$money, data$prime, type="p")

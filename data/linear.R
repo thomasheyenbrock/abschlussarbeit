@@ -1,9 +1,12 @@
-data <- read.csv2("~/Documents/abschlussarbeit/data/logistic.csv", sep = ",", header = TRUE)
+data <- read.csv2("~/Documents/abschlussarbeit/data/sample.csv", sep = ",", header = TRUE)
 
-xmin <- min(data$x)
-xmax <- max(data$x)
+xmin <- min(data$purchases)
+xmax <- max(data$purchases)
 
-modell <- as.formula("y ~ x")
+ymin <- min(data$money)
+ymax <- max(data$money)
+
+modell <- as.formula("money ~ purchases")
 logit <- lm(modell, data = data)
 
 print(logit)
@@ -14,5 +17,5 @@ linearFunction <- function(x){
     return(b0 + x * b1)
 }
 
-plot(linearFunction, xlim = c(xmin - 1, xmax + 1), ylim = c(-0.2, 1.2))
-lines(data$x, data$y, type="p")
+plot(linearFunction, xlim = c(xmin - 1, xmax + 1), ylim = c(ymin - 1, ymax + 1))
+lines(data$purchases, data$money, type="p")

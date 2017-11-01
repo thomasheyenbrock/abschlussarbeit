@@ -1,6 +1,26 @@
 \chapter{Grundlagen statistischer Methoden}
 
-Here starts the thesis with an introduction. Please use nice latex and bibtex entries \cite{latex}. Do not spend time on formating your thesis, but on its content.
+Bei der Regressionsanalyse geht es allgemein darum, das Verhalten einer Größe $Y$ in Abhängigkeit einer oder mehrerer anderer Größen $X_1, X_2, \dots, X_n$ zu prognostizieren. Die Größe $Y$ wird abhängig genannt, die Größen $X_i$ nennt man unabhängig. Die Prognose entspricht einem funktionalen Zusammenhang der folgenden Art:
+\begin{align*}
+    Y = f(X_1, \dots, X_n)
+\end{align*}
+Als Grundlage für den Findungsprozess dieser Funktion $f$ besitzt man eine Menge von $N$ Datenpunkten:
+\begin{align*}
+    (x_{1, j}, x_{2, j}, \dots, x_{n, j}, y_j) ~~~ \text{für} ~~ j = 1, \dots, N
+\end{align*}
+Im Allgemeinen ist es nicht möglich eine einfache Funktion $f$ zu finden, die alle Datenpunkte exakt prognostiziert. Stattdessen über- und unterschätzt die Funktion $f$ die realen Datenpunkte. Die konkrete Abweichung für den $j$-ten Datenpunkt wird in der Satistik als Fehler bezeichnet:
+\begin{align*}
+    e_j = y_j - f(x_{1, j}, \dots, x_{n, j})
+\end{align*}
 
-\section{Latex Introduction}
-There is no need for a latex introduction since there is plenty of literature out there.
+\section{Lineare Regression}
+
+Bei der linearen Regression geht man von einem linearen Zusammenhang zwischen der abhängigen und den unabhängigen Variablen aus. Die Funktion $f$ ist also von folgender Form:
+\begin{align*}
+    f(x_1, \dots, x_n) = \beta_0 + \sum_{i=1}^n \beta_i \cdot x_i ~~~ \text{mit} ~~ \beta_i \in \mathbb{R}
+\end{align*}
+Man möchte diejenigen Parameter $\beta_i$ bestimmen, so dass die entstehende Funktion die vorgegebenen Datenpunkte möglichst gut annähert. Das Maß für die Qualität einer Funktion $f$ definiert durch die Parameter $\beta_0, \dots, \beta_n$ ist die Summe der quadrierten Fehlerterme:
+\begin{align*}
+    E(\beta_0, \dots, \beta_n) = \sum_{j=1}^N e_j^2 = \sum_{j=1}^N \left( y_j - \beta_0 - \sum_{i=1}^n \beta_i \cdot x_{i, j} \right)^2
+\end{align*}
+Ziel ist es nun die Parameter so zu wählen, dass die Funktion $E$ miminiert wird. Dieses Vorgehen ist als Methode der kleinsten Quadrate bekannt.

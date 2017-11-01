@@ -1,8 +1,8 @@
-PWD /Users/thomasheyenbrock/Documents/abschlussarbeit/ThesisTemplate
+PWD /Users/thomasheyenbrock/Documents/abschlussarbeit/latex
 INPUT /usr/local/texlive/2016/texmf.cnf
 INPUT /usr/local/texlive/2016/texmf-dist/web2c/texmf.cnf
 INPUT /usr/local/texlive/2016/texmf-var/web2c/pdftex/pdflatex.fmt
-INPUT /Users/thomasheyenbrock/Documents/abschlussarbeit/ThesisTemplate/main.tex
+INPUT /Users/thomasheyenbrock/Documents/abschlussarbeit/latex/main.tex
 OUTPUT main.log
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/koma-script/scrbook.cls
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/koma-script/scrbook.cls
@@ -256,8 +256,12 @@ INPUT chapters/Intro.tex
 INPUT chapters/Intro.tex
 INPUT chapters/Grundlagen.tex
 INPUT chapters/Grundlagen.tex
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/adobe/palatino/pplr7t.tfm
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/adobe/palatino/pplr7t.tfm
 INPUT chapters/Anwendung.tex
 INPUT chapters/Anwendung.tex
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/vf/public/yhmath/yhcmex10.vf
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/yhmath/yrcmex10.tfm
 INPUT chapters/Datenbanken.tex
 INPUT chapters/Datenbanken.tex
 INPUT chapters/Ausblick.tex
@@ -278,6 +282,13 @@ INPUT main.aux
 INPUT ./main.out
 INPUT ./main.out
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/enc/dvips/base/8r.enc
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb

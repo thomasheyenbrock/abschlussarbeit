@@ -14,9 +14,30 @@ def outputCsv(data):
     return
 
 
+def outputSql(data):
+    output = ["INSERT INTO testTable (%s,%s,%s) VALUES" % ("purchases", "money", "prime")]
+
+    for datapoint in data:
+        output.append("(%s,%s,%a)," % (datapoint["purchases"], datapoint["money"], datapoint["prime"]))
+
+    output[-1] = output[-1][:-1] + ";"
+    f = open("sample.sql", "w")
+    f.write("\n".join(output))
+
+    return
+
+
 def main(argv):
     if len(argv) < 2:
         print('Please provide number of datapoints that shall be generated.')
+        return
+
+    if len(argv) < 3:
+        print("Please provice output format.")
+        return
+
+    if not (argv[2] == "csv" or argv[2] == "sql"):
+        print("Only 'csv' and 'sql' are allowed as output format.")
         return
 
     data = []
@@ -35,7 +56,10 @@ def main(argv):
             "prime": prime
         })
 
-    outputCsv(data)
+    if argv[2] == "csv":
+        outputCsv(data)
+    elif argv[2] == "sql":
+        outputSql(data)
     return
 
 if __name__ == "__main__":

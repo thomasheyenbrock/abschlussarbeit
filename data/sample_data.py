@@ -15,7 +15,13 @@ def outputCsv(data):
 
 
 def outputSql(data):
-    output = ["INSERT INTO testTable (%s,%s,%s) VALUES" % ("purchases", "money", "prime")]
+    output = [
+        "CREATE DATABASE IF NOT EXISTS test;"
+        "USE test;",
+        "DROP TABLE IF EXISTS testTable;",
+        "CREATE TABLE testTable (purchases INT(11), money INT(11), prime INT(1));"
+        "INSERT INTO testTable (%s,%s,%s) VALUES" % ("purchases", "money", "prime")
+    ]
 
     for datapoint in data:
         output.append("(%s,%s,%a)," % (datapoint["purchases"], datapoint["money"], datapoint["prime"]))

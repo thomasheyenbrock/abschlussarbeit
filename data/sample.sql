@@ -1,7 +1,7 @@
-CREATE DATABASE IF NOT EXISTS test;
-USE test;
-DROP TABLE IF EXISTS testTable;
-CREATE TABLE testTable (purchases INT(11), money INT(11), prime INT(1));INSERT INTO testTable (purchases,money,prime) VALUES
+CREATE DATABASE IF NOT EXISTS sampleDB;
+USE sampleDB;
+DROP TABLE IF EXISTS regression;
+CREATE TABLE regression (purchases INT(11), money INT(11), prime INT(1));INSERT INTO testTable (purchases,money,prime) VALUES
 (1,3929,1),
 (19,42909,1),
 (9,30029,1),

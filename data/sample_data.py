@@ -16,10 +16,10 @@ def outputCsv(data):
 
 def outputSql(data):
     output = [
-        "CREATE DATABASE IF NOT EXISTS test;"
-        "USE test;",
-        "DROP TABLE IF EXISTS testTable;",
-        "CREATE TABLE testTable (purchases INT(11), money INT(11), prime INT(1));"
+        "CREATE DATABASE IF NOT EXISTS sampleDB;"
+        "USE sampleDB;",
+        "DROP TABLE IF EXISTS regression;",
+        "CREATE TABLE regression (purchases INT(11), money INT(11), prime INT(1));"
         "INSERT INTO testTable (%s,%s,%s) VALUES" % ("purchases", "money", "prime")
     ]
 

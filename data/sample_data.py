@@ -19,12 +19,12 @@ def outputSql(data):
         "CREATE DATABASE IF NOT EXISTS sampleDB;"
         "USE sampleDB;",
         "DROP TABLE IF EXISTS regression;",
-        "CREATE TABLE regression (purchases INT(11), money INT(11), prime INT(1));"
-        "INSERT INTO testTable (%s,%s,%s) VALUES" % ("purchases", "money", "prime")
+        "CREATE TABLE regression (%s INT(11), %s INT(11), %s INT(1));" % ("purchases", "money", "prime")
+        "INSERT INTO regression (%s,%s,%s) VALUES" % ("purchases", "money", "prime")
     ]
 
     for datapoint in data:
-        output.append("(%s,%s,%a)," % (datapoint["purchases"], datapoint["money"], datapoint["prime"]))
+        output.append("(%s,%s,%s)," % (datapoint["purchases"], datapoint["money"], datapoint["prime"]))
 
     output[-1] = output[-1][:-1] + ";"
     f = open("sample.sql", "w")

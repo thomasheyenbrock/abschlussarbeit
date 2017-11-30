@@ -9,7 +9,7 @@ DELIMITER ;;
 CREATE PROCEDURE `CalculateGradient`()
 BEGIN
 
-    DECLARE bias DECIMAL(10, 2);
+    DECLARE bias DECIMAL(40, 20);
 
     SET bias = (
         SELECT old
@@ -50,7 +50,7 @@ END;;
 
 
 -- this procedure calculates the new parameters
-CREATE PROCEDURE `CalculateNewParameters`(IN step DECIMAL(12, 10))
+CREATE PROCEDURE `CalculateNewParameters`(IN step DECIMAL(40, 20))
 BEGIN
 
     UPDATE parameters
@@ -65,8 +65,8 @@ END;;
 CREATE PROCEDURE `CalculateLinears`()
 BEGIN
 
-    DECLARE biasOld DECIMAL(20, 10);
-    DECLARE biasNew DECIMAL(20, 10);
+    DECLARE biasOld DECIMAL(40, 20);
+    DECLARE biasNew DECIMAL(40, 20);
 
     SET biasOld = (
         SELECT old
@@ -115,7 +115,7 @@ END;;
 CREATE PROCEDURE `Main`(IN rounds INT(11), IN use_sample INT(1))
 BEGIN
 
-    DECLARE step DECIMAL(12, 10);
+    DECLARE step DECIMAL(40, 20);
     DECLARE min INT(11);
     DECLARE max INT(11);
     DECLARE better INT(1);
@@ -126,7 +126,7 @@ BEGIN
     CREATE TEMPORARY TABLE data(
         id INT(11),
         variable VARCHAR(32),
-        value DECIMAL(10, 9)
+        value DECIMAL(40, 20)
     );
 
     IF use_sample = 1 THEN
@@ -138,16 +138,7 @@ BEGIN
             @counter := @counter + 1 AS `id`,
             'purchases' AS `variable`,
             purchases AS `value`
-        FROM regression LIMIT 10;
-
-        -- insert all linear transformed values for column 'money' into data
-        SET @counter = 0;
-        INSERT INTO data
-        SELECT
-            @counter := @counter + 1 AS `id`,
-            'money' AS `variable`,
-            money AS `value`
-        FROM regression LIMIT 10;
+        FROM regression;
 
     ELSE
 
@@ -174,8 +165,8 @@ BEGIN
         INSERT INTO dependentValues
         SELECT
             @counter := @counter + 1 AS `id`,
-            prime AS `value`
-        FROM regression LIMIT 10;
+            money AS `value`
+        FROM regression;
 
     ELSE
 
@@ -192,8 +183,8 @@ BEGIN
     DROP TEMPORARY TABLE IF EXISTS parameters;
     CREATE TEMPORARY TABLE parameters (
         variable VARCHAR(32),
-        old DECIMAL(20, 10),
-        new DECIMAL(20, 10)
+        old DECIMAL(40, 20),
+        new DECIMAL(40, 20)
     );
 
     -- set initial parameters
@@ -215,8 +206,8 @@ BEGIN
     DROP TEMPORARY TABLE IF EXISTS linears;
     CREATE TEMPORARY TABLE linears (
         id INT(11),
-        old DECIMAL(20, 10),
-        new DECIMAL(20, 10)
+        old DECIMAL(40, 20),
+        new DECIMAL(40, 20)
     );
 
     -- insert initial values into linears table
@@ -226,7 +217,7 @@ BEGIN
     DROP TEMPORARY TABLE IF EXISTS gradient;
     CREATE TEMPORARY TABLE gradient (
         variable VARCHAR(32),
-        value DECIMAL(20, 10)
+        value DECIMAL(40, 20)
     );
 
     -- insert variables in gradient table
@@ -234,8 +225,7 @@ BEGIN
 
         INSERT INTO gradient VALUES
             ('bias', 0),
-            ('purchases', 0),
-            ('money', 0);
+            ('purchases', 0);
 
     ELSE
 
@@ -250,7 +240,7 @@ BEGIN
 
     -- loop
     SET counter = 0;
-    WHILE counter < rounds AND step > 0.0000000001 DO
+    WHILE counter < rounds AND step > 0.00000000000000000001 DO
 
         SET better = 0;
         CALL CalculateLinears();
@@ -259,7 +249,7 @@ BEGIN
         CALL CalculateLinears();
         CALL IsNewBetter(better);
 
-        WHILE better = 0 AND step > 0.0000000001 DO
+        WHILE better = 0 AND step > 0.00000000000000000001 DO
 
             SET step = step / 2;
             CALL CalculateNewParameters(step);
@@ -281,4 +271,4 @@ BEGIN
 END;;
 DELIMITER ;
 
-CALL Main(436, 0);
+CALL Main(10, 1);

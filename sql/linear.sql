@@ -6,7 +6,7 @@ DROP PROCEDURE IF EXISTS Main;
 
 DELIMITER ;;
 -- this procedure calculates the gradient for the current parameter values
-CREATE PROCEDURE `CalculateGradient`()
+CREATE PROCEDURE `CalculateGradient`(IN startTime INT(20))
 BEGIN
 
     DECLARE bias DECIMAL(40, 20);
@@ -31,8 +31,10 @@ BEGIN
     )
     WHERE variable = 'bias';
 
+    INSERT INTO timing VALUES ('bias gradient updated', UNIX_TIMESTAMP() - startTime);
+
     -- calculate other gradients
-    -- -------------- TODO ----------------
+    -- TODO: make it faster
 
     UPDATE gradient
     JOIN (
@@ -44,7 +46,7 @@ BEGIN
     ) T0 ON T0.variable = gradient.variable
     SET gradient.value = T0.value;
 
-    -- -------------- END TODO ----------------
+    INSERT INTO timing VALUES ('other gradients updated', UNIX_TIMESTAMP() - startTime);
 
 END;;
 
@@ -115,11 +117,21 @@ END;;
 CREATE PROCEDURE `Main`(IN rounds INT(11), IN use_sample INT(1))
 BEGIN
 
+    DECLARE startTime INT(20);
+
     DECLARE step DECIMAL(40, 20);
     DECLARE min INT(11);
     DECLARE max INT(11);
     DECLARE better INT(1);
     DECLARE counter INT(11);
+
+    -- time measurement
+    SET startTime = UNIX_TIMESTAMP();
+    DROP TEMPORARY TABLE IF EXISTS timing;
+    CREATE TEMPORARY TABLE timing (
+        action VARCHAR(50),
+        time INT(11)
+    );
 
     -- create a temporary table for the data
     DROP TEMPORARY TABLE IF EXISTS data;
@@ -238,16 +250,23 @@ BEGIN
     -- set initial step distance
     SET step = 1;
 
+    INSERT INTO timing VALUES ('setup', UNIX_TIMESTAMP() - startTime);
+
     -- loop
     SET counter = 0;
     WHILE counter < rounds AND step > 0.00000000000000000001 DO
 
         SET better = 0;
         CALL CalculateLinears();
-        CALL CalculateGradient();
+        INSERT INTO timing VALUES (CONCAT('loop ', counter, ' calculated linears'), UNIX_TIMESTAMP() - startTime);
+        CALL CalculateGradient(startTime);
+        INSERT INTO timing VALUES (CONCAT('loop ', counter, ' calculated gradients'), UNIX_TIMESTAMP() - startTime);
         CALL CalculateNewParameters(step);
+        INSERT INTO timing VALUES (CONCAT('loop ', counter, ' calculated new parameters'), UNIX_TIMESTAMP() - startTime);
         CALL CalculateLinears();
+        INSERT INTO timing VALUES (CONCAT('loop ', counter, ' calculated linears again'), UNIX_TIMESTAMP() - startTime);
         CALL IsNewBetter(better);
+        INSERT INTO timing VALUES (CONCAT('loop ', counter, ' checked new parameters'), UNIX_TIMESTAMP() - startTime);
 
         WHILE better = 0 AND step > 0.00000000000000000001 DO
 
@@ -256,10 +275,14 @@ BEGIN
             CALL CalculateLinears();
             CALL IsNewBetter(better);
 
+            INSERT INTO timing VALUES (CONCAT('loop ', counter, ' step reduction'), UNIX_TIMESTAMP() - startTime);
+
         END WHILE;
 
         UPDATE parameters
         SET parameters.old = parameters.new;
+
+        INSERT INTO timing VALUES (CONCAT('loop ', counter, ' done'), UNIX_TIMESTAMP() - startTime);
 
         SET counter = counter + 1;
 

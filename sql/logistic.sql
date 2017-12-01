@@ -9,7 +9,7 @@ DELIMITER ;;
 CREATE PROCEDURE `Logistic_CalculateGradient`()
 BEGIN
 
-    DECLARE bias DECIMAL(10, 2);
+    DECLARE bias DECIMAL(40, 20);
 
     SET bias = (
         SELECT old
@@ -56,7 +56,7 @@ END;;
 
 
 -- this procedure calculates the new parameters
-CREATE PROCEDURE `Logistic_CalculateNewParameters`(IN step DECIMAL(12, 10))
+CREATE PROCEDURE `Logistic_CalculateNewParameters`(IN step DECIMAL(40, 20))
 BEGIN
 
     UPDATE parameters
@@ -71,8 +71,8 @@ END;;
 CREATE PROCEDURE `Logistic_CalculateLogit`()
 BEGIN
 
-    DECLARE biasOld DECIMAL(20, 10);
-    DECLARE biasNew DECIMAL(20, 10);
+    DECLARE biasOld DECIMAL(40, 20);
+    DECLARE biasNew DECIMAL(40, 20);
 
     SET biasOld = (
         SELECT old
@@ -121,7 +121,7 @@ END;;
 CREATE PROCEDURE `Logistic_Main`(IN rounds INT(11), IN use_sample INT(1))
 BEGIN
 
-    DECLARE step DECIMAL(12, 10);
+    DECLARE step DECIMAL(40, 20);
     DECLARE min INT(11);
     DECLARE max INT(11);
     DECLARE better INT(1);
@@ -132,7 +132,7 @@ BEGIN
     CREATE TEMPORARY TABLE data(
         id INT(11),
         variable VARCHAR(32),
-        value DECIMAL(10, 9)
+        value DECIMAL(40, 20)
     );
 
     IF use_sample = 1 THEN
@@ -206,8 +206,8 @@ BEGIN
     DROP TEMPORARY TABLE IF EXISTS parameters;
     CREATE TEMPORARY TABLE parameters (
         variable VARCHAR(32),
-        old DECIMAL(20, 10),
-        new DECIMAL(20, 10)
+        old DECIMAL(40, 20),
+        new DECIMAL(40, 20)
     );
 
     -- set initial parameters
@@ -230,8 +230,8 @@ BEGIN
     DROP TEMPORARY TABLE IF EXISTS logits;
     CREATE TEMPORARY TABLE logits (
         id INT(11),
-        old DECIMAL(20, 10),
-        new DECIMAL(20, 10)
+        old DECIMAL(40, 20),
+        new DECIMAL(40, 20)
     );
 
     -- insert initial values into logit table
@@ -241,7 +241,7 @@ BEGIN
     DROP TEMPORARY TABLE IF EXISTS gradient;
     CREATE TEMPORARY TABLE gradient (
         variable VARCHAR(32),
-        value DECIMAL(20, 10)
+        value DECIMAL(40, 20)
     );
 
     -- insert variables in gradient table
@@ -265,7 +265,7 @@ BEGIN
 
     -- loop
     SET counter = 0;
-    WHILE counter < rounds AND step > 0.0000000001 DO
+    WHILE counter < rounds AND step > 0.00000000000000000001 DO
 
         SET better = 0;
         CALL Logistic_CalculateLogit();
@@ -274,7 +274,7 @@ BEGIN
         CALL Logistic_CalculateLogit();
         CALL Logistic_IsNewLogBetter(better);
 
-        WHILE better = 0 AND step > 0.0000000001 DO
+        WHILE better = 0 AND step > 0.00000000000000000001 DO
 
             SET step = step / 2;
             CALL Logistic_CalculateNewParameters(step);
@@ -296,4 +296,4 @@ BEGIN
 END;;
 DELIMITER ;
 
-CALL Logistic_Main(436, 0);
+CALL Logistic_Main(1000, 0);

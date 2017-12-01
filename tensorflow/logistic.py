@@ -21,11 +21,11 @@ def get_data(n_samples):
 # Step 1: read in data
 (x_train, y_train) = get_data(5000)
 
-x_train = np.asarray(x_train)
-y_train = np.asarray(y_train)
+x_train = np.asarray(x_train[:10])
+y_train = np.asarray(y_train[:10])
 
-x_train = np.asarray([1,2,3,4,5])
-y_train = np.asarray([0,0,1,0,1])
+# x_train = np.asarray([1,2,3,4,5])
+# y_train = np.asarray([0,0,1,0,1])
 
 min_x = min(x_train)
 max_x = max(x_train)

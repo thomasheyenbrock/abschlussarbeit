@@ -1,12 +1,12 @@
-DROP PROCEDURE IF EXISTS CalculateGradient;
-DROP PROCEDURE IF EXISTS CalculateNewParameters;
-DROP PROCEDURE IF EXISTS CalculateLinears;
-DROP PROCEDURE IF EXISTS IsNewBetter;
-DROP PROCEDURE IF EXISTS Main;
+DROP PROCEDURE IF EXISTS Linear_CalculateGradient;
+DROP PROCEDURE IF EXISTS Linear_CalculateNewParameters;
+DROP PROCEDURE IF EXISTS Linear_CalculateLinears;
+DROP PROCEDURE IF EXISTS Linear_IsNewBetter;
+DROP PROCEDURE IF EXISTS Linear_Main;
 
 DELIMITER ;;
 -- this procedure calculates the gradient for the current parameter values
-CREATE PROCEDURE `CalculateGradient`(IN startTime INT(20))
+CREATE PROCEDURE `Linear_CalculateGradient`(IN startTime INT(20))
 BEGIN
 
     DECLARE bias DECIMAL(40, 20);
@@ -52,7 +52,7 @@ END;;
 
 
 -- this procedure calculates the new parameters
-CREATE PROCEDURE `CalculateNewParameters`(IN step DECIMAL(40, 20))
+CREATE PROCEDURE `Linear_CalculateNewParameters`(IN step DECIMAL(40, 20))
 BEGIN
 
     UPDATE parameters
@@ -64,7 +64,7 @@ END;;
 
 
 -- this procedure calculates the linears for current parameter values
-CREATE PROCEDURE `CalculateLinears`()
+CREATE PROCEDURE `Linear_CalculateLinears`()
 BEGIN
 
     DECLARE biasOld DECIMAL(40, 20);
@@ -98,7 +98,7 @@ END;;
 
 -- this procedure calculates the least squared function for current parameter values
 -- and states if the new parameters are really better
-CREATE PROCEDURE `IsNewBetter`(OUT better INT(1))
+CREATE PROCEDURE `Linear_IsNewBetter`(OUT better INT(1))
 BEGIN
 
     SET better = (
@@ -114,7 +114,7 @@ END;;
 
 
 -- main procedure for execution
-CREATE PROCEDURE `Main`(IN rounds INT(11), IN use_sample INT(1))
+CREATE PROCEDURE `Linear_Main`(IN rounds INT(11), IN use_sample INT(1))
 BEGIN
 
     DECLARE startTime INT(20);
@@ -223,7 +223,7 @@ BEGIN
     );
 
     -- insert initial values into linears table
-    CALL CalculateLinears();
+    CALL Linear_CalculateLinears();
 
     -- create temporary table for gradient
     DROP TEMPORARY TABLE IF EXISTS gradient;
@@ -257,23 +257,23 @@ BEGIN
     WHILE counter < rounds AND step > 0.00000000000000000001 DO
 
         SET better = 0;
-        CALL CalculateLinears();
+        CALL Linear_CalculateLinears();
         INSERT INTO timing VALUES (CONCAT('loop ', counter, ' calculated linears'), UNIX_TIMESTAMP() - startTime);
-        CALL CalculateGradient(startTime);
+        CALL Linear_CalculateGradient(startTime);
         INSERT INTO timing VALUES (CONCAT('loop ', counter, ' calculated gradients'), UNIX_TIMESTAMP() - startTime);
-        CALL CalculateNewParameters(step);
+        CALL Linear_CalculateNewParameters(step);
         INSERT INTO timing VALUES (CONCAT('loop ', counter, ' calculated new parameters'), UNIX_TIMESTAMP() - startTime);
-        CALL CalculateLinears();
+        CALL Linear_CalculateLinears();
         INSERT INTO timing VALUES (CONCAT('loop ', counter, ' calculated linears again'), UNIX_TIMESTAMP() - startTime);
-        CALL IsNewBetter(better);
+        CALL Linear_IsNewBetter(better);
         INSERT INTO timing VALUES (CONCAT('loop ', counter, ' checked new parameters'), UNIX_TIMESTAMP() - startTime);
 
         WHILE better = 0 AND step > 0.00000000000000000001 DO
 
             SET step = step / 2;
-            CALL CalculateNewParameters(step);
-            CALL CalculateLinears();
-            CALL IsNewBetter(better);
+            CALL Linear_CalculateNewParameters(step);
+            CALL Linear_CalculateLinears();
+            CALL Linear_IsNewBetter(better);
 
             INSERT INTO timing VALUES (CONCAT('loop ', counter, ' step reduction'), UNIX_TIMESTAMP() - startTime);
 
@@ -294,4 +294,4 @@ BEGIN
 END;;
 DELIMITER ;
 
-CALL Main(10, 1);
+CALL Linear_Main(10, 1);

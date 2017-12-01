@@ -1,12 +1,12 @@
-DROP PROCEDURE IF EXISTS CalculateGradient;
-DROP PROCEDURE IF EXISTS CalculateNewParameters;
-DROP PROCEDURE IF EXISTS CalculateLogit;
-DROP PROCEDURE IF EXISTS IsNewLogBetter;
-DROP PROCEDURE IF EXISTS Main;
+DROP PROCEDURE IF EXISTS Logistic_CalculateGradient;
+DROP PROCEDURE IF EXISTS Logistic_CalculateNewParameters;
+DROP PROCEDURE IF EXISTS Logistic_CalculateLogit;
+DROP PROCEDURE IF EXISTS Logistic_IsNewLogBetter;
+DROP PROCEDURE IF EXISTS Logistic_Main;
 
 DELIMITER ;;
 -- this procedure calculates the gradient for the current parameter values
-CREATE PROCEDURE `CalculateGradient`()
+CREATE PROCEDURE `Logistic_CalculateGradient`()
 BEGIN
 
     DECLARE bias DECIMAL(10, 2);
@@ -56,7 +56,7 @@ END;;
 
 
 -- this procedure calculates the new parameters
-CREATE PROCEDURE `CalculateNewParameters`(IN step DECIMAL(12, 10))
+CREATE PROCEDURE `Logistic_CalculateNewParameters`(IN step DECIMAL(12, 10))
 BEGIN
 
     UPDATE parameters
@@ -68,7 +68,7 @@ END;;
 
 
 -- this procedure calculates the logits for current parameter values
-CREATE PROCEDURE `CalculateLogit`()
+CREATE PROCEDURE `Logistic_CalculateLogit`()
 BEGIN
 
     DECLARE biasOld DECIMAL(20, 10);
@@ -102,7 +102,7 @@ END;;
 
 -- this procedure calculates the log likelihood function for current parameter values
 -- and states if the new parameters are really better
-CREATE PROCEDURE `IsNewLogBetter`(OUT better INT(1))
+CREATE PROCEDURE `Logistic_IsNewLogBetter`(OUT better INT(1))
 BEGIN
 
     SET better = (
@@ -118,7 +118,7 @@ END;;
 
 
 -- main procedure for execution
-CREATE PROCEDURE `Main`(IN rounds INT(11), IN use_sample INT(1))
+CREATE PROCEDURE `Logistic_Main`(IN rounds INT(11), IN use_sample INT(1))
 BEGIN
 
     DECLARE step DECIMAL(12, 10);
@@ -268,18 +268,18 @@ BEGIN
     WHILE counter < rounds AND step > 0.0000000001 DO
 
         SET better = 0;
-        CALL CalculateLogit();
-        CALL CalculateGradient();
-        CALL CalculateNewParameters(step);
-        CALL CalculateLogit();
-        CALL IsNewLogBetter(better);
+        CALL Logistic_CalculateLogit();
+        CALL Logistic_CalculateGradient();
+        CALL Logistic_CalculateNewParameters(step);
+        CALL Logistic_CalculateLogit();
+        CALL Logistic_IsNewLogBetter(better);
 
         WHILE better = 0 AND step > 0.0000000001 DO
 
             SET step = step / 2;
-            CALL CalculateNewParameters(step);
-            CALL CalculateLogit();
-            CALL IsNewLogBetter(better);
+            CALL Logistic_CalculateNewParameters(step);
+            CALL Logistic_CalculateLogit();
+            CALL Logistic_IsNewLogBetter(better);
 
         END WHILE;
 
@@ -296,4 +296,4 @@ BEGIN
 END;;
 DELIMITER ;
 
-CALL Main(436, 0);
+CALL Logistic_Main(436, 0);

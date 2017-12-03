@@ -256,8 +256,13 @@ INPUT chapters/Intro.tex
 INPUT chapters/Intro.tex
 INPUT chapters/Grundlagen.tex
 INPUT chapters/Grundlagen.tex
+INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/psnfss/ts1ppl.fd
+INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/psnfss/ts1ppl.fd
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/adobe/palatino/pplr8c.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/adobe/palatino/pplr7t.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/adobe/palatino/pplr7t.tfm
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/vf/adobe/palatino/pplr8c.vf
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/mathpazo/fplmr.tfm
 INPUT chapters/Anwendung.tex
 INPUT chapters/Anwendung.tex
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/vf/public/yhmath/yhcmex10.vf

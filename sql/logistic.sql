@@ -137,19 +137,6 @@ BEGIN
 
     IF use_sample = 1 THEN
 
-        -- calculate min and max values for purchases
-        SET min = (SELECT MIN(purchases) FROM regression);
-        SET max = (SELECT MAX(purchases) FROM regression);
-
-        -- insert all linear transformed values for column 'purchases' into data
-        SET @counter = 0;
-        INSERT INTO data
-        SELECT
-            @counter := @counter + 1 AS `id`,
-            'purchases' AS `variable`,
-            (purchases - min) / (max - min) AS `value`
-        FROM regression LIMIT 10;
-
         -- calculate min and max values for money
         SET min = (SELECT MIN(money) FROM regression);
         SET max = (SELECT MAX(money) FROM regression);
@@ -215,7 +202,6 @@ BEGIN
 
         INSERT INTO parameters VALUES
             ('bias', 0, 0),
-            ('purchases', 0, 0),
             ('money', 0, 0);
 
     ELSE
@@ -249,7 +235,6 @@ BEGIN
 
         INSERT INTO gradient VALUES
             ('bias', 0),
-            ('purchases', 0),
             ('money', 0);
 
     ELSE

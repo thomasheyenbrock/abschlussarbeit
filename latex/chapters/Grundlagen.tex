@@ -36,10 +36,44 @@ Ziel der Regressionsanalyse ist es nun eine Funktion $f$ zu finden, die diese Fe
 
 Bei der linearen Regression geht man von einem linearen Zusammenhang zwischen der abhängigen und den unabhängigen Variablen aus. Die Funktion $f$ ist also von folgender Form:
 \begin{align*}
-    f(x_1, \dots, x_n) = \beta_0 + \sum_{i=1}^n \beta_i \cdot x_i ~~~ \text{mit} ~~ \beta_i \in \mathbb{R}
+    f(x_1, \dots, x_n) = \alpha + \sum_{i=1}^n \beta_i \cdot x_i ~~~ \text{mit} ~~ \beta_i \in \mathbb{R}
 \end{align*}
-Man möchte diejenigen Parameter $\beta_i$ bestimmen, so dass die entstehende Funktion die vorgegebenen Datenpunkte möglichst gut annähert. Das Maß für die Qualität einer Funktion $f$ definiert durch die Parameter $\beta_0, \dots, \beta_n$ ist die Summe der quadrierten Fehlerterme:
+Das Maß für die Qualität einer Funktion $f$ definiert durch die Parameter $\alpha, \beta_1, \dots, \beta_n$ ist die Summe der quadrierten Fehlerterme:
 \begin{align*}
-    E(\beta_0, \dots, \beta_n) = \sum_{j=1}^N e_j^2 = \sum_{j=1}^N \left( y_j - \beta_0 - \sum_{i=1}^n \beta_i \cdot x_{i, j} \right)^2
+    E(\alpha, \beta_1, \dots, \beta_n) = \sum_{j=1}^m e_j^2 =  \sum_{j=1}^m \left( y_j - f(x_{j, 1}, \dots, x_{j, n}) \right)^2 = \sum_{j=1}^m \left( y_j - \alpha - \sum_{i=1}^n \beta_i \cdot x_{i, j} \right)^2
 \end{align*}
-Ziel ist es nun die Parameter so zu wählen, dass die Funktion $E$ miminiert wird. Dieses Vorgehen ist als Methode der kleinsten Quadrate bekannt.
+Wir suchen also die Parameter $\hat\alpha, \hat\beta_1, \dots, \hat\beta_n$ für die gilt:
+\begin{align*}
+    E(\hat\alpha, \hat\beta_1, \dots, \hat\beta_n) = min \left\{E(\alpha, \beta_1, \dots, \beta_n) ~|~ \alpha \in \mathbb{R}, \beta_1 \in \mathbb{R}, \dots, \beta_n \in \mathbb{R} \right \}
+\end{align*}
+Um dieses Minimierungsproblem zu lösen berechnen wir die partiellen Ableitungen von $E$.
+\begin{align*}
+    \dfrac{\partial E}{\partial \alpha} &= - 2 \cdot \sum_{j=1}^m \left( y_j - f(x_{j, 1}, \dots, x_{j, n}) \right) = - 2 \cdot \sum_{j=1}^m \left( y_j - \alpha - \sum_{i=1}^n \beta_i \cdot x_{i, j} \right)\\
+    \dfrac{\partial E}{\partial \beta_k} &= - 2 \cdot \sum_{j=1}^m x_{k, j} \cdot \left( y_j - f(x_{j, 1}, \dots, x_{j, n}) \right)\\
+    &= - 2 \cdot \sum_{j=1}^m x_{k, j} \cdot \left( y_j - \alpha - \sum_{i=1}^n \beta_i \cdot x_{i, j} \right) ~~~\text{für}~~ 1 \leq k \leq n
+\end{align*}
+Durch Nullsetzen der partiellen Ableitungen erhält man ein lineares Gleichungssystem mit $(n + 1)$ Gleichungen und ebensovielen Unbekannten.
+\begin{align*}
+    \dfrac{\partial E}{\partial \alpha} = 0, ~~ \dfrac{\partial E}{\partial \beta_1} = 0, ~~ \dots, ~~ \dfrac{\partial E}{\partial \beta_n} = 0
+\end{align*}
+Die Lösung dieses Gleichungssystems (falls eine existent) ist das gesuchte Minimum.
+
+\subsection{Einfache lineare Regression}
+
+Man spricht von einfacher linearer Regression, wenn man mit nur eine unabhängige Variable arbeitet. Anschaulich möchte mann hier die bestmögliche Schätzgerade durch eine gegebene Punktwolke legen.
+
+Wir nennen die unabhängige Variable in diesem Kapitel statt $X_1$ einfach nur $X$. Ebenso schreiben wir $\beta_1 = \beta$ und $x_{1, j} = x_j$. Dann können wir das lineare Gleichungssystem zum Auffinden des Minimums explizit aufschreiben:
+\begin{align*}
+    0 &= - 2 \cdot \sum_{j=1}^m (y_i - \alpha - \beta \cdot x_{j})\\
+    0 &= - 2 \cdot \sum_{j=1}^m x_j \cdot (y_i - \alpha - \beta \cdot x_{j})
+\end{align*}
+Für dieses Gleichungssystem kann die Lösung explizit angegeben werden, wobei wir hier nicht näher auf die Herleitung dieses Ergebnisses eingehen wollen:
+\begin{align*}
+    \beta &= \dfrac{\sum\limits_{j=1}^m (x_j - \bar{x})(y_j - \bar{y})}{\sum\limits_{j=1}^m (x_j - \bar{x})^2}\\
+    \alpha &= \bar{y} - \beta \bar{x}
+\end{align*}
+Dabei bezeichnen $\bar{x}$ und $\bar{y}$ die Mittelwerte von $X$ respektive $Y$.
+
+\subsection{Multible lineare Regression}
+
+Bei multibler linearer Regression existieren mindestens zwei unabhängige Variablen. Hier ist es nicht mehr zweckmäßig eine explizite Lösung anzugeben. Auch bei maschineller Berechnung werden hier häufig alternative Methoden zur Berechnung der Parameter eingesetzt.

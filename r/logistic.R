@@ -1,7 +1,7 @@
 data <- read.csv2("~/Documents/abschlussarbeit/data/sample.csv", sep = ",", header = TRUE)
 
-data$money = c(1,2,3,4,5)
-data$prime = c(0,0,1,0,1)
+# data$money = c(1,2,3,4,5)
+# data$prime = c(0,0,1,0,1)
 
 xmin <- min(data$money)
 xmax <- max(data$money)

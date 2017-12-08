@@ -293,8 +293,10 @@ INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pf
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/yhmath/yhcmex.pfb

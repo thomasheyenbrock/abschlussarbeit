@@ -69,11 +69,35 @@ Wir nennen die unabhängige Variable in diesem Kapitel statt $X_1$ einfach nur $
 \end{align*}
 Für dieses Gleichungssystem kann die Lösung explizit angegeben werden, wobei wir hier nicht näher auf die Herleitung dieses Ergebnisses eingehen wollen:
 \begin{align*}
-    \beta &= \dfrac{\sum\limits_{j=1}^m (x_j - \bar{x})(y_j - \bar{y})}{\sum\limits_{j=1}^m (x_j - \bar{x})^2}\\
-    \alpha &= \bar{y} - \beta \bar{x}
+    \hat\beta &= \dfrac{\sum\limits_{j=1}^m (x_j - \bar{x})(y_j - \bar{y})}{\sum\limits_{j=1}^m (x_j - \bar{x})^2}\\
+    \hat\alpha &= \bar{y} - \hat\beta \bar{x}
 \end{align*}
 Dabei bezeichnen $\bar{x}$ und $\bar{y}$ die Mittelwerte von $X$ respektive $Y$.
 
 \subsection{Multible lineare Regression}
 
-Bei multibler linearer Regression existieren mindestens zwei unabhängige Variablen. Hier ist es nicht mehr zweckmäßig eine explizite Lösung anzugeben. Auch bei maschineller Berechnung werden hier häufig alternative Methoden zur Berechnung der Parameter eingesetzt.
+Bei multibler linearer Regression existieren mindestens zwei unabhängige Variablen. Hier ist es nicht mehr zweckmäßig eine explizite Lösung anzugeben. Hier sind alternative Methoden zur Berechnung der Parameter nötig.
+
+Neben einer Vielzahl von Algorithmen, die ein Optimierungsproblem iterativ lösen, gibt es auch die Möglichkeit der Berechnung durch Matrizenmultiplikation. Definieren wir dazu die folgenden Matrizen und Vektoren:
+\begin{align*}
+    X &= \begin{pmatrix}
+        1 & x_{1, 1} & \dots & x_{1, n} \\
+        \vdots & \vdots & \ddots & \vdots \\
+        1 & x_{m, 1} & \dots & x_{m, n}
+    \end{pmatrix} \in \mathbb{R}^{m \times (n + 1)} \\
+    y &= \begin{pmatrix}
+        y_1 \\
+        \vdots \\
+        y_m
+    \end{pmatrix} \in \mathbb{R}^{m \times 1}, ~~~
+    b = \begin{pmatrix}
+        \hat\alpha \\
+        \hat\beta_1 \\
+        \vdots \\
+        \hat\beta_n
+    \end{pmatrix} \in \mathbb{R}^{(n + 1) \times 1}
+\end{align*}
+Dabei ist $b$ der Vektor mit gesuchten Parametern für die Minimierung der kleinsten Quadrate. Falls die Matrix $X^T X$ invertiertbar ist, gilt die folgende Formel für die Berechnung der gesuchten Parameter:
+\begin{align*}
+    b = (X^T X)^{-1} X^T y
+\end{align*}

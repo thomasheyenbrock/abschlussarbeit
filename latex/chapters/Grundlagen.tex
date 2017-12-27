@@ -129,3 +129,38 @@ Wir suchen also die Parameter $\hat\alpha, \hat\beta_1, \dots, \hat\beta_n$ mit:
     L(\hat\alpha, \hat\beta_1, \dots, \hat\beta_n) = \max \left\{ L(\alpha, \beta_1, \dots, \beta_n) ~|~ \alpha \in \mathbb{R}, \beta_1 \in \mathbb{R}, \dots, \beta_n \in \mathbb{R} \right\}
 \end{align*}
 In diesem Fall kommt man leider nicht mehr an einer iterativen Lösung vorbei, da die partiellen Ableitungen und das entstehende lineare Gleichungssystem nicht mehr exakt lösbar sind. Eine der einfachsten Methoden zur Lösung von Optimierungsproblemen ist das Gradientenverfahren, welches im kommenden Teilkapitel kurz eingeführt wird.
+
+\subsection{Gradientenverfahren}
+
+Das Gradientenverfahren ist ein iterativer Algorithmus zur Lösung von Optimierungsproblemen. Nachdem wir hier bei der logistischen Regression eine Funktion maximieren wollen führen wir das Gradientenverfahren dementsprechend ein. Man kann dasselbe Verfahren aber auch zur Lösung von Minimierungsproblem einsetzen. Gegeben sei also eine Funktion der folgenden Form, die maximiert werden soll:
+\begin{align*}
+    L: \mathbb{R}^{n+1} \rightarrow \mathbb{R},~~ (\alpha, \beta_1, \dots, \beta_n) \mapsto L(\alpha, \beta_1, \dots, \beta_n)
+\end{align*}
+Beim Gradientenverfahren beginnt man mit beliebigen Startwerten $\alpha_0, \beta_{0, 1}, \dots, \beta_{0, n}$ und einer Schrittweite $s \in \mathbb{R}^+$. Vom Startpunkt aus geht man nun in die Richtung des steilsten Anstieges der Funktion und erhält dadurch neue Werte. Diese Richtung ist gerade der sogenannte Gradient der Funktion $L$.
+
+Der Gradient ist ein Vektor, der sich aus den partiellen Ableitungen von $L$ nach jeweils einer Variablen zusammensetzt und wird wiefolgt notiert:
+\begin{align*}
+    \text{grad}(L) = \begin{pmatrix}
+        \partial L / \partial \alpha \\
+        \partial L / \partial \beta_1 \\
+        \vdots \\
+        \partial L / \partial \beta_n
+    \end{pmatrix}
+\end{align*}
+Der Gradient von $L$ ist also wiederum eine Funktion, die Werte $\alpha, \beta_1, \dots, \beta_n$ auf einen Vektor der Länge $n+1$ abbildet. Der iterative Schritt des Verfahrens definiert sich wiefolgt:
+\begin{align*}
+    \begin{pmatrix}
+        \alpha_{i + 1} \\
+        \beta_{i + 1, 1} \\
+        \vdots \\
+        \beta_{i + 1, n}
+    \end{pmatrix} = \begin{pmatrix}
+        \alpha_i \\
+        \beta_{i, 1} \\
+        \vdots \\
+        \beta_{i, n}
+    \end{pmatrix} + s \cdot \text{grad}(L) (\alpha_i, \beta_{i, 0}, \dots, \beta_{i, n})
+\end{align*}
+Danach muss noch getestet werden, dass $L$ für die neuen Parameter auch wirklich einen größeren Wert annimmt also zuvor. Falls nicht, muss die Schrittweite $s$ verkleintert werden, zum Beispiel um einen festen zuvor definierten Faktor.
+
+Das Verfahren konvergiert nicht zwingend, falls die Funktion nach oben unbeschränkt ist. In unserem Fall ist die Likelihoodfunktion $L$ aber durch $1$ nach oben beschränkt. Trotzdem konvergiert das Gradientenverfahren nur mit Sicherheit gegen ein lokales Maximum von $L$, welches nicht zwingend auch ein globales Maximum sein muss.

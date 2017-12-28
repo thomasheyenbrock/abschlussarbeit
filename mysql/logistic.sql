@@ -118,7 +118,7 @@ END;;
 
 
 -- main procedure for execution
-CREATE PROCEDURE `Logistic_Main`(IN rounds INT(11), IN use_sample INT(1))
+CREATE PROCEDURE `Logistic_Main`(IN rounds INT(11))
 BEGIN
 
     DECLARE step DECIMAL(40, 20);
@@ -135,31 +135,18 @@ BEGIN
         value DECIMAL(40, 20)
     );
 
-    IF use_sample = 1 THEN
+    -- calculate min and max values for money
+    SET min = (SELECT MIN(money) FROM regression);
+    SET max = (SELECT MAX(money) FROM regression);
 
-        -- calculate min and max values for money
-        SET min = (SELECT MIN(money) FROM regression);
-        SET max = (SELECT MAX(money) FROM regression);
-
-        -- insert all linear transformed values for column 'money' into data
-        SET @counter = 0;
-        INSERT INTO data
-        SELECT
-            @counter := @counter + 1 AS `id`,
-            'money' AS `variable`,
-            (money - min) / (max - min) AS `value`
-        FROM regression LIMIT 10;
-
-    ELSE
-
-        INSERT INTO data VALUES
-            (1, 'x', 1),
-            (2, 'x', 2),
-            (3, 'x', 3),
-            (4, 'x', 4),
-            (5, 'x', 5);
-
-    END IF;
+    -- insert all linear transformed values for column 'money' into data
+    SET @counter = 0;
+    INSERT INTO data
+    SELECT
+        @counter := @counter + 1 AS `id`,
+        'money' AS `variable`,
+        (money - min) / (max - min) AS `value`
+    FROM regression LIMIT 10;
 
     -- create temporary table for binary variable
     DROP TEMPORARY TABLE IF EXISTS binaryValues;
@@ -168,26 +155,13 @@ BEGIN
         value INT(1)
     );
 
-    IF use_sample THEN
-
-        -- insert all values for column 'prime' into binaryValues
-        SET @counter = 0;
-        INSERT INTO binaryValues
-        SELECT
-            @counter := @counter + 1 AS `id`,
-            prime AS `value`
-        FROM regression LIMIT 10;
-
-    ELSE
-
-        INSERT INTO binaryValues VALUES
-            (1, 0),
-            (2, 0),
-            (3, 1),
-            (4, 0),
-            (5, 1);
-
-    END IF;
+    -- insert all values for column 'prime' into binaryValues
+    SET @counter = 0;
+    INSERT INTO binaryValues
+    SELECT
+        @counter := @counter + 1 AS `id`,
+        prime AS `value`
+    FROM regression LIMIT 10;
 
     -- create temporary table for parameters
     DROP TEMPORARY TABLE IF EXISTS parameters;
@@ -198,19 +172,9 @@ BEGIN
     );
 
     -- set initial parameters
-    IF use_sample = 1 THEN
-
-        INSERT INTO parameters VALUES
-            ('bias', 0, 0),
-            ('money', 0, 0);
-
-    ELSE
-
-        INSERT INTO parameters VALUES
-            ('bias', 0, 0),
-            ('x', 0, 0);
-
-    END IF;
+    INSERT INTO parameters VALUES
+        ('bias', 0, 0),
+        ('money', 0, 0);
 
     -- create temporary table for logits
     DROP TEMPORARY TABLE IF EXISTS logits;
@@ -231,19 +195,9 @@ BEGIN
     );
 
     -- insert variables in gradient table
-    IF use_sample = 1 THEN
-
-        INSERT INTO gradient VALUES
-            ('bias', 0),
-            ('money', 0);
-
-    ELSE
-
-        INSERT INTO gradient VALUES
-            ('bias', 0),
-            ('x', 0);
-
-    END IF;
+    INSERT INTO gradient VALUES
+        ('bias', 0),
+        ('money', 0);
 
     -- set initial step distance
     SET step = 1;
@@ -281,4 +235,4 @@ BEGIN
 END;;
 DELIMITER ;
 
-CALL Logistic_Main(1000, 0);
+CALL Logistic_Main(10);

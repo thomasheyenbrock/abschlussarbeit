@@ -4,7 +4,7 @@ DROP PROCEDURE IF EXISTS MLinReg_Main;
 DELIMITER ;;
 
 -- main procedure for regression analysis
-CREATE PROCEDURE MLinReg_Main()
+CREATE PROCEDURE MLinReg_Main(IN number_datapoints INT(11))
 BEGIN
 
 -- declare variables
@@ -16,10 +16,7 @@ DECLARE counter3 INT(11);
 DECLARE pivot DECIMAL(40, 20);
 
 -- set matrix dimensions
-SET m = (
-    SELECT COUNT(*)
-    FROM regression
-);
+SET m = number_datapoints;
 SET n = 2;
 
 -- drop temporary tables if existing
@@ -73,21 +70,24 @@ SET @id = 0;
 
 INSERT INTO Matrix_X
 SELECT @id := (@id + 1) AS `Row`, 1 AS `Column`, 1 AS `Value`
-FROM regression;
+FROM regression
+LIMIT number_datapoints;
 
 -- insert values for purchases in Matrix_X
 SET @id = 0;
 
 INSERT INTO Matrix_X
 SELECT @id := (@id + 1) AS `Row`, 2 AS `Column`, purchases AS `Value`
-FROM regression;
+FROM regression
+LIMIT number_datapoints;
 
 -- insert values for money in Matrix_y
 SET @id = 0;
 
 INSERT INTO Matrix_y
 SELECT @id := (@id + 1) AS `Row`, 1 AS `Column`, money AS `Value`
-FROM regression;
+FROM regression
+LIMIT number_datapoints;
 
 -- calculate Matrix_Transposed
 INSERT INTO Matrix_Transposed
@@ -269,4 +269,4 @@ END;;
 DELIMITER ;
 
 -- execute main procedure
-CALL MLinReg_Main();
+CALL MLinReg_Main(100000);

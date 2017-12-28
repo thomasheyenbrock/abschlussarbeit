@@ -118,7 +118,7 @@ END;;
 
 
 -- main procedure for execution
-CREATE PROCEDURE `Logistic_Main`(IN rounds INT(11))
+CREATE PROCEDURE `Logistic_Main`(IN number_datapoints INT(11), IN rounds INT(11))
 BEGIN
 
     DECLARE step DECIMAL(40, 20);
@@ -146,7 +146,8 @@ BEGIN
         @counter := @counter + 1 AS `id`,
         'money' AS `variable`,
         (money - min) / (max - min) AS `value`
-    FROM regression LIMIT 10;
+    FROM regression
+    LIMIT number_datapoints;
 
     -- create temporary table for binary variable
     DROP TEMPORARY TABLE IF EXISTS binaryValues;
@@ -161,7 +162,8 @@ BEGIN
     SELECT
         @counter := @counter + 1 AS `id`,
         prime AS `value`
-    FROM regression LIMIT 10;
+    FROM regression
+    LIMIT number_datapoints;
 
     -- create temporary table for parameters
     DROP TEMPORARY TABLE IF EXISTS parameters;
@@ -235,4 +237,4 @@ BEGIN
 END;;
 DELIMITER ;
 
-CALL Logistic_Main(10);
+CALL Logistic_Main(100000, 1000);

@@ -221,7 +221,7 @@ BEGIN
     );
 
     -- insert initial values into logit table
-    CALL CalculateLogit();
+    CALL Logistic_CalculateLogit();
 
     -- create temporary table for gradient
     DROP TEMPORARY TABLE IF EXISTS gradient;

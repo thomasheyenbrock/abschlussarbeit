@@ -3,10 +3,15 @@ import random
 import math
 
 def outputCsv(data):
-    output = ["%s,%s,%s" % ("purchases", "money", "prime")]
+    output = ["%s,%s,%s,%s" % ("age", "purchases", "money", "prime")]
 
     for datapoint in data:
-        output.append("%s,%s,%a" % (datapoint["purchases"], datapoint["money"], datapoint["prime"]))
+        output.append("%s,%s,%s,%a" % (
+            datapoint["age"],
+            datapoint["purchases"],
+            datapoint["money"],
+            datapoint["prime"]
+        ))
 
     f = open("sample.csv", "w")
     f.write("\n".join(output))
@@ -16,15 +21,16 @@ def outputCsv(data):
 
 def outputSql(data):
     output = [
-        "CREATE DATABASE IF NOT EXISTS sampleDB;"
-        "USE sampleDB;",
-        "DROP TABLE IF EXISTS regression;",
-        "CREATE TABLE regression (%s INT(11), %s INT(11), %s INT(1));" % ("purchases", "money", "prime")
-        "INSERT INTO regression (%s,%s,%s) VALUES" % ("purchases", "money", "prime")
+        "INSERT INTO regression (%s,%s,%s,%s) VALUES" % ("age", "purchases", "money", "prime")
     ]
 
     for datapoint in data:
-        output.append("(%s,%s,%s)," % (datapoint["purchases"], datapoint["money"], datapoint["prime"]))
+        output.append("(%s,%s,%s,%s)," % (
+            datapoint["age"],
+            datapoint["purchases"],
+            datapoint["money"],
+            datapoint["prime"]
+        ))
 
     output[-1] = output[-1][:-1] + ";"
     f = open("sample.sql", "w")
@@ -38,17 +44,10 @@ def main(argv):
         print('Please provide number of datapoints that shall be generated.')
         return
 
-    if len(argv) < 3:
-        print("Please provice output format.")
-        return
-
-    if not (argv[2] == "csv" or argv[2] == "sql"):
-        print("Only 'csv' and 'sql' are allowed as output format.")
-        return
-
     data = []
 
     for i in range(0, int(argv[1])):
+        age = int(max(random.normalvariate(25, 10) + 10, 18))
         purchases = int(max(random.normalvariate(10, 10), 1))
         money = int(max(purchases * 25 + random.normalvariate(0, (math.log(purchases) + 1) * 12), 0.01) * 100)
         if random.uniform(0, 1) > math.exp(0.2 * purchases - 2) / (1 + math.exp(0.2 * purchases - 2)):
@@ -57,15 +56,14 @@ def main(argv):
             prime = 1
 
         data.append({
+            "age": age,
             "purchases": purchases,
             "money": money,
             "prime": prime
         })
 
-    if argv[2] == "csv":
-        outputCsv(data)
-    elif argv[2] == "sql":
-        outputSql(data)
+    outputCsv(data)
+    outputSql(data)
     return
 
 if __name__ == "__main__":

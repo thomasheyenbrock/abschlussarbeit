@@ -17,7 +17,7 @@ DECLARE pivot DECIMAL(40, 20);
 
 -- set matrix dimensions
 SET m = number_datapoints;
-SET n = 2;
+SET n = 3;
 
 -- drop temporary tables if existing
 DROP TEMPORARY TABLE IF EXISTS Matrix_X;
@@ -78,6 +78,14 @@ SET @id = 0;
 
 INSERT INTO Matrix_X
 SELECT @id := (@id + 1) AS `Row`, 2 AS `Column`, purchases AS `Value`
+FROM regression
+LIMIT number_datapoints;
+
+-- insert values for age in Matrix_X
+SET @id = 0;
+
+INSERT INTO Matrix_X
+SELECT @id := (@id + 1) AS `Row`, 3 AS `Column`, age AS `Value`
 FROM regression
 LIMIT number_datapoints;
 

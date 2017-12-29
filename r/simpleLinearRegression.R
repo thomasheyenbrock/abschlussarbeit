@@ -1,4 +1,4 @@
-data <- read.csv2("~/Documents/abschlussarbeit/data/sample.csv", sep = ",", header = TRUE)
+data <- read.csv2("./data/sample.csv", sep = ",", header = TRUE)
 
 xmin <- min(data$purchases)
 xmax <- max(data$purchases)

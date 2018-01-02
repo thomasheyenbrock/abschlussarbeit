@@ -110,9 +110,19 @@ Lineare Regression eignet sich oft nicht zur Modellierung einer binären Variabl
 \begin{align*}
     l: \mathbb{R} \rightarrow (0, 1),~~ x \mapsto \dfrac{1}{1+e^{-x}}
 \end{align*}
-Diese Funktion wendet man nun auf die Linearkombination aller unabhängigen Variablen mit Parametern $\beta_1, \dots, \beta_n$ und konstantem Term $\alpha$ an. Das Ergebnis für den $i$-ten Datensatz bezeichnen wir mit $\pi_i$
+Diese Funktion wendet man nun auf die Linearkombination aller unabhängigen Variablen mit Parametern $\beta_1, \dots, \beta_n$ und konstantem Term $\alpha$ an. Zur Vereinfachung definieren wir für das restliche Kapitel die Variable $c$ wiefolgt:
 \begin{align*}
-    \pi_i = \pi_i(\alpha, \beta_1, \dots, \beta_n) := l \left( \alpha + \sum_{j=1}^n \beta_j \cdot x_{i, j} \right) = \left( 1 + \exp \left( - \alpha - \sum_{j=1}^n \beta_j \cdot x_{i, j} \right) \right)^{-1}
+    c := \alpha + \sum_{i=1}^n \beta_i \cdot x_{i, j}
+\end{align*}
+Das Ergebnis der Funktion $l$ für den $i$-ten Datensatz bezeichnen wir mit $\pi_i$
+\begin{align*}
+    \pi_i = \pi_i(\alpha, \beta_1, \dots, \beta_n) := l \left( \alpha + \sum_{j=1}^n \beta_j \cdot x_{i, j} \right) = \dfrac{1}{1 + e^{-c}}
+\end{align*}
+Wir stellen hierbei fest, dass folgende Identität gilt:
+\begin{align*}
+    \pi(- \alpha, - \beta_1, \dots, - \beta_n) &= \dfrac{1}{1 + e^c} = \dfrac{1 + e^c - e^c}{1 + e^c} \\
+    &= 1 - \dfrac{e^c}{1 + e^c} = 1 - \dfrac{1}{e^{-c} + 1} \\
+    &= 1 - \pi(\alpha, \beta_1, \dots, \beta_n)
 \end{align*}
 Anschaulich repräsentiert $\pi_i$ die Wahrscheinlichkeit dafür, dass die abhängige Variable eines Datensatzes mit unabhängigen Variablen $x_{i, 1}, \dots, x_{i, n}$ gleich $1$ ist, also:
 \begin{align*}
@@ -120,9 +130,18 @@ Anschaulich repräsentiert $\pi_i$ die Wahrscheinlichkeit dafür, dass die abhä
 \end{align*}
 Man möchte die Parameter $\alpha, \beta_1, \dots, \beta_n$ nun so schätzen, dass die Wahrscheinlichkeit für das Auftreten der vorhandenen Datenbasis maximiert wird. Diese Wahrscheinlichkeit ist gegeben durch:
 \begin{align*}
-    L(\alpha, \beta_1, \dots, \beta_n) = \prod_{i=1}^m P(Y_i = y_i | X_1 = x_{i, 1}, \dots, X_n = x_{i, n}) = \prod_{i=1}^m y_i \cdot \pi_i(\alpha, \beta_1, \dots, \beta_n)
+    L(\alpha, \beta_1, \dots, \beta_n) &= \prod_{i=1}^m P(Y_i = y_i | X_1 = x_{i, 1}, \dots, X_n = x_{i, n}) \\
+    &= \prod_{i=1}^m y_i \cdot \pi_i(\alpha, \beta_1, \dots, \beta_n) + (1 - y_i) \cdot (1 - \pi_i(\alpha, \beta_1, \dots, \beta_n)) \\
+    &= \prod_{i=1}^m y_i \cdot \pi_i(\alpha, \beta_1, \dots, \beta_n) + (1 - y_i) \cdot \pi_i(- \alpha, - \beta_1, \dots, - \beta_n))
 \end{align*}
-Dieses Verfahren bezeichnet man auch als Maximum-Likelihood-Methode. Die Funktion $L$ nennt man dementsprechend auch Likelihoodfunktion. Oft maximiert man nicht $L$ direkt, sondern eher $\ln(L)$. Der Sinn ist, dass man das Produkt damit in eine Summe einzelner Logarithmen umwandeln kann, welche wiederum einfacher abzuleiten ist. Das darf man machen, da der Logarithmus eine stetig wachsende Funktion ist und die Werte von $L$ stets zwischen $0$ und $1$ liegen.
+Da alle $y_i$ im Fall der logistischen Regression entweder gleich $0$ oder gleich $1$ sind, ist immer nur einer der beidem Summanden in jedem Faktor nicht null. Diese Fallunterscheidung kann man auch in das Vorzeichen der Parameter verschieben, da sich die beiden möglichen Faktoren nur darin unterscheiden. Dann erhält man:
+\begin{align*}
+    L(\alpha, \beta_1, \dots, \beta_n) = \prod_{i=1}^m \pi(&(2 \cdot y_i - 1) \cdot \alpha, \\
+    &(2 \cdot y_i - 1) \cdot \beta_1, \\
+    &\dots, \\
+    &(2 \cdot y_i - 1) \cdot \beta_n)
+\end{align*}
+Das Verfahren der Maximierung dieser Wahrscheinlichkeit bezeichnet man auch als Maximum-Likelihood-Methode. Die Funktion $L$ nennt man dementsprechend auch Likelihoodfunktion. Oft maximiert man nicht $L$ direkt, sondern eher $\ln(L)$. Der Sinn ist, dass man das Produkt damit in eine Summe einzelner Logarithmen umwandeln kann, welche wiederum einfacher abzuleiten ist. Das darf man machen, da der Logarithmus eine stetig wachsende Funktion ist und die Werte von $L$ stets zwischen $0$ und $1$ liegen.
 
 Wir suchen also die Parameter $\hat\alpha, \hat\beta_1, \dots, \hat\beta_n$ mit:
 \begin{align*}
@@ -164,3 +183,51 @@ Der Gradient von $L$ ist also wiederum eine Funktion, die Werte $\alpha, \beta_1
 Danach muss noch getestet werden, dass $L$ für die neuen Parameter auch wirklich einen größeren Wert annimmt also zuvor. Falls nicht, muss die Schrittweite $s$ verkleintert werden, zum Beispiel um einen festen zuvor definierten Faktor.
 
 Das Verfahren konvergiert nicht zwingend, falls die Funktion nach oben unbeschränkt ist. In unserem Fall ist die Likelihoodfunktion $L$ aber durch $1$ nach oben beschränkt. Trotzdem konvergiert das Gradientenverfahren nur mit Sicherheit gegen ein lokales Maximum von $L$, welches nicht zwingend auch ein globales Maximum sein muss.
+
+\subsection{Gradient bei logistischer Regression}
+
+Um das Gradientenverfahren bei logistischer Regression einsetzen zu können, muss der Gradient für den Logarithmus der Likelihoodfunktion bekannt sein. In diesem Kapitel bilden aso wir die partiellen Ableitungen nach allen Parametern.
+
+Um $L_{log} = \ln(L)$ partiell ableiten zu können, berechnen wir zuerst die partiellen Ableitungen aller $\pi_i$. Für die partielle Ableitung nach $\alpha$ ergibt sich mit der Kettenregel folgende Funktion:
+\begin{align*}
+    \dfrac{\partial \pi_i}{\partial \alpha} &= - \left( 1 + \exp \left(- \alpha - \sum_{j=1}^n \beta_j \cdot x_{i, j} \right) \right)^{-2} \cdot \exp \left(- \alpha - \sum_{j=1}^n \beta_j \cdot x_{i, j} \right) \cdot (-1) \\
+    &= \left( 1 + \exp \left(- \alpha - \sum_{j=1}^n \beta_j \cdot x_{i, j} \right) \right)^{-1} \cdot \left( 1 + \exp \left(\alpha + \sum_{j=1}^n \beta_j \cdot x_{i, j} \right) \right)^{-1} \\
+    &= \pi_i(\alpha, \beta_1, \dots, \beta_n) \cdot \pi_i(- \alpha, - \beta_1, \dots, - \beta_n)
+\end{align*}
+Die partiellen Ableitungen einem der $\beta_k$ für $k = 1, \dots, n$ kann fast analog gebildet werden. Bei der Anwendung der Kettenregel auf die innerste lineare Funktion bleibt jedoch noch der konstanter Faktor $x_{i, k}$ übrig.
+\begin{align*}
+    \dfrac{\partial \pi_i}{\partial \beta_k} = x_{i, k} \cdot \pi_i(\alpha, \beta_1, \dots, \beta_n) \cdot \pi_i(- \alpha, - \beta_1, \dots, - \beta_n)
+\end{align*}
+Nun zur den eigentlichen partiellen Ableitunge. Zuerst noch einmal zu der Funktion, die wir nun ableiten wollen. Definieren wir $\tilde\alpha := (2 y_i - 1) \alpha$ und $\tilde\beta_i := (2 y_i - 1) \beta_i$ für $i = 1, \dots, n$. Dann erhält man:
+\begin{align*}
+    L_{log}(\alpha, \beta_1, \dots, \beta_n) &= \ln(L(\alpha, \beta_1, \dots, \beta_n)) \\
+    &= \sum_{i=1}^m \ln \left(y_i \cdot \pi(\tilde\alpha, \tilde\beta_1, \dots, \tilde\beta_n) \right)
+\end{align*}
+Leitet man nach $\alpha$ ab, so erhält man:
+\begin{align*}
+    \dfrac{\partial L_{log}}{\partial \alpha} &= \sum_{i=1}^m \dfrac{\partial}{\partial \alpha} \left( \ln \left( \pi_i(\tilde\alpha, \tilde\beta_1, \dots, \tilde\beta_n) \right) \right) \\
+    &= \sum_{i=1}^m \left( \pi_i(\tilde\alpha, \tilde\beta_1, \dots, \tilde\beta_n) \right)^{-1} \cdot \dfrac{\partial \pi_i}{\partial \tilde\alpha} \cdot \dfrac{\partial \tilde\alpha}{\partial \alpha} \\
+    &= \sum_{i=1}^m \left( \pi_i(\tilde\alpha, \tilde\beta_1, \dots, \tilde\beta_n) \right)^{-1} \cdot \pi_i(\tilde\alpha, \tilde\beta_1, \dots, \tilde\beta_n) \cdot (1 - \pi_i(\tilde\alpha, \tilde\beta_1, \dots, \tilde\beta_n)) \cdot (2 y_i - 1) \\
+    &= \sum_{i=1}^m (1 - \pi_i(\tilde\alpha, \tilde\beta_1, \dots, \tilde\beta_n)) \cdot (2 y_i - 1)
+\end{align*}
+Für die partielle Ableitung nach $\beta_k$ erhält man analog:
+\begin{align*}
+    \dfrac{\partial L_{log}}{\partial \beta_k} = \sum_{i=1}^m x_{i, k} \cdot (1 - \pi_i(\tilde\alpha, \tilde\beta_1, \dots, \tilde\beta_n)) \cdot (2 y_i - 1)
+\end{align*}
+Betrachten wir die Summanden der partiellen Ableitungen nun getrennt für die beiden möglichen Werten von $y_i$. Ist $y_i = 0$ dann gilt:
+\begin{align*}
+    (1 - \pi_i(\tilde\alpha, \tilde\beta_1, \dots, \tilde\beta_n)) \cdot (2 y_i - 1) &= (1 - \pi_i(- \alpha, - \beta_1, \dots, - \beta_n)) \cdot (- 1) \\
+    &= - 1 + (1 - \pi_i(\alpha, \beta_1, \dots, \beta_n)) \\
+    &= - \pi_i(\alpha, \beta_1, \dots, \beta_n)
+\end{align*}
+Für $y_i = 1$ ergibt sich folgendes:
+\begin{align*}
+    (1 - \pi_i(\tilde\alpha, \tilde\beta_1, \dots, \tilde\beta_n)) \cdot (2 y_i - 1) &= (1 - \pi_i(\alpha, \beta_1, \dots, \beta_n)) \cdot (2 - 1) \\
+    &= 1 - \pi_i(\alpha, \beta_1, \dots, \beta_n)
+\end{align*}
+Damit können wir die partiellen Ableitungen weiter vereinfachen:
+\begin{align*}
+    \dfrac{\partial L_{log}}{\partial \alpha} &= \sum_{i=1}^m y_i - \pi_i(\alpha, \beta_1, \dots, \beta_n) \\
+    \dfrac{\partial L_{log}}{\partial \beta_k} &= \sum_{i=1}^m x_{i, k} \cdot (y_i - \pi_i(\alpha, \beta_1, \dots, \beta_n))
+\end{align*}
+Diese Darstellung der partiellen Ableitungen erlaubt es uns später in SQL den Gradienten zu berechnen. Der Term innerhalb der Summe wird einfach für jeden Datenpunkt berechnet, danach wird die resultierende Spalte zusammen mit einer Gruppierung summiert.

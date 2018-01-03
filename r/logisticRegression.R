@@ -24,7 +24,7 @@ plot(
     type = "n",
     xlab = "money",
     ylab = "prime",
-    main = "Logistic regression"
+    main = "Logistische Regression"
 )
 lines(
     data$money,

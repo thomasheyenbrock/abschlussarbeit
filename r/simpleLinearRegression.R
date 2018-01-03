@@ -23,7 +23,7 @@ plot(
     type = "n",
     xlab = "purchases",
     ylab = "money",
-    main = "Simple linear regression",
+    main = "Einfache lineare Regression",
     sub = paste("money = ", b0, "+", b1, "* purchases"),
     col.sub = "darkgray"
 )

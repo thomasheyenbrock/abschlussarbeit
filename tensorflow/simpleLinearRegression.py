@@ -35,8 +35,17 @@ def main(argv):
             return
 
     batch_size = datapoint_size
-    steps = 1000
-    learn_rate = 0.0005
+    steps = 2000
+    if datapoint_size <= 10:
+        learn_rate = 0.0076
+    elif datapoint_size <= 100:
+        learn_rate = 0.0064
+    elif datapoint_size <= 1000:
+        learn_rate = 0.0056
+    elif datapoint_size <= 10000:
+        learn_rate = 0.0054
+    elif datapoint_size <= 100000:
+        learn_rate = 0.0054
 
     x = tf.placeholder(tf.float32, [None, 1])
     W = tf.Variable(tf.zeros([1, 1]))

@@ -15,8 +15,8 @@ def get_data(n_samples):
     csvreader = csv.reader(csvfile, delimiter=',', quotechar='|')
     for row in csvreader:
         if not row[0] == "age":
-            x.append([int(row[2]) / 100000])
-            x_plot.append(int(row[2]) / 100000)
+            x.append([int(row[2])])
+            x_plot.append(int(row[2]))
             y.append(int(row[3]))
 
     return (x[:n_samples], x_plot[:n_samples], y[:n_samples])
@@ -36,7 +36,16 @@ def main(argv):
 
     batch_size = datapoint_size
     steps = 1000
-    learn_rate = 0.1
+    if datapoint_size == 10:
+        learn_rate = 1
+    elif datapoint_size == 100:
+        learn_rate = 0.1
+    elif datapoint_size == 1000:
+        learn_rate = 0.01
+    elif datapoint_size == 10000:
+        learn_rate = 0.001
+    elif datapoint_size == 100000:
+        learn_rate = 0.0001
 
     x = tf.placeholder(tf.float32, [None, 1])
     W = tf.Variable(tf.zeros([1, 1]))
@@ -56,6 +65,10 @@ def main(argv):
 
     all_xs = np.array(all_xs)
     all_ys = np.transpose([all_ys])
+
+    min_x = min(all_xs)
+    max_x = max(all_xs)
+    all_xs = (all_xs - min_x) / (max_x - min_x)
 
     sess = tf.Session()
     init = tf.global_variables_initializer()
@@ -78,11 +91,15 @@ def main(argv):
 
     (curr_W, curr_b, curr_cost) = sess.run([W, b, cost], feed_dict=feed)
 
+    curr_W = curr_W / (max_x - min_x)
+    curr_b = curr_b - curr_W * min_x
+
     print("W: %s" % curr_W)
     print("b: %s" % curr_b)
     print("cost: %s" % curr_cost)
 
     # plot
+    all_xs = all_xs * (max_x - min_x) + min_x
     plot_ys = 1 / (1 + np.exp(- curr_W * all_xs - curr_b))
     plot_order = np.argsort(plot_xs)
     plt.plot(plot_xs, all_ys, 'ro', label='Original data')

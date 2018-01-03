@@ -32,8 +32,17 @@ def main(argv):
             return
 
     batch_size = datapoint_size
-    steps = 1000
-    learn_rate = 0.0005
+    steps = 50000
+    if datapoint_size <= 10:
+        learn_rate = 0.00093
+    elif datapoint_size <= 100:
+        learn_rate = 0.00078
+    elif datapoint_size <= 1000:
+        learn_rate = 0.0007
+    elif datapoint_size <= 10000:
+        learn_rate = 0.00071
+    elif datapoint_size <= 100000:
+        learn_rate = 0.00071
 
     x = tf.placeholder(tf.float32, [None, 2])
     W = tf.Variable(tf.zeros([2, 1]))
@@ -50,7 +59,7 @@ def main(argv):
     all_ys = np.transpose([all_ys])
 
     sess = tf.Session()
-    init = tf.initialize_all_variables()
+    init = tf.global_variables_initializer()
     sess.run(init)
 
     for i in range(steps):

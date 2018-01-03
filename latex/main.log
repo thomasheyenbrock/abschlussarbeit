@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.5.18)  3 JAN 2018 15:31
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.5.18)  3 JAN 2018 16:01
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1299,44 +1299,43 @@ mm/m/it/10.95 L\OT1/cmr/m/n/10.95 )$ \OT1/ppl/m/n/10.95 par-tiell ableiten zu k
 ]
 chapter 3.
 [11]
-Overfull \hbox (6.61844pt too wide) in paragraph at lines 38--39
+Overfull \hbox (6.61844pt too wide) in paragraph at lines 37--38
 \OT1/ppl/m/n/10.95 Das R-Projekt oder ein-fach nur R ist eine Sprache f[]ur sta
 tis-tis-che Berech-nun-gen und graphis-
  []
 
 
-Overfull \hbox (7.14468pt too wide) in paragraph at lines 42--43
+Overfull \hbox (7.14468pt too wide) in paragraph at lines 41--42
 []\OT1/ppl/m/n/10.95 In R lassen sich au^^Yer-dem sehr ein-fach so-ge-nan-nte M
 od-elle definieren, welche als Eingabe
  []
 
-LaTeX Font Info:    Try loading font information for OML+ppl on input line 49.
+LaTeX Font Info:    Try loading font information for OML+ppl on input line 48.
 (/usr/local/texlive/2016/texmf-dist/tex/latex/psnfss/omlppl.fd
 File: omlppl.fd 
 )
 LaTeX Font Info:    Font shape `OML/ppl/m/n' in size <10.95> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 49.
-
-<r-simpleLinearRegression.png, id=290, 2254.4225pt x 1240.635pt>
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 48.
+ [12]
+<r-simpleLinearRegression.png, id=306, 2254.4225pt x 1240.635pt>
 File: r-simpleLinearRegression.png Graphic file (type png)
 
 <use r-simpleLinearRegression.png>
-Package pdftex.def Info: r-simpleLinearRegression.png used on input line 57.
+Package pdftex.def Info: r-simpleLinearRegression.png used on input line 68.
 (pdftex.def)             Requested size: 433.35742pt x 238.46802pt.
 
-Overfull \hbox (10.95pt too wide) in paragraph at lines 57--58
+Overfull \hbox (10.95pt too wide) in paragraph at lines 68--69
 [][] 
  []
 
+) (./chapters/Datenbanken.tex
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-Underfull \vbox (badness 4441) has occurred while \output is active []
-
- [12])
-(./chapters/Datenbanken.tex [13 <./r-simpleLinearRegression.png>] [14
-
-]
+ [13 <./r-simpleLinearRegression.png>] [14]
 chapter 4.
-) (./chapters/Ausblick.tex [15] [16
+) (./chapters/Ausblick.tex [15
+
+] [16
 
 ]
 chapter 5.
@@ -1371,8 +1370,8 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 119.
  ) 
 Here is how much of TeX's memory you used:
- 12232 strings out of 493014
- 184711 string characters out of 6133351
+ 12240 strings out of 493014
+ 184825 string characters out of 6133351
  367396 words of memory out of 5000000
  15395 multiletter control sequences out of 15000+600000
  24320 words of font info for 63 fonts, out of 8000000 for 9000
@@ -1392,10 +1391,10 @@ mf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/local/texlive/2016/texmf-dist
 /fonts/type1/urw/palatino/uplr8a.pfb></usr/local/texlive/2016/texmf-dist/fonts/
 type1/urw/palatino/uplri8a.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/
 public/yhmath/yhcmex.pfb>
-Output written on main.pdf (37 pages, 282192 bytes).
+Output written on main.pdf (37 pages, 284253 bytes).
 PDF statistics:
- 431 PDF objects out of 1000 (max. 8388607)
- 371 compressed objects within 4 object streams
- 85 named destinations out of 1000 (max. 500000)
+ 440 PDF objects out of 1000 (max. 8388607)
+ 380 compressed objects within 4 object streams
+ 93 named destinations out of 1000 (max. 500000)
  283 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -28,11 +28,10 @@ Insgesamt wurden für diese Arbeit 100.000 solcher Datensätze erzeugt. In der f
 
 Wir definieren uns außerdem drei Fragestellungen, welche wir jeweils mit einer Art der in Kapitel 2 vorgestellten Regressionen beantworten werden:
 \begin{enumerate}
-  \item Zuerst wollen wir wissen, ob das ausgegebene Geld mit der Anzahl der Käufe in Zusammenhang steht. Diese Fragen können wir mit einfacher linearer Regression beantworten. $money$ ist hierbei die abhängige Variable und $purchases$ ist die unabhängige Variable.
-  \item Die zweite Frage ist ähnlich der ersten, nur wollen wir hier wissen, ob neben der Anzahl der Käufe auch das Alter des Kunden einen Einfluss auf das ausgegebene Geld hat. Hier haben wir nun zwei unabhängige Variablen, nämhlich $age$ und $purchases$. Die abhängige Variable bleibt $money$. Diese Frage beantworten wir also mit multipler linearer Regression.
+  \item Zuerst wollen wir wissen, ob das ausgegebene Geld mit der Anzahl der Käufe in linearem Zusammenhang steht. Diese Fragen können wir mit einfacher linearer Regression beantworten. $money$ ist hierbei die abhängige Variable und $purchases$ ist die unabhängige Variable.
+  \item Die zweite Frage ist ähnlich der ersten, nur wollen wir hier wissen, ob neben der Anzahl der Käufe auch das Alter des Kunden einen linearen Einfluss auf das ausgegebene Geld hat. Hier haben wir nun zwei unabhängige Variablen, nämhlich $age$ und $purchases$. Die abhängige Variable bleibt $money$. Diese Frage beantworten wir also mit multipler linearer Regression.
   \item Als letztes interessiert uns, ob eine Prime-Mitgliedschaft von der Summe des ausgegebenen Geldes zusammenhängt. $money$ ist also nun die unabhängige Variable, während $prime$ die abhängige Variable ist. Außerdem ist $prime$ eine binäre Variable. Deshalb nutzen wir hier also logistische Regression.
 \end{enumerate}
-
 
 \section{Regression in R}
 Das R-Projekt oder einfach nur R ist eine Sprache für statistische Berechnungen und graphische Darstellung. Damit ist R wie geschaffen für Regressionsanalyse. Von allen hier behandelten Sprachen ist R damit auch die einfachste und direkteste für Regression.
@@ -52,11 +51,33 @@ Betrachten wir also Frage Nummer $1$ aus dem vorherigen Teilkapitel. Die Formel 
   print(slr)
 \end{lstlisting}
 
+Das Ergebnis des obigen Codes ist folgendes:
+
+\begin{lstlisting}
+  Coefficients:
+  (Intercept)    purchases
+        1.941     2500.805
+\end{lstlisting}
+
+Der Wert unter $(Intercept)$ entspricht dabei dem Paramter $\alpha$ in unserer Notation, der Wert unter $purchases$ entspricht $\beta$.
+
+Wir wollen dieses Ergebnis kurz interpretieren. Der kleine Wert für $\alpha$ entspricht der Intuition, dass ein Kunde ohne Käufe auch kein Geld ausgegeben hat. Der relativ große Wert von ca. $2500$ für $\beta$ zeigt, dass die Anzahl der gekauften Artikel sehr einen großen Einfluss auf das ausgegebene Geld hat. Die Kunden geben pro gekauftem Artikel etwa $2500$ Cent, also $25$ Euro aus.
+
 R verfügt auch über Möglichkeiten zur graphischen Darstellung. Lässt man die die Datenpunkte und die lineare Ausgleichsfunktion mit den berechneten Parameter plotten, erhält man dieses Ergebnis:
 
 \includegraphics[width=\textwidth]{r-simpleLinearRegression}
 
 \subsection{Multiple lineare Regression}
+
+Bei multipler lineare Regression unterscheidet sich der R-Code nur in der Wahl der Formel. Hier wollen wir $money$ durch eine Summe von $purchases$ und $age$ modellieren, deshalb lautet die Formel hier $money \sim purchases + age$. Man erhält das folgende Ergebnis.
+
+\begin{lstlisting}
+  Coefficients:
+  (Intercept)    purchases          age
+     -16.4842    2500.8042       0.5318
+\end{lstlisting}
+
+Auch hier eine kurze Interpretation dieses Ergebnisses: Der Wert für $\alpha$ ist wieder relativ klein, der Wert für das $\beta$ zu $purchases$ ist fast exakt derselbe wie bei einfacher linerarer Regression, was bei denselben Daten auch zu erwarten war. Der Wert für das $\beta$ zu $age$ ist dagegen nahe bei null. Das bedeutet, dass das Alter neben der Anzahl der Käufe keinen signifikanten Einfluss auf das ausgegebene Geld hat.
 
 \subsection{Logistische Regression}
 

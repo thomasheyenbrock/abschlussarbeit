@@ -15,5 +15,25 @@ logitFunction <- function(x){
     return(exp(c) / (1 + exp(c)))
 }
 
-plot(logitFunction, xlim = c(xmin - 1, xmax + 1), ylim = c(-0.2, 1.2))
-lines(data$money, data$prime, type="p")
+xplot <- seq(xmin - 1, xmax + 1, 1000)
+yplot <- logitFunction(xplot)
+
+plot(
+    c(xmin - 1, xmax + 1),
+    c(-0.2, 1.2),
+    type = "n",
+    xlab = "money",
+    ylab = "prime",
+    main = "Logistic regression"
+)
+lines(
+    data$money,
+    data$prime,
+    type="p"
+)
+lines(
+    xplot,
+    yplot,
+    col = "red",
+    lwd = 2
+)

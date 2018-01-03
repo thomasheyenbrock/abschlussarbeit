@@ -278,6 +278,9 @@ INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/psnfss/omlppl.fd
 INPUT r-simpleLinearRegression.png
 INPUT ./r-simpleLinearRegression.png
 INPUT ./r-simpleLinearRegression.png
+INPUT r-logisticRegression.png
+INPUT ./r-logisticRegression.png
+INPUT ./r-logisticRegression.png
 INPUT chapters/Datenbanken.tex
 INPUT chapters/Datenbanken.tex
 INPUT chapters/Ausblick.tex

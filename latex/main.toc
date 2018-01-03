@@ -18,21 +18,21 @@
 \contentsline {section}{\numberline {3.2}Regression in R}{12}{section.3.2}
 \contentsline {subsection}{\numberline {3.2.1}Einfache lineare Regression}{12}{subsection.3.2.1}
 \contentsline {subsection}{\numberline {3.2.2}Multiple lineare Regression}{13}{subsection.3.2.2}
-\contentsline {subsection}{\numberline {3.2.3}Logistische Regression}{14}{subsection.3.2.3}
-\contentsline {section}{\numberline {3.3}Regression in Tensorflow}{14}{section.3.3}
-\contentsline {subsection}{\numberline {3.3.1}Einfache lineare Regression}{14}{subsection.3.3.1}
-\contentsline {subsection}{\numberline {3.3.2}Multiple lineare Regression}{14}{subsection.3.3.2}
-\contentsline {subsection}{\numberline {3.3.3}Logistische Regression}{14}{subsection.3.3.3}
-\contentsline {section}{\numberline {3.4}Regression in SQL}{14}{section.3.4}
-\contentsline {subsection}{\numberline {3.4.1}Einfache lineare Regression}{14}{subsection.3.4.1}
-\contentsline {subsection}{\numberline {3.4.2}Multiple lineare Regression}{14}{subsection.3.4.2}
-\contentsline {subsection}{\numberline {3.4.3}Logistische Regression}{14}{subsection.3.4.3}
-\contentsline {chapter}{\numberline {4}Statistische Methoden in Datenbanken}{15}{chapter.4}
-\contentsline {section}{\numberline {4.1}Latex Introduction}{15}{section.4.1}
-\contentsline {chapter}{\numberline {5}Erweiterungspotenzial in Datenbanksystemen}{17}{chapter.5}
-\contentsline {section}{\numberline {5.1}Latex Introduction}{17}{section.5.1}
-\contentsline {chapter}{\numberline {6}Fazit}{19}{chapter.6}
-\contentsline {section}{\numberline {6.1}Latex Introduction}{19}{section.6.1}
-\contentsline {part}{Appendix}{23}{part*.7}
-\contentsline {chapter}{\numberline {A}Detailed Descriptions}{23}{appendix.A}
-\contentsline {chapter}{\nonumberline Bibliography}{25}{chapter*.8}
+\contentsline {subsection}{\numberline {3.2.3}Logistische Regression}{13}{subsection.3.2.3}
+\contentsline {section}{\numberline {3.3}Regression in Tensorflow}{15}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}Einfache lineare Regression}{15}{subsection.3.3.1}
+\contentsline {subsection}{\numberline {3.3.2}Multiple lineare Regression}{15}{subsection.3.3.2}
+\contentsline {subsection}{\numberline {3.3.3}Logistische Regression}{15}{subsection.3.3.3}
+\contentsline {section}{\numberline {3.4}Regression in SQL}{15}{section.3.4}
+\contentsline {subsection}{\numberline {3.4.1}Einfache lineare Regression}{15}{subsection.3.4.1}
+\contentsline {subsection}{\numberline {3.4.2}Multiple lineare Regression}{15}{subsection.3.4.2}
+\contentsline {subsection}{\numberline {3.4.3}Logistische Regression}{15}{subsection.3.4.3}
+\contentsline {chapter}{\numberline {4}Statistische Methoden in Datenbanken}{17}{chapter.4}
+\contentsline {section}{\numberline {4.1}Latex Introduction}{17}{section.4.1}
+\contentsline {chapter}{\numberline {5}Erweiterungspotenzial in Datenbanksystemen}{19}{chapter.5}
+\contentsline {section}{\numberline {5.1}Latex Introduction}{19}{section.5.1}
+\contentsline {chapter}{\numberline {6}Fazit}{21}{chapter.6}
+\contentsline {section}{\numberline {6.1}Latex Introduction}{21}{section.6.1}
+\contentsline {part}{Appendix}{25}{part*.7}
+\contentsline {chapter}{\numberline {A}Detailed Descriptions}{25}{appendix.A}
+\contentsline {chapter}{\nonumberline Bibliography}{27}{chapter*.8}

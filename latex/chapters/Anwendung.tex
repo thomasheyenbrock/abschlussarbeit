@@ -38,7 +38,7 @@ Das R-Projekt oder einfach nur R ist eine Sprache für statistische Berechnungen
 
 In R sind einfache Datenstrukturen wie Vektoren, Matrizen und Listen als Datentypen vorhanden. Darauf aufbauend existieren sogenannten Dataframes. Diese sind eine Liste von Vektoren der gleichen Länge und werden gerne zur Repräsentation von Datentabellen verwendet. Die Vektoren der Liste entsprechen dann den Spalten der Tabelle.
 
-In R lassen sich außerdem sehr einfach sogenannte Modelle definieren, welche als Eingabe nur die Daten und eine Formel benötigen. Eine Formel ist von der Form $y \sim modell$ und enthält den funktionalen Zusammenhang zwischen der abhängigen und den unabhängigen Variablen.
+In R lassen sich außerdem sehr einfach sogenannte Modelle definieren, welche als Eingabe nur die Daten und eine Formel benötigen. Eine Formel ist von der Form $y \sim modell$ und enthält den funktionalen Zusammenhang zwischen der abhängigen und den unabhängigen Variablen. Mit diesen linearen Modellen berechnet man schnell und einfach die Parameter zu einem gegebenen Datensatz unter Verwendung der $lm$-Funktion in R.
 
 \subsection{Einfache lineare Regression}
 
@@ -80,6 +80,37 @@ Bei multipler lineare Regression unterscheidet sich der R-Code nur in der Wahl d
 Auch hier eine kurze Interpretation dieses Ergebnisses: Der Wert für $\alpha$ ist wieder relativ klein, der Wert für das $\beta$ zu $purchases$ ist fast exakt derselbe wie bei einfacher linerarer Regression, was bei denselben Daten auch zu erwarten war. Der Wert für das $\beta$ zu $age$ ist dagegen nahe bei null. Das bedeutet, dass das Alter neben der Anzahl der Käufe keinen signifikanten Einfluss auf das ausgegebene Geld hat.
 
 \subsection{Logistische Regression}
+
+Bei logistischer Regression nutzen wir nun nicht mehr ein lineares Modell wie bisher, sondern ein generalisiertes lineares Modell. Logistische Regression ist im Wesentlichen ein Spezialfall dieses Modelles. Die zugehörige Funktion nennt sich $glm$ in R. Um logistische Regression damit betreiben zu können, wählt man den Parameter $family$ dieser Funktion als $binomial$.
+
+Man braucht wie auch bei linearer Regression ein Formel für das Modell. Diese bildet man analog wie bisher, indem mal die abhängige Variable mit den unabhängigen Variablen über eine Tilde verbindet. Im Fall der dritten Fragestellung aus Kapitel 3.1 wählen die also die Formel $prime \sim money$.
+
+Der gesamte R-Code für die logistische Regression lautet also wiefolgt:
+
+\begin{lstlisting}
+  data <- read.csv2("sample.csv", sep = ",", header = TRUE)
+  modell <- as.formula("prime ~ money")
+  logit <- glm(modell, family = binomial, data = data)
+  print(logit)
+\end{lstlisting}
+
+Nach der Ausführung erhält man das folgende Ergebnis:
+
+\begin{lstlisting}
+  Coefficients:
+  (Intercept)        money
+  -1.9145608    0.0000769
+
+  Degrees of Freedom: 99999 Total (i.e. Null);  99998 Residual
+  Null Deviance:	    138600
+  Residual Deviance: 100500 	AIC: 100500
+\end{lstlisting}
+
+Eine anschauliche Interpretation der zurückgegebenen Parameter ist nicht mehr so einfach. Wir lassen uns das Ergebnis daher wieder als Plot visualisieren:
+
+\includegraphics[width=\textwidth]{r-logisticRegression}
+
+Für Kunden, die weniger als $100$ Euro ausgegeben haben ist die Wahrscheinlichkeit Prime-Mitglied zu sein mit etwa $25\%$ relativ gering. Je höher die Summe aber wird, desto größer wird auch diese Wahrscheinlichkeit. So ist ein Kunde mit mehr als $800$ Euro Ausgaben so gut wie immer ein Prime-Mitglied.
 
 \section{Regression in Tensorflow}
 

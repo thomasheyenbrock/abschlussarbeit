@@ -7,13 +7,13 @@ ymin <- min(data$money)
 ymax <- max(data$money)
 
 modell <- as.formula("money ~ purchases")
-logit <- lm(modell, data = data)
+slr <- lm(modell, data = data)
 
-print(logit)
+print(slr)
 
 linearFunction <- function(x){
-    b0 <- coef(logit["coefficients"])[1]
-    b1 <- coef(logit["coefficients"])[2]
+    b0 <- coef(slr["coefficients"])[1]
+    b1 <- coef(slr["coefficients"])[2]
     return(b0 + x * b1)
 }
 

@@ -19,7 +19,7 @@ def get_data(n_samples):
             x_plot.append(int(row[2]))
             y.append(int(row[3]))
 
-    return (x[:n_samples], x_plot[:n_samples], y[:n_samples])
+    return (np.array(x[:n_samples]), x_plot[:n_samples], np.transpose([y[:n_samples]]))
 
 def main(argv):
     if len(argv) < 2:
@@ -34,7 +34,6 @@ def main(argv):
             print("ERROR: Argument has to be a integer greater than 2.")
             return
 
-    batch_size = datapoint_size
     steps = 1000
     if datapoint_size == 10:
         learn_rate = 1
@@ -48,9 +47,9 @@ def main(argv):
         learn_rate = 0.0001
 
     x = tf.placeholder(tf.float32, [None, 1])
-    W = tf.Variable(tf.zeros([1, 1]))
-    b = tf.Variable(tf.zeros([1]))
-    y = 1 / (1 + tf.exp(- tf.matmul(x, W) - b))
+    alpha = tf.Variable(tf.zeros([1]))
+    beta = tf.Variable(tf.zeros([1, 1]))
+    y = 1 / (1 + tf.exp(- tf.matmul(x, beta) - alpha))
     y_ = tf.placeholder(tf.float32, [None, 1])
 
     cost = - tf.reduce_sum(
@@ -63,9 +62,6 @@ def main(argv):
 
     (all_xs, plot_xs, all_ys) = get_data(datapoint_size)
 
-    all_xs = np.array(all_xs)
-    all_ys = np.transpose([all_ys])
-
     min_x = min(all_xs)
     max_x = max(all_xs)
     all_xs = (all_xs - min_x) / (max_x - min_x)
@@ -75,32 +71,21 @@ def main(argv):
     sess.run(init)
 
     for i in range(steps):
-        if datapoint_size == batch_size:
-            batch_start_idx = 0
-        elif datapoint_size < batch_size:
-            raise ValueError("datapoint_size: %d, must be greater than batch_size: %d" % (datapoint_size, batch_size))
-        else:
-            batch_start_idx = (i * batch_size) % (datapoint_size - batch_size)
-        batch_end_idx = batch_start_idx + batch_size
-        batch_xs = all_xs[batch_start_idx:batch_end_idx]
-        batch_ys = all_ys[batch_start_idx:batch_end_idx]
-        xs = np.array(batch_xs)
-        ys = np.array(batch_ys)
-        feed = { x: xs, y_: ys }
+        feed = { x: all_xs, y_: all_ys }
         sess.run(train_step, feed_dict=feed)
 
-    (curr_W, curr_b, curr_cost) = sess.run([W, b, cost], feed_dict=feed)
+    (curr_alpha, curr_beta, curr_cost) = sess.run([alpha, beta, cost], feed_dict=feed)
 
-    curr_W = curr_W / (max_x - min_x)
-    curr_b = curr_b - curr_W * min_x
+    curr_beta = curr_beta / (max_x - min_x)
+    curr_alpha = curr_alpha - curr_beta * min_x
 
-    print("W: %s" % curr_W)
-    print("b: %s" % curr_b)
-    print("cost: %s" % curr_cost)
+    print("alpha:  %f" % curr_alpha)
+    print("beta:   %f" % curr_beta)
+    print("cost:   %f" % curr_cost)
 
     # plot
     all_xs = all_xs * (max_x - min_x) + min_x
-    plot_ys = 1 / (1 + np.exp(- curr_W * all_xs - curr_b))
+    plot_ys = 1 / (1 + np.exp(- curr_beta * all_xs - curr_alpha))
     plot_order = np.argsort(plot_xs)
     plt.plot(plot_xs, all_ys, 'ro', label='Original data')
     plt.plot(np.array(plot_xs)[plot_order], np.array(plot_ys)[plot_order], label='Fitted line')

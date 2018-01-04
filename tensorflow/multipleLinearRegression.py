@@ -44,12 +44,12 @@ def main(argv):
         learn_rate = 0.00071
 
     x = tf.placeholder(tf.float32, [None, 2])
+    y = tf.placeholder(tf.float32, [None, 1])
     alpha = tf.Variable(tf.zeros([1]))
     betas = tf.Variable(tf.zeros([2, 1]))
-    y = tf.matmul(x, betas) + alpha
-    y_ = tf.placeholder(tf.float32, [None, 1])
+    y_calc = tf.matmul(x, betas) + alpha
 
-    cost = tf.reduce_mean(tf.square(y_ - y))
+    cost = tf.reduce_mean(tf.square(y - y_calc))
     train_step = tf.train.GradientDescentOptimizer(learn_rate).minimize(cost)
 
     (all_xs, all_ys) = get_data(datapoint_size)
@@ -59,7 +59,7 @@ def main(argv):
     sess.run(init)
 
     for i in range(steps):
-        feed = { x: all_xs, y_: all_ys }
+        feed = { x: all_xs, y: all_ys }
         sess.run(train_step, feed_dict=feed)
 
     (curr_alpha, curr_betas, curr_cost) = sess.run([alpha, betas, cost], feed_dict=feed)

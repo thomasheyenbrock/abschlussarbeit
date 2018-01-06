@@ -21,7 +21,7 @@ def outputCsv(data):
 
 def outputSql(data):
     output = [
-        "INSERT INTO regression (%s,%s,%s,%s) VALUES" % ("age", "purchases", "money", "prime")
+        "INSERT INTO sample (%s,%s,%s,%s) VALUES" % ("age", "purchases", "money", "prime")
     ]
 
     for datapoint in data:

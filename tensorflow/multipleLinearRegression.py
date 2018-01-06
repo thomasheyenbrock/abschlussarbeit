@@ -46,8 +46,8 @@ def main(argv):
     x = tf.placeholder(tf.float32, [None, 2])
     y = tf.placeholder(tf.float32, [None, 1])
     alpha = tf.Variable(tf.zeros([1]))
-    betas = tf.Variable(tf.zeros([2, 1]))
-    y_calc = tf.matmul(x, betas) + alpha
+    beta = tf.Variable(tf.zeros([2, 1]))
+    y_calc = tf.matmul(x, beta) + alpha
 
     cost = tf.reduce_mean(tf.square(y - y_calc))
     train_step = tf.train.GradientDescentOptimizer(learn_rate).minimize(cost)
@@ -62,11 +62,11 @@ def main(argv):
         feed = { x: all_xs, y: all_ys }
         sess.run(train_step, feed_dict=feed)
 
-    (curr_alpha, curr_betas, curr_cost) = sess.run([alpha, betas, cost], feed_dict=feed)
+    (curr_alpha, curr_beta, curr_cost) = sess.run([alpha, beta, cost], feed_dict=feed)
 
     print("alpha:           %f" % curr_alpha)
-    print("beta_purchases:  %f" % curr_betas[0])
-    print("beta_age:        %f" % curr_betas[1])
+    print("beta_purchases:  %f" % curr_beta[0])
+    print("beta_age:        %f" % curr_beta[1])
     print("cost:            %f" % curr_cost)
 
 if __name__ == "__main__":

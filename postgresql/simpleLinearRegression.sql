@@ -1,44 +1,49 @@
 -- main procedure for regression analysis
-CREATE OR REPLACE FUNCTION SLinReg_Main(ref refcursor)
+CREATE OR REPLACE FUNCTION simple_linear_regression(ref refcursor, number_datapoints int)
 RETURNS refcursor AS $$
 BEGIN
 
+DROP TABLE IF EXISTS datapoints;
+CREATE TEMPORARY TABLE datapoints (
+    purchases INTEGER,
+    money INTEGER
+);
+
+INSERT INTO datapoints
+SELECT purchases, money
+FROM sample
+LIMIT number_datapoints;
+
 OPEN ref FOR
 WITH
+    means AS (
+        SELECT
+            AVG(purchases) AS mean_purchases,
+            AVG(money) AS mean_money
+        FROM datapoints
+    ),
+    sums AS (
+        SELECT
+            SUM((purchases - (SELECT mean_purchases FROM means)) * (money - (SELECT mean_money FROM means))) AS nominator,
+            SUM(POWER(purchases - (SELECT mean_purchases FROM means), 2)) AS denominator
+        FROM datapoints
+    ),
     beta AS (
-        SELECT SUM((purchases - (
-            SELECT AVG(purchases)
-            FROM regression
-        )) * (money - (
-            SELECT AVG(money)
-            FROM regression
-        ))) / SUM(POWER(purchases - (
-            SELECT AVG(purchases)
-            FROM regression
-        ), 2)) AS value
-        FROM regression
+        SELECT
+            'purchases' AS variable,
+            nominator / denominator AS value
+        FROM sums
     ),
     alpha AS (
         SELECT
-            (
-                SELECT AVG(money)
-                FROM regression
-            ) - ((
-                SELECT value
-                FROM beta
-            ) * (
-                SELECT AVG(purchases)
-                FROM regression
-            )) AS value
+            'bias' AS variable,
+            mean_money - (SELECT value FROM beta) * mean_purchases AS value
+        FROM means
     )
-SELECT
-    'bias' AS variable,
-    value
+SELECT *
 FROM alpha
 UNION
-SELECT
-    'purchases' AS variable,
-    value
+SELECT *
 FROM beta;
 
 RETURN ref;
@@ -47,5 +52,5 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- execute main procedure
-SELECT SLinReg_Main('cursor');
+SELECT simple_linear_regression('cursor', 100000);
 FETCH ALL IN "cursor";

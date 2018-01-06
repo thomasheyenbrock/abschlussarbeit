@@ -243,9 +243,9 @@ INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/adobe/palatino/pplb8r.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/adobe/palatino/pplb7t.tfm
 INPUT main.toc
 INPUT main.toc
-INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/adobe/palatino/pplb7t.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/vf/adobe/palatino/pplb7t.vf
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/adobe/palatino/pplb8r.tfm
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/adobe/palatino/pplb7t.tfm
 OUTPUT main.toc
 INPUT components/outline.tex
 INPUT components/outline.tex
@@ -281,6 +281,8 @@ INPUT ./r-simpleLinearRegression.png
 INPUT r-logisticRegression.png
 INPUT ./r-logisticRegression.png
 INPUT ./r-logisticRegression.png
+INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/listings/lstlang1.sty
+INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/listings/lstlang1.sty
 INPUT chapters/Datenbanken.tex
 INPUT chapters/Datenbanken.tex
 INPUT chapters/Ausblick.tex

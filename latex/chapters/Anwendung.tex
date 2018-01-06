@@ -33,16 +33,20 @@ Wir definieren uns außerdem drei Fragestellungen, welche wir jeweils mit einer 
   \item Als letztes interessiert uns, ob eine Prime-Mitgliedschaft von der Summe des ausgegebenen Geldes zusammenhängt. $money$ ist also nun die unabhängige Variable, während $prime$ die abhängige Variable ist. Außerdem ist $prime$ eine binäre Variable. Deshalb nutzen wir hier also logistische Regression.
 \end{enumerate}
 
-\section{Regression in R}
+\section{R-Projekt}
 Das R-Projekt oder einfach nur R ist eine Sprache für statistische Berechnungen und graphische Darstellung. Damit ist R wie geschaffen für Regressionsanalyse. Von allen hier behandelten Sprachen ist R damit auch die einfachste und direkteste für Regression.
 
-In R sind einfache Datenstrukturen wie Vektoren, Matrizen und Listen als Datentypen vorhanden. Darauf aufbauend existieren sogenannten Dataframes. Diese sind eine Liste von Vektoren der gleichen Länge und werden gerne zur Repräsentation von Datentabellen verwendet. Die Vektoren der Liste entsprechen dann den Spalten der Tabelle.
+\subsection{Grundprinzip}
 
-In R lassen sich außerdem sehr einfach sogenannte Modelle definieren, welche als Eingabe nur die Daten und eine Formel benötigen. Eine Formel ist von der Form $y \sim modell$ und enthält den funktionalen Zusammenhang zwischen der abhängigen und den unabhängigen Variablen. Mit diesen linearen Modellen berechnet man schnell und einfach die Parameter zu einem gegebenen Datensatz unter Verwendung der $lm$-Funktion in R.
+In R sind einfache Datenstrukturen wie Vektoren, Matrizen und Listen als Datentypen vorhanden. Darauf aufbauend existieren sogenannten Dataframes. Ein Dataframe ist eine Liste von Vektoren der gleichen Länge und wird in R zur Repräsentation von Datentabellen verwendet. Die Vektoren der Liste entsprechen dann den Spalten der Tabelle. In einen solchen Dataframe importieren wir unsere Daten.
+
+In R lassen sich außerdem sehr einfach sogenannte Modelle definieren, welche als Eingabe nur die Daten und eine Formel benötigen. Eine Formel ist von der Form $y \sim modell$ und enthält den funktionalen Zusammenhang zwischen der abhängigen und den unabhängigen Variablen.
+
+Hat man ein Modell erstellt, so bietet R einfache Funktionen, um die Parameter für das gegebene Modell mittels Regressionsanalyse zu berechnen. Wir werden im Folgenden von den Funktionen $lm$ (für "linear model") und $glm$ für ("generalized linear model") Gebrauch machen.
 
 \subsection{Einfache lineare Regression}
 
-Betrachten wir also Frage Nummer $1$ aus dem vorherigen Teilkapitel. Die Formel lautet dann einfach $money \sim purchases$. Um die Parameter zu berechnen sind nur wenige Zeilen R-Code nötig. Man liest die Daten aus der csv-Datei, erstellt das Modell mit der Formel und berechnet die Parameter. Die print-Funktion druckt am Ende das Ergebnis:
+Betrachten wir also Frage Nummer $1$ aus dem vorherigen Teilkapitel. Die Formel lautet dann einfach $money \sim purchases$. Man liest also die Daten aus der csv-Datei, erstellt das Modell mit der genannten Formel und berechnet die Parameter mit der Funktion $lm$. Insgesamt braucht man also nur drei Zeilen Code. Die print-Funktion dient hierbei nur zur Ausgabe des Ergebnisses.
 
 \begin{lstlisting}
   data <- read.csv2("sample.csv", sep = ",", header = TRUE)
@@ -69,7 +73,7 @@ R verfügt auch über Möglichkeiten zur graphischen Darstellung. Lässt man die
 
 \subsection{Multiple lineare Regression}
 
-Bei multipler lineare Regression unterscheidet sich der R-Code nur in der Wahl der Formel. Hier wollen wir $money$ durch eine Summe von $purchases$ und $age$ modellieren, deshalb lautet die Formel hier $money \sim purchases + age$. Man erhält das folgende Ergebnis.
+Bei multipler lineare Regression unterscheidet sich der R-Code nur in der Wahl der Formel. Hier wollen wir $money$ durch eine lineare Summe von $purchases$ und $age$ modellieren, deshalb lautet die Formel hier $money \sim purchases + age$. Man erhält das folgende Ergebnis.
 
 \begin{lstlisting}
   Coefficients:
@@ -81,7 +85,7 @@ Auch hier eine kurze Interpretation dieses Ergebnisses: Der Wert für $\alpha$ i
 
 \subsection{Logistische Regression}
 
-Bei logistischer Regression nutzen wir nun nicht mehr ein lineares Modell wie bisher, sondern ein generalisiertes lineares Modell. Logistische Regression ist im Wesentlichen ein Spezialfall dieses Modelles. Die zugehörige Funktion nennt sich $glm$ in R. Um logistische Regression damit betreiben zu können, wählt man den Parameter $family$ dieser Funktion als $binomial$.
+Bei logistischer Regression nutzen wir nun nicht mehr ein lineares Modell wie bisher, sondern ein generalisiertes lineares Modell. Logistische Regression ist im Wesentlichen ein Spezialfall dieses Modelles. Hier nutzen wir also die $glm$-Funktion. Um logistische Regression damit betreiben zu können, wählt man den Parameter $family$ dieser Funktion als $binomial$.
 
 Man braucht wie auch bei linearer Regression ein Formel für das Modell. Diese bildet man analog wie bisher, indem mal die abhängige Variable mit den unabhängigen Variablen über eine Tilde verbindet. Im Fall der dritten Fragestellung aus Kapitel 3.1 wählen die also die Formel $prime \sim money$.
 
@@ -112,15 +116,111 @@ Eine anschauliche Interpretation der zurückgegebenen Parameter ist nicht mehr s
 
 Für Kunden, die weniger als $100$ Euro ausgegeben haben ist die Wahrscheinlichkeit Prime-Mitglied zu sein mit etwa $25\%$ relativ gering. Je höher die Summe aber wird, desto größer wird auch diese Wahrscheinlichkeit. So ist ein Kunde mit mehr als $800$ Euro Ausgaben so gut wie immer ein Prime-Mitglied.
 
-\section{Regression in Tensorflow}
+\section{TensorFlow}
+
+TensorFlow ist eine Software-Bibliothek, die unter der Haube von Google für die Umsetzung von Algorithmen für maschinelles Lernen entwickelt wurde. Das umfasst insbesondere auch die Möglichkeit zur iterativen Optimierung von Kostenfunktionen, was wir nun für Regressionsanalyse nutzen wollen.
+
+TensorFlow bietet APIs für verschiedene Programmiersprachen an. Die Skripte, welche für dieser Arbeit erstellt wurden, sind in Python geschrieben. Im Unterschied zu den Ergebnissen der R-Skripte werden wir hier nicht dieselben Ergebnisse erhalten. Wir verwenden TensorFlows Implementierung eines Gradientenabstiegsverfahrens, für welches man die Anzahl der Schritte und die Abstiegsgeschwindigkeit selbst wählen muss. Die Genauigkeit der berechneten Parameter hängt also zusätzlich von einer angemessenen Auswahl dieser Werte ab.
+
+Die Python-Skripte umfassen nun zwischen 70 und 100 Codezeilen, daher findet man diese Skripte im Ganzen nur im Anhang. Die wichsten Ausschnitte sollen im folgenden aber einen Einblick in die Funktioneweise des Codes geben.
+
+\subsection{Grundprinzip}
+
+TensorFlow arbeitet auf dem untersten Level mit Tensoren. Das sind im Wesentlichen Matrizen mit festen Dimensionen. Diese Tensoren können dann mit Hilfe aller möglicher Operatoren weiterverarbeitet werden.
+
+Es gibt drei Möglichkeiten, Tensoren zu definieren: Als Konstante, als Variable oder als Platzhalter. Während Konstanten ihren Wert nicht mehr ändern können, sind die beiden letztgenannten veränderbar. Der Unterschied besteht darin, dass Variablen mit einem Startwert initiiert werden und Platzhalter ohne Wert. Wir werden Variablen nutzen, um die Parameter über die Iterationen zu speichern. Die Daten, mit denen wir das Modell trainieren werden, übergeben wir an Platzhalter.
+
+Wie das Modell exakt definiert wird zeigen die folgenden Teilkapitel. Allgemein gesamt wird eine Kostenfunktion aufgestellt, die dann mit Hilfe eines Gradientenabstiegsverfahrens iterativ minimiert wird. Die Definition dieses sogenannten Trainingsschrittes sieht immer gleich aus:
+
+\begin{lstlisting}[language=Python]
+  train_step = tf.train
+                 .GradientDescentOptimizer(learn_rate)
+                 .minimize(cost)
+\end{lstlisting}
+
+Dabei ist $tf$ die importierte TensorFlow-Bibliothek, $learn\_rate$ ist die Geschwindigkeit bzw. Schrittweite des Verfahrens und $cost$ ist die zuvor definierte Kostenfunktion.
+
+Um dann auch wirklich Berechnungen durchführen zu können, muss in TensorFlow eine Session erzeugt werden. In dieser Session wird dann die Iteration gestartet, die $train_step$ immer wieder mit echten Daten füttert. Je mehr Iterationen, desto exakter werden die Parameter.
 
 \subsection{Einfache lineare Regression}
 
+Hier definieren wir unsere Platzhalter und Variable wiefolgt:
+
+\begin{lstlisting}
+  x = tf.placeholder(tf.float32, [None, 1])
+  y = tf.placeholder(tf.float32, [None, 1])
+  alpha = tf.Variable(tf.zeros([1]))
+  beta = tf.Variable(tf.zeros([1, 1]))
+\end{lstlisting}
+
+$x$ und $y$ sind die Platzhalter der wahren Werte für das folgende Training. $alpha$ und $beta$ sind die Parameter-Variablen, welche mit null-Werten initiiert werden. Daraus berechnen wir über den linearen funktionalen Zusammenhang die geschätzten $y$ Werte:
+
+\begin{lstlisting}
+  y_calc = tf.matmul(x, beta) + alpha
+\end{lstlisting}
+
+Die Funktion $matmul$ führt Matrizenmultiplikation durch. Nun definieren wir noch die Kostenfunktion als Mittelwert der Quadrate zwischen den wahren und berechneten $y$-Werten:
+
+\begin{lstlisting}
+  cost = tf.reduce_mean(tf.square(y - y_calc))
+\end{lstlisting}
+
+Damit können wir die Session starten und unsere Parameter berechnen lassen. Mit einer Schrittweite von $0.0054$ und $2000$ Iterationen erhält man folgendes Ergebnis:
+
+\begin{lstlisting}
+  alpha:  1.976688
+  beta:   2500.802979
+  cost:   13818006.000000
+\end{lstlisting}
+
+Die Werte für $alpha$ und $beta$ sind damit schon sehr nahe an den exakten Werten. Zusätzlich wird hier auch der aktuelle Wert für die Kostenfunktion ausgegeben.
+
 \subsection{Multiple lineare Regression}
+
+Nachdem in diesem Fall nun mehr unabhängige Variablen vorhanden sind, vergrößern wir die Größe der Tensoren $x$ und $beta$ um eins.
+
+\begin{lstlisting}
+  x = tf.placeholder(tf.float32, [None, 2])
+  beta = tf.Variable(tf.zeros([2, 1]))
+\end{lstlisting}
+
+Die restlichen Variablen werden wie bei einfacher linearer Regression definiert. Das Gradientenverfahren ist bei zwei abhängigen Variablen ineffizienter und komplexer, daher muss die Schrittweite verringert werden. Eine Folge davon ist, dass man mehr Schritte für dieselbe Präzision des Ergebnisses durchführen muss. Bei einer Schrittweite von $0.00071$ und $50000$ Schritten erhält man folgendes Ergebnis:
+
+\begin{lstlisting}
+  alpha:           -16.035418
+  beta_purchases:  2500.799316
+  beta_age:        0.521137
+  cost:            13817990.000000
+\end{lstlisting}
 
 \subsection{Logistische Regression}
 
-\section{Regression in SQL}
+Wir definieren nun unsere Tensoren wieder exakt wie bei der einfachen linearen Regression, da wie hier wieder mit je einer unabhängigen und einer abhängigen Variablen arbeiten. Die bisher verwendete Berechnung der $y$-Werte fügen wir nun zusätzlich in die logistische Funktion ein:
+
+\begin{lstlisting}
+  y_calc = 1 / (1 + tf.exp(- tf.matmul(x, beta) - alpha))
+\end{lstlisting}
+
+Die Kostenfunktion ist nun nicht mehr die Summe der Quadrate sondern im Wesentlichen die Likelihoodfunktion. TensorFlow bietet nur eine API für Minimierung, während wir hier eine Funktion maximieren wollen. Deshalb verwenden wir das Inverse der Likelihoodfunktion als Kostenfunktion. Zusätzlich wenden wir wieder einen Logarithmus auf die Funktion an:
+
+\begin{lstlisting}
+  cost = - tf.reduce_sum(
+    tf.log(
+      y * y_calc +
+      (1 - y) * (1 - y_calc)
+    )
+  )
+\end{lstlisting}
+
+Wir wählen eine Schrittweite von $0.0001$ und iterieren $1000$ Schritte, um das folgende Ergebnis zu erhalten:
+
+\begin{lstlisting}
+  alpha:  -1.914557
+  beta:   0.000077
+  cost:   50272.593750
+\end{lstlisting}
+
+\section{SQL}
 
 \subsection{Einfache lineare Regression}
 

@@ -11,24 +11,26 @@
 \BOOKMARK [2][-]{subsection.2.2.2}{Gradient bei logistischer Regression}{section.2.2}% 11
 \BOOKMARK [0][-]{chapter.3}{Anwendung statistischer Methoden}{}% 12
 \BOOKMARK [1][-]{section.3.1}{Beispieldaten}{chapter.3}% 13
-\BOOKMARK [1][-]{section.3.2}{Regression in R}{chapter.3}% 14
-\BOOKMARK [2][-]{subsection.3.2.1}{Einfache lineare Regression}{section.3.2}% 15
-\BOOKMARK [2][-]{subsection.3.2.2}{Multiple lineare Regression}{section.3.2}% 16
-\BOOKMARK [2][-]{subsection.3.2.3}{Logistische Regression}{section.3.2}% 17
-\BOOKMARK [1][-]{section.3.3}{Regression in Tensorflow}{chapter.3}% 18
-\BOOKMARK [2][-]{subsection.3.3.1}{Einfache lineare Regression}{section.3.3}% 19
-\BOOKMARK [2][-]{subsection.3.3.2}{Multiple lineare Regression}{section.3.3}% 20
-\BOOKMARK [2][-]{subsection.3.3.3}{Logistische Regression}{section.3.3}% 21
-\BOOKMARK [1][-]{section.3.4}{Regression in SQL}{chapter.3}% 22
-\BOOKMARK [2][-]{subsection.3.4.1}{Einfache lineare Regression}{section.3.4}% 23
-\BOOKMARK [2][-]{subsection.3.4.2}{Multiple lineare Regression}{section.3.4}% 24
-\BOOKMARK [2][-]{subsection.3.4.3}{Logistische Regression}{section.3.4}% 25
-\BOOKMARK [0][-]{chapter.4}{Statistische Methoden in Datenbanken}{}% 26
-\BOOKMARK [1][-]{section.4.1}{Latex Introduction}{chapter.4}% 27
-\BOOKMARK [0][-]{chapter.5}{Erweiterungspotenzial in Datenbanksystemen}{}% 28
-\BOOKMARK [1][-]{section.5.1}{Latex Introduction}{chapter.5}% 29
-\BOOKMARK [0][-]{chapter.6}{Fazit}{}% 30
-\BOOKMARK [1][-]{section.6.1}{Latex Introduction}{chapter.6}% 31
-\BOOKMARK [-1][]{part*.7}{Appendix}{}% 32
-\BOOKMARK [0][-]{appendix.A}{Detailed Descriptions}{part*.7}% 33
-\BOOKMARK [0][-]{chapter*.8}{Bibliography}{part*.7}% 34
+\BOOKMARK [1][-]{section.3.2}{R-Projekt}{chapter.3}% 14
+\BOOKMARK [2][-]{subsection.3.2.1}{Grundprinzip}{section.3.2}% 15
+\BOOKMARK [2][-]{subsection.3.2.2}{Einfache lineare Regression}{section.3.2}% 16
+\BOOKMARK [2][-]{subsection.3.2.3}{Multiple lineare Regression}{section.3.2}% 17
+\BOOKMARK [2][-]{subsection.3.2.4}{Logistische Regression}{section.3.2}% 18
+\BOOKMARK [1][-]{section.3.3}{TensorFlow}{chapter.3}% 19
+\BOOKMARK [2][-]{subsection.3.3.1}{Grundprinzip}{section.3.3}% 20
+\BOOKMARK [2][-]{subsection.3.3.2}{Einfache lineare Regression}{section.3.3}% 21
+\BOOKMARK [2][-]{subsection.3.3.3}{Multiple lineare Regression}{section.3.3}% 22
+\BOOKMARK [2][-]{subsection.3.3.4}{Logistische Regression}{section.3.3}% 23
+\BOOKMARK [1][-]{section.3.4}{SQL}{chapter.3}% 24
+\BOOKMARK [2][-]{subsection.3.4.1}{Einfache lineare Regression}{section.3.4}% 25
+\BOOKMARK [2][-]{subsection.3.4.2}{Multiple lineare Regression}{section.3.4}% 26
+\BOOKMARK [2][-]{subsection.3.4.3}{Logistische Regression}{section.3.4}% 27
+\BOOKMARK [0][-]{chapter.4}{Statistische Methoden in Datenbanken}{}% 28
+\BOOKMARK [1][-]{section.4.1}{Latex Introduction}{chapter.4}% 29
+\BOOKMARK [0][-]{chapter.5}{Erweiterungspotenzial in Datenbanksystemen}{}% 30
+\BOOKMARK [1][-]{section.5.1}{Latex Introduction}{chapter.5}% 31
+\BOOKMARK [0][-]{chapter.6}{Fazit}{}% 32
+\BOOKMARK [1][-]{section.6.1}{Latex Introduction}{chapter.6}% 33
+\BOOKMARK [-1][]{part*.7}{Appendix}{}% 34
+\BOOKMARK [0][-]{appendix.A}{Detailed Descriptions}{part*.7}% 35
+\BOOKMARK [0][-]{chapter*.8}{Bibliography}{part*.7}% 36

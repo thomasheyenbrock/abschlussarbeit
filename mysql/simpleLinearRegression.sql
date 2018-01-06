@@ -1,15 +1,15 @@
 -- drop possibly existing procedures
-DROP PROCEDURE IF EXISTS SLinReg_Main;
+DROP PROCEDURE IF EXISTS simple_linear_regression;
 
 DELIMITER ;;
 
 -- main procedure for regression analysis
-CREATE PROCEDURE `SLinReg_Main`(IN number_datapoints INT(11))
+CREATE PROCEDURE `simple_linear_regression`(IN number_datapoints INT(11))
 BEGIN
 
 -- declare variables
-DECLARE purchasesMean DECIMAL(40, 20);
-DECLARE moneyMean DECIMAL(40, 20);
+DECLARE purchases_mean DECIMAL(40, 20);
+DECLARE money_mean DECIMAL(40, 20);
 DECLARE alpha DECIMAL(40, 20);
 DECLARE beta DECIMAL(40, 20);
 
@@ -21,31 +21,31 @@ CREATE TEMPORARY TABLE datapoints (
 );
 INSERT INTO datapoints
 SELECT purchases, money
-FROM regression
+FROM sample
 LIMIT number_datapoints;
 
 -- calculate means
-SET purchasesMean = (
+SET purchases_mean = (
     SELECT AVG(purchases)
     FROM datapoints
 );
-SET moneyMean = (
+SET money_mean = (
     SELECT AVG(money)
     FROM datapoints
 );
 
 -- calculate beta
 SET beta = (
-    SELECT SUM((purchases - purchasesMean) * (money - moneyMean))
+    SELECT SUM((purchases - purchases_mean) * (money - money_mean))
     FROM datapoints
 );
 SET beta = beta / (
-    SELECT SUM(POWER(purchases - purchasesMean, 2))
+    SELECT SUM(POWER(purchases - purchases_mean, 2))
     FROM datapoints
 );
 
 -- calculate alpha
-SET alpha = moneyMean - (beta * purchasesMean);
+SET alpha = money_mean - (beta * purchases_mean);
 
 -- print parameters alpha and beta
 SELECT 'bias' AS `variable`, alpha AS `value`
@@ -59,4 +59,4 @@ END;;
 DELIMITER ;
 
 -- execute main procedure
-CALL SLinReg_Main(100000);
+CALL simple_linear_regression(100000);

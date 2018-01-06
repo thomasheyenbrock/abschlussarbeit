@@ -26,9 +26,9 @@
 \contentsline {subsection}{\numberline {3.3.3}Multiple lineare Regression}{16}{subsection.3.3.3}
 \contentsline {subsection}{\numberline {3.3.4}Logistische Regression}{17}{subsection.3.3.4}
 \contentsline {section}{\numberline {3.4}SQL}{17}{section.3.4}
-\contentsline {subsection}{\numberline {3.4.1}Einfache lineare Regression}{17}{subsection.3.4.1}
-\contentsline {subsection}{\numberline {3.4.2}Multiple lineare Regression}{17}{subsection.3.4.2}
-\contentsline {subsection}{\numberline {3.4.3}Logistische Regression}{17}{subsection.3.4.3}
+\contentsline {subsection}{\numberline {3.4.1}Einfache lineare Regression}{18}{subsection.3.4.1}
+\contentsline {subsection}{\numberline {3.4.2}Multiple lineare Regression}{18}{subsection.3.4.2}
+\contentsline {subsection}{\numberline {3.4.3}Logistische Regression}{18}{subsection.3.4.3}
 \contentsline {chapter}{\numberline {4}Statistische Methoden in Datenbanken}{19}{chapter.4}
 \contentsline {section}{\numberline {4.1}Latex Introduction}{19}{section.4.1}
 \contentsline {chapter}{\numberline {5}Erweiterungspotenzial in Datenbanksystemen}{21}{chapter.5}

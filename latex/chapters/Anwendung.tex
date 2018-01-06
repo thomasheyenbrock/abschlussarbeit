@@ -222,7 +222,39 @@ Wir wählen eine Schrittweite von $0.0001$ und iterieren $1000$ Schritte, um das
 
 \section{SQL}
 
+Die "Structured Query Language" alias "SQL" ist eine Sprache zur Definition und Verarbeitung von Datenstrukturen in Datenbanksystemen und wird in nahezu allen Implementierungen relationaler Datenbanken unterstützt. Of liegen die Daten, welche man für Regressionsanalyse verwenden möchte in einer solchen Datenbank.
+
+Natürliche Methoden für Regression gehören nicht zum Portfolie von SQL, da Statistik und Datenanalyse nicht der primäre Einsatzzweck für SQL ist. Doch auch wenn jede Datenbank ihren eigenen SQL-Dialekt anbietet, ist es in nahezu allen Systemen möglch, mit standardisierten SQL-Methoden Regression direkt in der Datenbank zu betreiben.
+
+In diesem Kapitel soll das nun für zwei der beliebtesten Open-Source-Datenbanksystemen umgesetzt werden, nämlich MySQL und PostgreSQL. Der vollständige SQL-Code befindet sich wegen der Länge wieder komplett im Anhang.
+
+Im Gegensatz zu den beiden bisher vorgestellten Sprachen verfolgen wir hier kein Grundprinzip, in dem sich alle Regressionen ähnlich sind. Die einzige Gemeinsamkeit ist, dass wir in allen SQL-Skripten Prozeduren bzw. Funktionen definieren, welche bei Aufruf die Regressionsanalyse durchführen. Wir nehmen dazu an, dass die Daten für die Regression in einer Tabelle namens $data$ liegen.
+
+Bei einfacher linearer Regression berechnen wir die Parameter exakt über die Formeln aus Kapitel 2.1.1. Bei multipler Regression verwenden wir die Matrixformel aus Kapitel 2.1.2. Hier müssen wir zusätzlich Algorithmen zur Multiplikation und Invertierung von Matrizen implementieren. Für logistische implementieren wir dann ein Gradientenverfahren.
+
 \subsection{Einfache lineare Regression}
+
+Einfache lineare Regression stellt uns in SQL noch vor wenig Herausforderungen. Wir berechnen zuerst die Mittelwerte über die Spalten $purchases$ und $money$, dann die Summen in Zähler und Nenner der Formel für $\beta$ und können dann mit einfachen Rechenoperationen die beiden Paramter bestimmen.
+
+Diese Berechnung kann man sogar in einer einzelnen Abfrage umsetzen. Das Skript für PostgreSQL tut das auch und definiert die genannten Berechnungsschritte als einzelne Views. In MySQL existiert die VIEW-Syntax nicht. Deshalb wird die Berechnung der Übersicht halber auf mehrere Abfragen aufgeteilt.
+
+Führen wir die Prozeduren im jeweiligen Datenbanksystem aus, erhalten wir folgende Ergebnisse:
+
+\begin{center}
+  \captionof{table}{Ergebnis in MySQL}
+  \begin{tabular}{|c|c|}\hline
+    \textbf{variable} & \textbf{value} \\ \hline
+    bias & 1.94097291465000744000 \\ \hline
+    purchases & 2500.80479741553200000000 \\ \hline
+  \end{tabular}
+
+  \captionof{table}{Ergebnis in PostgreSQL}
+  \begin{tabular}{|c|c|}\hline
+    \textbf{variable} & \textbf{value} \\ \hline
+    bias & 1.94097291212994333830395091244619200000000000 \\ \hline
+    purchases & 2500.8047974157705841434285987976 \\ \hline
+  \end{tabular}
+\end{center}
 
 \subsection{Multiple lineare Regression}
 

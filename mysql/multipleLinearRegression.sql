@@ -1,18 +1,18 @@
 -- drop possibly existing procedures
-DROP PROCEDURE IF EXISTS MLinReg_Main;
+DROP PROCEDURE IF EXISTS multiple_linear_regression;
 
 DELIMITER ;;
 
 -- main procedure for regression analysis
-CREATE PROCEDURE MLinReg_Main(IN number_datapoints INT(11))
+CREATE PROCEDURE multiple_linear_regression(IN number_datapoints INT(11))
 BEGIN
 
 -- declare variables
 DECLARE m INT(11);
 DECLARE n INT(11);
-DECLARE counter1 INT(11);
-DECLARE counter2 INT(11);
-DECLARE counter3 INT(11);
+DECLARE counter_1 INT(11);
+DECLARE counter_2 INT(11);
+DECLARE counter_3 INT(11);
 DECLARE pivot DECIMAL(40, 20);
 
 -- set matrix dimensions
@@ -20,261 +20,270 @@ SET m = number_datapoints;
 SET n = 3;
 
 -- drop temporary tables if existing
-DROP TEMPORARY TABLE IF EXISTS Matrix_X;
-DROP TEMPORARY TABLE IF EXISTS Matrix_Transposed;
-DROP TEMPORARY TABLE IF EXISTS Matrix_Product1;
-DROP TEMPORARY TABLE IF EXISTS Matrix_Inverse;
-DROP TEMPORARY TABLE IF EXISTS Matrix_Product2;
-DROP TEMPORARY TABLE IF EXISTS Matrix_y;
-DROP TEMPORARY TABLE IF EXISTS Matrix_Result;
+DROP TEMPORARY TABLE IF EXISTS matrix_X;
+DROP TEMPORARY TABLE IF EXISTS matrix_transposed;
+DROP TEMPORARY TABLE IF EXISTS matrix_product_1;
+DROP TEMPORARY TABLE IF EXISTS matrix_inverse;
+DROP TEMPORARY TABLE IF EXISTS matrix_product_2;
+DROP TEMPORARY TABLE IF EXISTS matrix_y;
+DROP TEMPORARY TABLE IF EXISTS matrix_result;
 
 -- create temporary tables
-CREATE TEMPORARY TABLE Matrix_X (
-    `Row` INT(11),
-    `Column` INT(11),
-    `Value` DECIMAL(40, 20)
+CREATE TEMPORARY TABLE matrix_X (
+  `row` INT(11),
+  `column` INT(11),
+  `value` DECIMAL(40, 20)
 );
-CREATE TEMPORARY TABLE Matrix_Transposed (
-    `Row` INT(11),
-    `Column` INT(11),
-    `Value` DECIMAL(40, 20)
+CREATE TEMPORARY TABLE matrix_transposed (
+  `row` INT(11),
+  `column` INT(11),
+  `value` DECIMAL(40, 20)
 );
-CREATE TEMPORARY TABLE Matrix_Product1 (
-    `Row` INT(11),
-    `Column` INT(11),
-    `Value` DECIMAL(40, 20)
+CREATE TEMPORARY TABLE matrix_product_1 (
+  `row` INT(11),
+  `column` INT(11),
+  `value` DECIMAL(40, 20)
 );
-CREATE TEMPORARY TABLE Matrix_Inverse (
-    `Row` INT(11),
-    `Column` INT(11),
-    `Value` DECIMAL(40, 20)
+CREATE TEMPORARY TABLE matrix_inverse (
+  `row` INT(11),
+  `column` INT(11),
+  `value` DECIMAL(40, 20)
 );
-CREATE TEMPORARY TABLE Matrix_Product2 (
-    `Row` INT(11),
-    `Column` INT(11),
-    `Value` DECIMAL(40, 20)
+CREATE TEMPORARY TABLE matrix_product_2 (
+  `row` INT(11),
+  `column` INT(11),
+  `value` DECIMAL(40, 20)
 );
-CREATE TEMPORARY TABLE Matrix_y (
-    `Row` INT(11),
-    `Column` INT(11),
-    `Value` DECIMAL(40, 20)
+CREATE TEMPORARY TABLE matrix_y (
+  `row` INT(11),
+  `column` INT(11),
+  `value` DECIMAL(40, 20)
 );
-CREATE TEMPORARY TABLE Matrix_Result (
-    `Row` INT(11),
-    `Column` INT(11),
-    `Value` DECIMAL(40, 20)
+CREATE TEMPORARY TABLE matrix_result (
+  `row` INT(11),
+  `column` INT(11),
+  `value` DECIMAL(40, 20)
 );
 
--- insert constant values in Matrix_X
+-- insert constant values in matrix_X
 SET @id = 0;
 
-INSERT INTO Matrix_X
-SELECT @id := (@id + 1) AS `Row`, 1 AS `Column`, 1 AS `Value`
-FROM regression
+INSERT INTO matrix_X
+SELECT
+  @id := (@id + 1) AS `row`,
+  1 AS `column`,
+  1 AS `value`
+FROM sample
 LIMIT number_datapoints;
 
--- insert values for purchases in Matrix_X
+-- insert values for purchases in matrix_X
 SET @id = 0;
 
-INSERT INTO Matrix_X
-SELECT @id := (@id + 1) AS `Row`, 2 AS `Column`, purchases AS `Value`
-FROM regression
+INSERT INTO matrix_X
+SELECT
+  @id := (@id + 1) AS `row`,
+  2 AS `column`,
+  purchases AS `value`
+FROM sample
 LIMIT number_datapoints;
 
--- insert values for age in Matrix_X
+-- insert values for age in matrix_X
 SET @id = 0;
 
-INSERT INTO Matrix_X
-SELECT @id := (@id + 1) AS `Row`, 3 AS `Column`, age AS `Value`
-FROM regression
+INSERT INTO matrix_X
+SELECT
+  @id := (@id + 1) AS `row`,
+  3 AS `column`,
+  age AS `value`
+FROM sample
 LIMIT number_datapoints;
 
--- insert values for money in Matrix_y
+-- insert values for money in matrix_y
 SET @id = 0;
 
-INSERT INTO Matrix_y
-SELECT @id := (@id + 1) AS `Row`, 1 AS `Column`, money AS `Value`
-FROM regression
+INSERT INTO matrix_y
+SELECT
+  @id := (@id + 1) AS `row`,
+  1 AS `column`,
+  money AS `value`
+FROM sample
 LIMIT number_datapoints;
 
--- calculate Matrix_Transposed
-INSERT INTO Matrix_Transposed
-SELECT `Column` AS `Row`, `Row` AS `Column`, `Value` AS `Value`
-FROM Matrix_X;
+-- calculate matrix_transposed
+INSERT INTO matrix_transposed
+SELECT
+  `column` AS `row`,
+  `row` AS `column`,
+  `value` AS `value`
+FROM matrix_X;
 
 -- calculate Matrix_Product1
-SET counter1 = 1;
+SET counter_1 = 1;
 
-WHILE counter1 <= n DO
+WHILE counter_1 <= n DO
 
-    SET counter2 = 1;
+  SET counter_2 = 1;
 
-    WHILE counter2 <= n DO
+  WHILE counter_2 <= n DO
 
-        INSERT INTO Matrix_Product1 VALUES (
-            counter1,
-            counter2,
-            (
-                SELECT SUM(T1.`Value` * T2.`Value`)
-                FROM (
-                    SELECT * FROM Matrix_X WHERE `Column` = counter2
-                ) T1
-                JOIN (
-                    SELECT * FROM Matrix_Transposed WHERE `Row` = counter1
-                ) T2
-                ON T2.`Column` = T1.`Row`
-            )
-        );
+    INSERT INTO matrix_product_1 VALUES (
+      counter_1,
+      counter_2,
+      (
+        SELECT SUM(T1.`value` * T2.`value`)
+        FROM (
+          SELECT * FROM matrix_X WHERE `column` = counter_2
+        ) T1
+        JOIN (
+          SELECT * FROM matrix_transposed WHERE `row` = counter_1
+        ) T2
+        ON T2.`column` = T1.`row`
+      )
+    );
 
-        SET counter2 = counter2 + 1;
+    SET counter_2 = counter_2 + 1;
 
-    END WHILE;
+  END WHILE;
 
-    SET counter1 = counter1 + 1;
+  SET counter_1 = counter_1 + 1;
 
 END WHILE;
 
--- calculate Matrix_Inverse
-INSERT INTO Matrix_Inverse
+-- calculate matrix_inverse
+INSERT INTO matrix_inverse
 SELECT *
-FROM Matrix_Product1;
+FROM matrix_product_1;
 
-SET counter1 = 0;
+SET counter_1 = 0;
 
-WHILE counter1 < n DO
+WHILE counter_1 < n DO
 
-    SET counter1 = counter1 + 1;
+  SET counter_1 = counter_1 + 1;
 
-    DROP TEMPORARY TABLE IF EXISTS PivotRow;
-    CREATE TEMPORARY TABLE PivotRow (
-        `Column` INT(11),
-        `Value` DECIMAL(40, 20)
-    );
+  DROP TEMPORARY TABLE IF EXISTS pivot_row;
+  CREATE TEMPORARY TABLE pivot_row (
+      `column` INT(11),
+      `value` DECIMAL(40, 20)
+  );
 
-    INSERT INTO PivotRow
-    SELECT `Column`, `Value`
-    FROM Matrix_Inverse
-    WHERE `Row` = counter1;
+  INSERT INTO pivot_row
+  SELECT `column`, `value`
+  FROM matrix_inverse
+  WHERE `row` = counter_1;
 
-    SET pivot = (
-        SELECT `Value`
-        FROM Matrix_Inverse
-        WHERE `Row` = counter1 AND `Column` = counter1
-    );
+  SET pivot = (
+      SELECT `value`
+      FROM matrix_inverse
+      WHERE `row` = counter_1 AND `column` = counter_1
+  );
 
-    UPDATE Matrix_Inverse
-    SET `Value` = `Value` / pivot
-    WHERE `Row` = counter1 AND `Column` <> counter1;
+  UPDATE matrix_inverse
+  SET `value` = `value` / pivot
+  WHERE `row` = counter_1 AND `column` <> counter_1;
 
-    UPDATE Matrix_Inverse
-    SET `Value` = - `Value` / pivot
-    WHERE `Row` <> counter1 AND `Column` = counter1;
+  UPDATE matrix_inverse
+  SET `value` = - `value` / pivot
+  WHERE `row` <> counter_1 AND `column` = counter_1;
 
-    SET counter2 = 1;
+  SET counter_2 = 1;
 
-    WHILE counter2 <= n DO
+  WHILE counter_2 <= n DO
 
-        IF counter2 <> counter1 THEN
+    IF counter_2 <> counter_1 THEN
 
-            SET counter3 = 1;
+      SET counter_3 = 1;
 
-            WHILE counter3 <= n DO
+      WHILE counter_3 <= n DO
 
-                IF counter3 <> counter1 THEN
+        IF counter_3 <> counter_1 THEN
 
-                    SET pivot = (
-                        SELECT `Value`
-                        FROM PivotRow
-                        WHERE `Column` = counter3
-                    ) * (
-                        SELECT `Value`
-                        FROM Matrix_Inverse
-                        WHERE `Row` = counter2 AND `Column` = counter1
-                    );
+          SET pivot = (
+            SELECT `value`
+            FROM pivot_row
+            WHERE `column` = counter_3
+          ) * (
+            SELECT `value`
+            FROM matrix_inverse
+            WHERE `row` = counter_2 AND `column` = counter_1
+          );
 
-                    UPDATE Matrix_Inverse
-                    SET `Value` = `Value` + pivot
-                    WHERE `Row` = counter2 AND `Column` = counter3;
-
-                END IF;
-
-                SET counter3 = counter3 + 1;
-
-            END WHILE;
+          UPDATE matrix_inverse
+          SET `value` = `value` + pivot
+          WHERE `row` = counter_2 AND `column` = counter_3;
 
         END IF;
 
-        SET counter2 = counter2 + 1;
+        SET counter_3 = counter_3 + 1;
 
-    END WHILE;
+      END WHILE;
 
-    UPDATE Matrix_Inverse
-    SET `Value` = 1 / `Value`
-    WHERE `Row` = counter1 AND `Column` = counter1;
+    END IF;
 
-END WHILE;
+    SET counter_2 = counter_2 + 1;
 
--- calculate Matrix_Product2
-SET counter1 = 1;
+  END WHILE;
 
-WHILE counter1 <= n DO
-
-    SET counter2 = 1;
-
-    WHILE counter2 <= m DO
-
-        INSERT INTO Matrix_Product2 VALUES (
-            counter1,
-            counter2,
-            (
-                SELECT SUM(T1.`Value` * T2.`Value`)
-                FROM (
-                    SELECT * FROM Matrix_Transposed WHERE `Column` = counter2
-                ) T1
-                JOIN (
-                    SELECT * FROM Matrix_Inverse WHERE `Row` = counter1
-                ) T2
-                ON T2.`Column` = T1.`Row`
-            )
-        );
-
-        SET counter2 = counter2 + 1;
-
-    END WHILE;
-
-    SET counter1 = counter1 + 1;
+  UPDATE matrix_inverse
+  SET `value` = 1 / `value`
+  WHERE `row` = counter_1 AND `column` = counter_1;
 
 END WHILE;
 
--- calculate Matrix_Result
-SET counter1 = 1;
+-- calculate matrix_product_2
+SET counter_1 = 1;
 
-WHILE counter1 <= n DO
+WHILE counter_1 <= n DO
 
-    INSERT INTO Matrix_Result VALUES (
-        counter1,
-        1,
-        (
-            SELECT SUM(T1.`Value` * T2.`Value`)
-            FROM (
-                SELECT * FROM Matrix_y
-            ) T1
-            JOIN (
-                SELECT * FROM Matrix_Product2 WHERE `Row` = counter1
-            ) T2
-            ON T2.`Column` = T1.`Row`
-        )
-    );
+  INSERT INTO matrix_product_2 VALUES (
+    counter_1,
+    1,
+    (
+      SELECT SUM(T1.`value` * T2.`value`)
+      FROM (
+        SELECT * FROM matrix_y
+      ) T1
+      JOIN (
+        SELECT * FROM matrix_transposed WHERE `row` = counter_1
+      ) T2
+      ON T2.`column` = T1.`row`
+    )
+  );
 
-    SET counter1 = counter1 + 1;
+  SET counter_1 = counter_1 + 1;
 
 END WHILE;
 
-SELECT * FROM Matrix_Result;
+-- calculate matrix_result
+
+SET counter_1 = 1;
+
+WHILE counter_1 <= n DO
+
+  INSERT INTO matrix_result VALUES (
+    counter_1,
+    1,
+    (
+      SELECT SUM(T1.`value` * T2.`value`)
+      FROM (
+        SELECT * FROM matrix_product_2
+      ) T1
+      JOIN (
+        SELECT * FROM matrix_inverse WHERE `row` = counter_1
+      ) T2
+      ON T2.`column` = T1.`row`
+    )
+  );
+
+  SET counter_1 = counter_1 + 1;
+
+END WHILE;
+
+SELECT *
+FROM matrix_result;
 
 END;;
 
 DELIMITER ;
 
 -- execute main procedure
-CALL MLinReg_Main(100000);
+CALL multiple_linear_regression(100000);

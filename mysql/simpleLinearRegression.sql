@@ -48,9 +48,9 @@ SET beta = beta / (
 SET alpha = money_mean - (beta * purchases_mean);
 
 -- print parameters alpha and beta
-SELECT 'bias' AS `variable`, alpha AS `value`
+SELECT 'alpha' AS `variable`, alpha AS `value`
 UNION
-SELECT 'purchases' AS `variable`, beta AS `value`;
+SELECT 'beta' AS `variable`, beta AS `value`;
 
 DROP TEMPORARY TABLE IF EXISTS datapoints;
 

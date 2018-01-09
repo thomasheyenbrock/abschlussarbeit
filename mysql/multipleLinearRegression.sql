@@ -278,7 +278,13 @@ WHILE counter_1 <= n DO
 
 END WHILE;
 
-SELECT *
+SELECT
+  CASE row
+    WHEN 1 THEN 'alpha'
+    WHEN 2 THEN 'beta_purchases'
+    WHEN 3 THEN 'beta_age'
+  END AS `variable`,
+  value
 FROM matrix_result;
 
 END;;

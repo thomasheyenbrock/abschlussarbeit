@@ -30,13 +30,13 @@ WITH
     ),
     beta AS (
         SELECT
-            'purchases' AS variable,
+            'beta' AS variable,
             nominator / denominator AS value
         FROM sums
     ),
     alpha AS (
         SELECT
-            'bias' AS variable,
+            'alpha' AS variable,
             mean_money - (SELECT value FROM beta) * mean_purchases AS value
         FROM means
     )

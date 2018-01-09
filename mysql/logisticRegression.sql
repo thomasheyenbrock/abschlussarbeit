@@ -9,48 +9,21 @@ DELIMITER ;;
 CREATE PROCEDURE `calculate_gradient`()
 BEGIN
 
-DECLARE alpha DECIMAL(40, 20);
-
-SET alpha = (
-  SELECT old
-  FROM parameters
-  WHERE variable = 'alpha'
-);
+DELETE FROM gradient;
 
 -- calculate gradient for alpha
-UPDATE gradient
-SET value = (
-  SELECT (SELECT SUM(value) FROM binary_values) - SUM(1 / (1 + exp(- T0.linear)))
-  FROM (
-    SELECT d.id, SUM(d.value * p.old) + alpha AS `linear`
-    FROM datapoints d
-    JOIN parameters p ON p.variable = d.variable
-    GROUP BY d.id
-  ) T0
-)
-WHERE variable = 'alpha';
+INSERT INTO gradient
+SELECT 'alpha' AS `variable`, SUM(bv.value - l.old) AS `value`
+FROM logits l
+JOIN binary_values bv ON bv.id = l.id;
 
 -- calculate other gradients
-UPDATE gradient
-JOIN (
-  SELECT d.variable, -SUM(d.value * l.old) AS `value`
-  FROM datapoints d
-  JOIN logits l ON l.id = d.id
-  GROUP BY d.variable
-) T0
-ON T0.variable = gradient.variable
-SET gradient.value = T0.value;
-
-UPDATE gradient
-JOIN (
-  SELECT d.variable, SUM(d.value) AS `value`
-  FROM datapoints d
-  JOIN binary_values bv ON bv.id = d.id
-  WHERE bv.value = 1
-  GROUP BY d.variable
-) T0
-ON T0.variable = gradient.variable
-SET gradient.value = gradient.value + T0.value;
+INSERT INTO gradient
+SELECT d.variable, SUM(d.value * (bv.value - l.old)) AS `value`
+FROM logits l
+JOIN binary_values bv ON bv.id = l.id
+JOIN datapoints d ON d.id = l.id
+GROUP BY d.variable;
 
 END;;
 

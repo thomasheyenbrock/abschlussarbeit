@@ -3,46 +3,21 @@ CREATE OR REPLACE FUNCTION calculate_gradient()
 RETURNS void AS $$
 BEGIN
 
+DELETE FROM gradient;
+
 -- calculate gradient for alpha
-WITH
-  alpha AS (
-    SELECT old
-    FROM parameters
-    WHERE variable = 'alpha'
-  )
-UPDATE gradient g
-SET value = (
-  SELECT (SELECT SUM(value) FROM binary_values) - SUM(1 / (1 + exp(- T0.linear)))
-  FROM (
-    SELECT d.id, SUM(d.value * p.old) + (SELECT old FROM alpha) AS linear
-    FROM datapoints d
-    JOIN parameters p ON p.variable = d.variable
-    GROUP BY d.id
-  ) T0
-)
-WHERE g.variable = 'alpha';
+INSERT INTO gradient
+SELECT 'alpha' AS variable, SUM(bv.value - l.old) AS value
+FROM logits l
+JOIN binary_values bv ON bv.id = l.id;
 
 -- calculate other gradients
-UPDATE gradient
-SET value = T0.value2
-FROM (
-  SELECT d.variable AS variable2, -SUM(d.value * l.old) AS value2
-  FROM datapoints d
-  JOIN logits l ON l.id = d.id
-  GROUP BY d.variable
-) T0
-WHERE T0.variable2 = variable;
-
-UPDATE gradient
-SET value = value + T0.value2
-FROM (
-  SELECT d.variable AS variable2, SUM(d.value) AS value2
-  FROM datapoints d
-  JOIN binary_values bv ON bv.id = d.id
-  WHERE bv.value = 1
-  GROUP BY d.variable
-) T0
-WHERE T0.variable2 = variable;
+INSERT INTO gradient
+SELECT d.variable, SUM(d.value * (bv.value - l.old)) AS value
+FROM logits l
+JOIN binary_values bv ON bv.id = l.id
+JOIN datapoints d ON d.id = l.id
+GROUP BY d.variable;
 
 RETURN;
 

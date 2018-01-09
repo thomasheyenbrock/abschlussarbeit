@@ -5,6 +5,8 @@ if (length(args) > 0) {
     n = strtoi(args[1])
 }
 
+start_time <- Sys.time()
+
 data <- head(read.csv2("./data/sample.csv", sep = ",", header = TRUE), n)
 
 xmin <- min(data$money)
@@ -13,7 +15,10 @@ xmax <- max(data$money)
 modell <- as.formula("prime ~ money")
 logit <- glm(modell, family = binomial, data = data)
 
+end_time <- Sys.time()
+
 print(logit)
+print(end_time - start_time)
 
 logitFunction <- function(x){
     b0 <- coef(logit["coefficients"])[1]

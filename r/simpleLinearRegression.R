@@ -5,6 +5,8 @@ if (length(args) > 0) {
     n = strtoi(args[1])
 }
 
+start_time <- Sys.time()
+
 data <- head(read.csv2("./data/sample.csv", sep = ",", header = TRUE), n)
 
 xmin <- min(data$purchases)
@@ -16,7 +18,10 @@ ymax <- max(data$money)
 modell <- as.formula("money ~ purchases")
 slr <- lm(modell, data = data)
 
+end_time <- Sys.time()
+
 print(slr)
+print(end_time - start_time)
 
 b0 <- coef(slr["coefficients"])[1]
 b1 <- coef(slr["coefficients"])[2]

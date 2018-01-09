@@ -1,48 +1,3 @@
--- this procedure calculates the gradient for the current parameter values
-CREATE OR REPLACE FUNCTION calculate_gradient()
-RETURNS void AS $$
-BEGIN
-
-DELETE FROM gradient;
-
--- calculate gradient for alpha
-INSERT INTO gradient
-SELECT 'alpha' AS variable, SUM(bv.value - l.old) AS value
-FROM logits l
-JOIN binary_values bv ON bv.id = l.id;
-
--- calculate other gradients
-INSERT INTO gradient
-SELECT d.variable, SUM(d.value * (bv.value - l.old)) AS value
-FROM logits l
-JOIN binary_values bv ON bv.id = l.id
-JOIN datapoints d ON d.id = l.id
-GROUP BY d.variable;
-
-RETURN;
-
-END;
-$$ LANGUAGE plpgsql;
-
-
--- this procedure calculates the new parameters
-CREATE OR REPLACE FUNCTION calculate_new_parameters(step NUMERIC(40, 20))
-RETURNS void AS $$
-BEGIN
-
-UPDATE parameters
-SET new = old + step * gradient.value
-FROM gradient
-WHERE gradient.variable = parameters.variable;
-
-RETURN;
-
-END;
-$$ LANGUAGE plpgsql;
-
-
-
-
 -- this procedure calculates the logits for current parameter values
 CREATE OR REPLACE FUNCTION calculate_logit()
 RETURNS void AS $$
@@ -75,11 +30,50 @@ RETURN;
 END;
 $$ LANGUAGE plpgsql;
 
+-- this procedure calculates the gradient for the current parameter values
+CREATE OR REPLACE FUNCTION calculate_gradient()
+RETURNS void AS $$
+BEGIN
 
+DELETE FROM gradient;
+
+-- calculate gradient for alpha
+INSERT INTO gradient
+SELECT 'alpha' AS variable, SUM(bv.value - l.old) AS value
+FROM logits l
+JOIN binary_values bv ON bv.id = l.id;
+
+-- calculate other gradients
+INSERT INTO gradient
+SELECT d.variable, SUM(d.value * (bv.value - l.old)) AS value
+FROM logits l
+JOIN binary_values bv ON bv.id = l.id
+JOIN datapoints d ON d.id = l.id
+GROUP BY d.variable;
+
+RETURN;
+
+END;
+$$ LANGUAGE plpgsql;
+
+-- this procedure calculates the new parameters
+CREATE OR REPLACE FUNCTION calculate_new_parameters(step NUMERIC(40, 20))
+RETURNS void AS $$
+BEGIN
+
+UPDATE parameters
+SET new = old + step * gradient.value
+FROM gradient
+WHERE gradient.variable = parameters.variable;
+
+RETURN;
+
+END;
+$$ LANGUAGE plpgsql;
 
 -- this procedure calculates the log likelihood function for current parameter values
 -- and states if the new parameters are really better
-CREATE OR REPLACE FUNCTION is_new_logit_better()
+CREATE OR REPLACE FUNCTION are_new_parameters_better()
 RETURNS BOOLEAN AS $$
 DECLARE
   better BOOLEAN;
@@ -95,9 +89,6 @@ RETURN better;
 
 END;
 $$ LANGUAGE plpgsql;
-
-
-
 
 -- main procedure for execution
 CREATE OR REPLACE FUNCTION logistic_regression(ref refcursor, number_datapoints INTEGER, IN rounds INTEGER)
@@ -193,14 +184,14 @@ WHILE counter < rounds AND step > 0.00000000000000000001 LOOP
   PERFORM calculate_gradient();
   PERFORM calculate_new_parameters(step);
   PERFORM calculate_logit();
-  better := is_new_logit_better();
+  better := are_new_parameters_better();
 
   WHILE NOT better AND step > 0.00000000000000000001 LOOP
 
     step := step / 2;
     PERFORM calculate_new_parameters(step);
     PERFORM calculate_logit();
-    better := is_new_logit_better();
+    better := are_new_parameters_better();
 
   END LOOP;
 

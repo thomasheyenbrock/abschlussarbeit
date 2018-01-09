@@ -5,38 +5,6 @@ DROP PROCEDURE IF EXISTS is_new_logit_better;
 DROP PROCEDURE IF EXISTS logistic_regression;
 
 DELIMITER ;;
--- this procedure calculates the gradient for the current parameter values
-CREATE PROCEDURE `calculate_gradient`()
-BEGIN
-
-DELETE FROM gradient;
-
--- calculate gradient for alpha
-INSERT INTO gradient
-SELECT 'alpha' AS `variable`, SUM(bv.value - l.old) AS `value`
-FROM logits l
-JOIN binary_values bv ON bv.id = l.id;
-
--- calculate other gradients
-INSERT INTO gradient
-SELECT d.variable, SUM(d.value * (bv.value - l.old)) AS `value`
-FROM logits l
-JOIN binary_values bv ON bv.id = l.id
-JOIN datapoints d ON d.id = l.id
-GROUP BY d.variable;
-
-END;;
-
--- this procedure calculates the new parameters
-CREATE PROCEDURE `calculate_new_parameters`(IN step DECIMAL(40, 20))
-BEGIN
-
-UPDATE parameters
-JOIN gradient ON gradient.variable = parameters.variable
-SET parameters.new = parameters.old + step * gradient.value;
-
-END;;
-
 -- this procedure calculates the logits for current parameter values
 CREATE PROCEDURE `calculate_logit`()
 BEGIN
@@ -69,9 +37,41 @@ INSERT INTO logits
 
 END;;
 
+-- this procedure calculates the gradient for the current parameter values
+CREATE PROCEDURE `calculate_gradient`()
+BEGIN
+
+DELETE FROM gradient;
+
+-- calculate gradient for alpha
+INSERT INTO gradient
+SELECT 'alpha' AS `variable`, SUM(bv.value - l.old) AS `value`
+FROM logits l
+JOIN binary_values bv ON bv.id = l.id;
+
+-- calculate other gradients
+INSERT INTO gradient
+SELECT d.variable, SUM(d.value * (bv.value - l.old)) AS `value`
+FROM logits l
+JOIN binary_values bv ON bv.id = l.id
+JOIN datapoints d ON d.id = l.id
+GROUP BY d.variable;
+
+END;;
+
+-- this procedure calculates the new parameters
+CREATE PROCEDURE `calculate_new_parameters`(IN step DECIMAL(40, 20))
+BEGIN
+
+UPDATE parameters
+JOIN gradient ON gradient.variable = parameters.variable
+SET parameters.new = parameters.old + step * gradient.value;
+
+END;;
+
 -- this procedure calculates the log likelihood function for current parameter values
 -- and states if the new parameters are really better
-CREATE PROCEDURE `is_new_logit_better`(OUT better INT(1))
+CREATE PROCEDURE `are_new_parameters_better`(OUT better INT(1))
 BEGIN
 
 SET better = (
@@ -181,14 +181,14 @@ WHILE counter < rounds AND step > 0.00000000000000000001 DO
   CALL calculate_gradient();
   CALL calculate_new_parameters(step);
   CALL calculate_logit();
-  CALL is_new_logit_better(better);
+  CALL are_new_parameters_better(better);
 
   WHILE better = 0 AND step > 0.00000000000000000001 DO
 
     SET step = step / 2;
     CALL calculate_new_parameters(step);
     CALL calculate_logit();
-    CALL is_new_logit_better(better);
+    CALL are_new_parameters_better(better);
 
   END WHILE;
 

@@ -1,5 +1,10 @@
 \begin{thebibliography}{1}
 
+\bibitem{matrix}
+Khan~Hamid Ahmad~Farooq.
+\newblock An efficient and simple algorithm for matrix inversion.
+\newblock 2010.
+
 \bibitem{latex}
 Leslie Lamport.
 \newblock {\em LaTeX : A Documentation Preparation System User's Guide and

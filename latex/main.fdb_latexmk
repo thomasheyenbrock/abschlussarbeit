@@ -1,13 +1,13 @@
 # Fdb version 3
-["bibtex main"] 1515242756 "main.aux" "main.bbl" "main" 1515242757
+["bibtex main"] 1515501344 "main.aux" "main.bbl" "main" 1515501346
   "/usr/local/texlive/2016/texmf-dist/bibtex/bst/base/plain.bst" 1292289607 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "bibliography/literature.bib" 1197240198 207 b633351bc012ead96d2e057eccb2a32e ""
-  "main.aux" 1515242757 6579 58762be4e5e41957cfbd9737a84c3c36 ""
+  "bibliography/literature.bib" 1515499454 418 454c0290803b51ef4092028bfe297854 ""
+  "main.aux" 1515501345 6912 b1dcb1d6db7677344c9e2b7fbf07e809 ""
   "main.bcf" 0 -1 0 ""
   (generated)
-  "main.bbl"
   "main.blg"
-["pdflatex"] 1515242756 "/Users/thomasheyenbrock/Documents/projects/abschlussarbeit/latex/main.tex" "main.pdf" "main" 1515242757
+  "main.bbl"
+["pdflatex"] 1515501344 "/Users/thomasheyenbrock/Documents/projects/abschlussarbeit/latex/main.tex" "main.pdf" "main" 1515501346
   "/Users/thomasheyenbrock/Documents/projects/abschlussarbeit/latex/main.tex" 1512741841 3027 8f7c47ff49584173c7bd2f8dcde66a1f ""
   "/usr/local/texlive/2016/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2016/texmf-dist/fonts/map/fontname/texfonts.map" 1272929888 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
@@ -143,7 +143,7 @@
   "/usr/local/texlive/2016/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1495124131 1888048 f2c5faed5981a516f406b2ccc20bff71 ""
   "/usr/local/texlive/2016/texmf-var/web2c/pdftex/pdflatex.fmt" 1495124159 3873397 267de2d3d537f854994708b0a59715f4 ""
   "/usr/local/texlive/2016/texmf.cnf" 1463979140 577 2938757e76f31531e65cc647e3507693 ""
-  "chapters/Anwendung.tex" 1515242754 17801 b998768dc5f4d27956a303d80db7755f ""
+  "chapters/Anwendung.tex" 1515501342 23503 1ec62b315fdf79d633f14d0373db5a0a ""
   "chapters/Ausblick.tex" 1509035726 343 217a2a0f01856c573d1ad13f160bb117 ""
   "chapters/Datenbanken.tex" 1509035702 337 c2344a73f6d9c311f4d1be57946589e7 ""
   "chapters/Fazit.tex" 1509035761 306 b1e3f1f2fb44e640bb31703e89523226 ""
@@ -160,11 +160,11 @@
   "components/text.tex" 1509035802 390 c2796c6c595139f49aab22da8f995156 ""
   "components/titlepage.tex" 1512742824 1196 c96fdaaa40a8dc4aadec78f9c71056ab ""
   "dropping.sty" 1459864348 4294 6f4291b336e5dbf2a6ceb60a959e0307 ""
-  "main.aux" 1515242757 6579 58762be4e5e41957cfbd9737a84c3c36 ""
-  "main.bbl" 1515242756 224 66f5de66030782aa1d8aed91220a29a4 "bibtex main"
-  "main.out" 1515242757 2466 59a8580957c64e93d2df04707d0a89cd ""
+  "main.aux" 1515501345 6912 b1dcb1d6db7677344c9e2b7fbf07e809 ""
+  "main.bbl" 1515501344 349 0842312b5c10d1f7abe0892f5e0e33a0 "bibtex main"
+  "main.out" 1515501345 2466 59a8580957c64e93d2df04707d0a89cd ""
   "main.tex" 1512741841 3027 8f7c47ff49584173c7bd2f8dcde66a1f ""
-  "main.toc" 1515242757 3106 460fdd2d98b73c247803860875aa8a31 ""
+  "main.toc" 1515501345 3106 f1cc7a25a019ecd2211f32b5304216ff ""
   "main.tpt" 0 -1 0 ""
   "r-logisticRegression.png" 1514989084 45265 3f1df34e7f619b5b898f900aaa0a5a2d ""
   "r-simpleLinearRegression.png" 1514989380 109215 d02cf08e097f54b91f5e61c548b0de6e ""
@@ -172,9 +172,9 @@
   "styles/shortoverview.sty" 1196959270 1741 7e4df7c19f44e7cddca4cf20220c9144 ""
   "styles/tumlogo.sty" 1196959270 2441 f7d8c89a60d237e3718d281ce4389719 ""
   (generated)
-  "main.aux"
-  "main.glo"
   "main.out"
+  "main.glo"
+  "main.toc"
+  "main.aux"
   "main.log"
   "main.pdf"
-  "main.toc"

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.5.18)  6 JAN 2018 13:45
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.5.18)  9 JAN 2018 13:35
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1372,34 +1372,40 @@ Overfull \hbox (5.86342pt too wide) in paragraph at lines 231--232
 n ver-fol-gen wir hier kein Grund-
  []
 
-[17]) (./chapters/Datenbanken.tex [18]
-chapter 4.
-) (./chapters/Ausblick.tex [19
+[17] [18]
+Overfull \hbox (2.45813pt too wide) in paragraph at lines 300--301
+\OT1/ppl/m/n/10.95 wird mit zwei Schleifen []uber die Zeilen und Spal-ten gebil
+det, welche im Wesentlichen
+ []
 
-] [20
+[19]) (./chapters/Datenbanken.tex [20]
+chapter 4.
+) (./chapters/Ausblick.tex [21
+
+] [22
 
 ]
 chapter 5.
-) (./chapters/Fazit.tex [21] [22
+) (./chapters/Fazit.tex [23] [24
 
 ]
 chapter 6.
-) [23] [24
+) [25] [26
 
 ]
 LaTeX Font Info:    Font shape `OT1/ppl/bx/n' in size <24.88> not available
 (Font)              Font shape `OT1/ppl/b/n' tried instead on input line 18.
- [25] [26]) (./chapters/oneAppendix.tex
+ [27] [28]) (./chapters/oneAppendix.tex
 chapter A.
-) [27
+) [29
 
-] [28
+] [30
 
 ] (./main.bbl
 chapter without number
 )
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 119.
- [29
+ [31
 
 ]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 119.
@@ -1411,10 +1417,10 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 119.
  ) 
 Here is how much of TeX's memory you used:
- 12521 strings out of 493014
- 188376 string characters out of 6133351
- 387880 words of memory out of 5000000
- 15612 multiletter control sequences out of 15000+600000
+ 12527 strings out of 493014
+ 188427 string characters out of 6133351
+ 387908 words of memory out of 5000000
+ 15613 multiletter control sequences out of 15000+600000
  24320 words of font info for 63 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  43i,17n,66p,8548b,1763s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1432,10 +1438,10 @@ mf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/local/texlive/2016/texmf-dist
 /fonts/type1/urw/palatino/uplr8a.pfb></usr/local/texlive/2016/texmf-dist/fonts/
 type1/urw/palatino/uplri8a.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/
 public/yhmath/yhcmex.pfb>
-Output written on main.pdf (41 pages, 329559 bytes).
+Output written on main.pdf (43 pages, 338258 bytes).
 PDF statistics:
- 534 PDF objects out of 1000 (max. 8388607)
- 467 compressed objects within 5 object streams
- 152 named destinations out of 1000 (max. 500000)
+ 548 PDF objects out of 1000 (max. 8388607)
+ 479 compressed objects within 5 object streams
+ 157 named destinations out of 1000 (max. 500000)
  304 words of extra memory for PDF output out of 10000 (max. 10000000)
 

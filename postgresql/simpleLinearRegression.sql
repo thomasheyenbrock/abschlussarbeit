@@ -51,6 +51,3 @@ FROM beta;
 
 END;
 $$ LANGUAGE plpgsql;
-
--- execute main procedure
-SELECT simple_linear_regression(100000);

@@ -221,5 +221,3 @@ FROM parameters;
 
 END;
 $$ LANGUAGE plpgsql;
-
-SELECT logistic_regression(1000, 1000);

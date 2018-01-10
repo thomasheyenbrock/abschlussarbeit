@@ -224,5 +224,3 @@ FROM parameters;
 
 END;;
 DELIMITER ;
-
-CALL logistic_regression(1000, 1000);

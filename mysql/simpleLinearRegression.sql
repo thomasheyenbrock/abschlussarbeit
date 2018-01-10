@@ -57,6 +57,3 @@ DROP TEMPORARY TABLE IF EXISTS datapoints;
 END;;
 
 DELIMITER ;
-
--- execute main procedure
-CALL simple_linear_regression(100000);

@@ -290,6 +290,3 @@ FROM matrix_result;
 END;;
 
 DELIMITER ;
-
--- execute main procedure
-CALL multiple_linear_regression(100000);

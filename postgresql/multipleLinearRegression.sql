@@ -170,6 +170,3 @@ SELECT 'beta_age'::VARCHAR(50) AS variable, b[3][1] AS value;
 
 END;
 $$ LANGUAGE plpgsql;
-
--- execute main procedure
-SELECT multiple_linear_regression(100000);

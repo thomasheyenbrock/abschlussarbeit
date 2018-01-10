@@ -1,7 +1,7 @@
 DROP PROCEDURE IF EXISTS calculate_gradient;
 DROP PROCEDURE IF EXISTS calculate_new_parameters;
 DROP PROCEDURE IF EXISTS calculate_logit;
-DROP PROCEDURE IF EXISTS is_new_logit_better;
+DROP PROCEDURE IF EXISTS are_new_parameters_better;
 DROP PROCEDURE IF EXISTS logistic_regression;
 
 DELIMITER ;;
@@ -9,8 +9,8 @@ DELIMITER ;;
 CREATE PROCEDURE `calculate_logit`()
 BEGIN
 
-DECLARE alpha_old DECIMAL(40, 20);
-DECLARE alpha_new DECIMAL(40, 20);
+DECLARE alpha_old DECIMAL(65, 30);
+DECLARE alpha_new DECIMAL(65, 30);
 
 SET alpha_old = (
   SELECT old
@@ -60,7 +60,7 @@ GROUP BY d.variable;
 END;;
 
 -- this procedure calculates the new parameters
-CREATE PROCEDURE `calculate_new_parameters`(IN step DECIMAL(40, 20))
+CREATE PROCEDURE `calculate_new_parameters`(IN step DECIMAL(65, 30))
 BEGIN
 
 UPDATE parameters
@@ -88,10 +88,10 @@ END;;
 CREATE PROCEDURE `logistic_regression`(IN number_datapoints INT(11), IN rounds INT(11))
 BEGIN
 
-DECLARE step DECIMAL(40, 20);
+DECLARE step DECIMAL(65, 30);
 DECLARE min INT(11);
 DECLARE max INT(11);
-DECLARE transform DECIMAL(40, 20);
+DECLARE transform DECIMAL(65, 30);
 DECLARE better INT(1);
 DECLARE counter INT(11);
 
@@ -100,7 +100,8 @@ DROP TEMPORARY TABLE IF EXISTS datapoints;
 CREATE TEMPORARY TABLE datapoints (
   id INT(11),
   variable VARCHAR(32),
-  value DECIMAL(40, 20)
+  value DECIMAL(65, 30),
+  PRIMARY KEY (id, variable)
 );
 
 -- calculate min and max values for money
@@ -121,7 +122,8 @@ LIMIT number_datapoints;
 DROP TEMPORARY TABLE IF EXISTS binary_values;
 CREATE TEMPORARY TABLE binary_values (
   id INT(11),
-  value INT(1)
+  value INT(1),
+  PRIMARY KEY (id)
 );
 
 -- insert all values for column 'prime' into binary_values
@@ -137,8 +139,9 @@ LIMIT number_datapoints;
 DROP TEMPORARY TABLE IF EXISTS parameters;
 CREATE TEMPORARY TABLE parameters (
   variable VARCHAR(32),
-  old DECIMAL(40, 20),
-  new DECIMAL(40, 20)
+  old DECIMAL(65, 30),
+  new DECIMAL(65, 30),
+  PRIMARY KEY (variable)
 );
 
 -- set initial parameters
@@ -150,8 +153,9 @@ INSERT INTO parameters VALUES
 DROP TEMPORARY TABLE IF EXISTS logits;
 CREATE TEMPORARY TABLE logits (
   id INT(11),
-  old DECIMAL(40, 20),
-  new DECIMAL(40, 20)
+  old DECIMAL(65, 30),
+  new DECIMAL(65, 30),
+  PRIMARY KEY (id)
 );
 
 -- insert initial values into logit table
@@ -161,7 +165,8 @@ CALL calculate_logit();
 DROP TEMPORARY TABLE IF EXISTS gradient;
 CREATE TEMPORARY TABLE gradient (
   variable VARCHAR(32),
-  value DECIMAL(40, 20)
+  value DECIMAL(65, 30),
+  PRIMARY KEY (variable)
 );
 
 -- insert variables in gradient table
@@ -174,26 +179,31 @@ SET step = 1;
 
 -- loop
 SET counter = 0;
-WHILE counter < rounds AND step > 0.00000000000000000001 DO
+WHILE counter < rounds AND step > 0.000000000000000000000000000001 DO
 
-  SET better = 0;
-  CALL calculate_logit();
   CALL calculate_gradient();
   CALL calculate_new_parameters(step);
   CALL calculate_logit();
-  CALL are_new_parameters_better(better);
 
-  WHILE better = 0 AND step > 0.00000000000000000001 DO
+  WHILE (
+    SELECT
+      SUM(LOG(bv.value * l.new + (1 - bv.value) * (1 - l.new))) >
+      SUM(LOG(bv.value * l.old + (1 - bv.value) * (1 - l.old)))
+    FROM logits l
+    JOIN binary_values bv ON bv.id = l.id
+  ) = 0 AND step > 0.000000000000000000000000000001 DO
 
     SET step = step / 2;
     CALL calculate_new_parameters(step);
     CALL calculate_logit();
-    CALL are_new_parameters_better(better);
 
   END WHILE;
 
   UPDATE parameters
   SET parameters.old = parameters.new;
+
+  UPDATE logits
+  SET logits.old = logits.new;
 
   SET counter = counter + 1;
 
@@ -215,4 +225,4 @@ FROM parameters;
 END;;
 DELIMITER ;
 
-CALL logistic_regression(10, 1000);
+CALL logistic_regression(1000, 1000);

@@ -57,7 +57,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- this procedure calculates the new parameters
-CREATE OR REPLACE FUNCTION calculate_new_parameters(step NUMERIC(40, 20))
+CREATE OR REPLACE FUNCTION calculate_new_parameters(step NUMERIC(65, 30))
 RETURNS void AS $$
 BEGIN
 
@@ -91,10 +91,13 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- main procedure for execution
-CREATE OR REPLACE FUNCTION logistic_regression(ref refcursor, number_datapoints INTEGER, IN rounds INTEGER)
-RETURNS refcursor AS $$
+CREATE OR REPLACE FUNCTION logistic_regression(number_datapoints INTEGER, rounds INTEGER)
+RETURNS TABLE (
+  variable VARCHAR(50),
+  value NUMERIC(65, 30)
+) AS $$
 DECLARE
-  step NUMERIC(40, 20);
+  step NUMERIC(65, 30);
   better BOOLEAN;
   counter INTEGER;
 BEGIN
@@ -103,8 +106,8 @@ BEGIN
 DROP TABLE IF EXISTS datapoints;
 CREATE TEMPORARY TABLE datapoints (
   id INTEGER,
-  variable VARCHAR(32),
-  value NUMERIC(40, 20)
+  variable VARCHAR(50),
+  value NUMERIC(65, 30)
 );
 
 -- insert all linear transformed values for column 'money' into data
@@ -140,9 +143,9 @@ LIMIT number_datapoints;
 -- create temporary table for parameters
 DROP TABLE IF EXISTS parameters;
 CREATE TEMPORARY TABLE parameters (
-  variable VARCHAR(32),
-  old NUMERIC(40, 20),
-  new NUMERIC(40, 20)
+  variable VARCHAR(50),
+  old NUMERIC(65, 30),
+  new NUMERIC(65, 30)
 );
 
 -- set initial parameters
@@ -154,8 +157,8 @@ INSERT INTO parameters VALUES
 DROP TABLE IF EXISTS logits;
 CREATE TEMPORARY TABLE logits (
   id INTEGER,
-  old NUMERIC(40, 20),
-  new NUMERIC(40, 20)
+  old NUMERIC(65, 30),
+  new NUMERIC(65, 30)
 );
 
 -- insert initial values into logit table
@@ -164,8 +167,8 @@ PERFORM calculate_logit();
 -- create temporary table for gradient
 DROP TABLE IF EXISTS gradient;
 CREATE TEMPORARY TABLE gradient (
-  variable VARCHAR(32),
-  value DECIMAL(40, 20)
+  variable VARCHAR(50),
+  value DECIMAL(65, 30)
 );
 
 -- insert variables in gradient table
@@ -178,15 +181,14 @@ step := 1;
 
 -- loop
 counter := 0;
-WHILE counter < rounds AND step > 0.00000000000000000001 LOOP
+WHILE counter < rounds AND step > 0.000000000000000000000000000001 LOOP
 
-  PERFORM calculate_logit();
   PERFORM calculate_gradient();
   PERFORM calculate_new_parameters(step);
   PERFORM calculate_logit();
   better := are_new_parameters_better();
 
-  WHILE NOT better AND step > 0.00000000000000000001 LOOP
+  WHILE NOT better AND step > 0.000000000000000000000000000001 LOOP
 
     step := step / 2;
     PERFORM calculate_new_parameters(step);
@@ -198,26 +200,26 @@ WHILE counter < rounds AND step > 0.00000000000000000001 LOOP
   UPDATE parameters
   SET old = new;
 
+  UPDATE logits
+  SET old = new;
+
   counter := counter + 1;
 
 END LOOP;
 
 UPDATE parameters
 SET old = old / ((SELECT MAX(money) FROM sample) - (SELECT MIN(money) FROM sample))
-WHERE variable = 'beta_money';
+WHERE parameters.variable = 'beta_money';
 
 UPDATE parameters
-SET old = old - (SELECT old FROM parameters WHERE variable = 'beta_money') * (SELECT MIN(money) FROM sample)
-WHERE variable = 'alpha';
+SET old = old - (SELECT old FROM parameters p2 WHERE p2.variable = 'beta_money') * (SELECT MIN(money) FROM sample)
+WHERE parameters.variable = 'alpha';
 
-OPEN ref FOR
-SELECT variable, old AS value
+RETURN QUERY
+SELECT parameters.variable::VARCHAR(50), old AS value
 FROM parameters;
-
-RETURN ref;
 
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT logistic_regression('cursor', 10, 1000);
-FETCH ALL IN "cursor";
+SELECT logistic_regression(1000, 1000);

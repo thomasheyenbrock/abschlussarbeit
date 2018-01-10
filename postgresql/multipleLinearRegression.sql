@@ -125,8 +125,11 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- main procedure for regression analysis
-CREATE OR REPLACE FUNCTION multiple_linear_regression(ref refcursor, number_datapoints int)
-RETURNS refcursor AS $$
+CREATE OR REPLACE FUNCTION multiple_linear_regression(number_datapoints INTEGER)
+RETURNS TABLE (
+  variable VARCHAR(50),
+  value NUMERIC(65, 30)
+) AS $$
 DECLARE
   x INTEGER[][]:= (
     SELECT ARRAY(
@@ -158,18 +161,15 @@ b := matrix_multiplication(
   )
 );
 
-OPEN ref FOR
-SELECT 'alpha' AS variable, b[1][1] AS value
+RETURN QUERY
+SELECT 'alpha'::VARCHAR(50) AS variable, b[1][1] AS value
 UNION
-SELECT 'beta_purchases' AS variable, b[2][1] AS value
+SELECT 'beta_purchases'::VARCHAR(50) AS variable, b[2][1] AS value
 UNION
-SELECT 'beta_age' AS variable, b[3][1] AS value;
-
-RETURN ref;
+SELECT 'beta_age'::VARCHAR(50) AS variable, b[3][1] AS value;
 
 END;
 $$ LANGUAGE plpgsql;
 
 -- execute main procedure
-SELECT multiple_linear_regression('cursor', 100000);
-FETCH ALL IN "cursor";
+SELECT multiple_linear_regression(100000);

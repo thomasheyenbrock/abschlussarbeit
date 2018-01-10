@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.5.18)  9 JAN 2018 13:35
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.5.18)  10 JAN 2018 10:22
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1138,7 +1138,7 @@ Class scrbook Warning: deprecated old font command `\bf' used.
 
 LaTeX Font Info:    Font shape `OT1/ppl/bx/n' in size <20.74> not available
 (Font)              Font shape `OT1/ppl/b/n' tried instead on input line 43.
-<styles/informat.png, id=146, 355.3275pt x 355.3275pt>
+<styles/informat.png, id=142, 355.3275pt x 355.3275pt>
 File: styles/informat.png Graphic file (type png)
 
 <use styles/informat.png>
@@ -1215,17 +1215,13 @@ LaTeX Font Info:    Font shape `OT1/ppl/bx/n' in size <14.4> not available
 LaTeX Font Info:    Font shape `OT1/ppl/bx/n' in size <10.95> not available
 (Font)              Font shape `OT1/ppl/b/n' tried instead on input line 69.
  (./main.toc
-Underfull \vbox (badness 1082) has occurred while \output is active []
-
- [9]
 LaTeX Font Info:    Font shape `OT1/ppl/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ppl/b/n' tried instead on input line 38.
-)
+(Font)              Font shape `OT1/ppl/b/n' tried instead on input line 37.
+ [9])
 \tf@toc=\write5
 \openout5 = `main.toc'.
 
-
-(./components/outline.tex [10]
+ (./components/outline.tex [10]
 Underfull \hbox (badness 10000) in paragraph at lines 18--19
 
  []
@@ -1321,7 +1317,7 @@ File: omlppl.fd
 LaTeX Font Info:    Font shape `OML/ppl/m/n' in size <10.95> not available
 (Font)              Font shape `OML/cmm/m/it' tried instead on input line 52.
  [12]
-<r-simpleLinearRegression.png, id=312, 2254.4225pt x 1240.635pt>
+<r-simpleLinearRegression.png, id=307, 2254.4225pt x 1240.635pt>
 File: r-simpleLinearRegression.png Graphic file (type png)
 
 <use r-simpleLinearRegression.png>
@@ -1333,7 +1329,7 @@ Overfull \hbox (10.95pt too wide) in paragraph at lines 72--73
  []
 
 [13 <./r-simpleLinearRegression.png>]
-<r-logisticRegression.png, id=327, 2254.4225pt x 1240.635pt>
+<r-logisticRegression.png, id=322, 2254.4225pt x 1240.635pt>
 File: r-logisticRegression.png Graphic file (type png)
 
 <use r-logisticRegression.png>
@@ -1378,34 +1374,52 @@ Overfull \hbox (2.45813pt too wide) in paragraph at lines 300--301
 det, welche im Wesentlichen
  []
 
-[19]) (./chapters/Datenbanken.tex [20]
-chapter 4.
-) (./chapters/Ausblick.tex [21
+[19]
+Overfull \hbox (8.85342pt too wide) in paragraph at lines 327--328
+\OT1/ppl/m/n/10.95 den. (Die Werte f[]ur einen Daten-punkt wer-den dann also au
+f mehrere Zeilen aufgeteilt.)
+ []
 
-] [22
+[20]
+Overfull \hbox (1.64146pt too wide) in paragraph at lines 338--339
+[]$\OML/cmm/m/it/10.95 calculate[]parameters$\OT1/ppl/m/n/10.95 : Diese Funk-ti
+on nimmt eine Schrit-tweite als Ar-gu-ment, berech-
+ []
+
+
+Overfull \hbox (5.15685pt too wide) in paragraph at lines 338--339
+\OT1/ppl/m/n/10.95 net da-raus und aus den Werten der $\OML/cmm/m/it/10.95 grad
+ient$\OT1/ppl/m/n/10.95 -Tabelle die neuen Pa-ram-e-ter und schreibt
+ []
+
+[21]) (./chapters/Vergleich.tex [22]
+chapter 4.
+) (./chapters/Ausblick.tex [23
+
+] [24
 
 ]
 chapter 5.
-) (./chapters/Fazit.tex [23] [24
+) (./chapters/Fazit.tex [25] [26
 
 ]
 chapter 6.
-) [25] [26
+) [27] [28
 
 ]
 LaTeX Font Info:    Font shape `OT1/ppl/bx/n' in size <24.88> not available
 (Font)              Font shape `OT1/ppl/b/n' tried instead on input line 18.
- [27] [28]) (./chapters/oneAppendix.tex
+ [29] [30]) (./chapters/oneAppendix.tex
 chapter A.
-) [29
+) [31
 
-] [30
+] [32
 
 ] (./main.bbl
 chapter without number
 )
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 119.
- [31
+ [33
 
 ]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 119.
@@ -1413,14 +1427,14 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 119.
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 119.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 119.
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 59A8580957C64E93D2DF04707D0A89CD;2466.
+(rerunfilecheck)             Checksum: 1AE997BCA7C43306AF3175BC529CBB86;2410.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 119.
  ) 
 Here is how much of TeX's memory you used:
- 12527 strings out of 493014
- 188427 string characters out of 6133351
- 387908 words of memory out of 5000000
- 15613 multiletter control sequences out of 15000+600000
+ 12529 strings out of 493014
+ 188423 string characters out of 6133351
+ 387905 words of memory out of 5000000
+ 15612 multiletter control sequences out of 15000+600000
  24320 words of font info for 63 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  43i,17n,66p,8548b,1763s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1438,10 +1452,10 @@ mf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/local/texlive/2016/texmf-dist
 /fonts/type1/urw/palatino/uplr8a.pfb></usr/local/texlive/2016/texmf-dist/fonts/
 type1/urw/palatino/uplri8a.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/
 public/yhmath/yhcmex.pfb>
-Output written on main.pdf (43 pages, 338258 bytes).
+Output written on main.pdf (45 pages, 345137 bytes).
 PDF statistics:
- 548 PDF objects out of 1000 (max. 8388607)
- 479 compressed objects within 5 object streams
- 157 named destinations out of 1000 (max. 500000)
- 304 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 552 PDF objects out of 1000 (max. 8388607)
+ 481 compressed objects within 5 object streams
+ 160 named destinations out of 1000 (max. 500000)
+ 296 words of extra memory for PDF output out of 10000 (max. 10000000)
 

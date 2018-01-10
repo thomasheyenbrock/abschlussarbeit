@@ -29,12 +29,11 @@
 \contentsline {subsection}{\numberline {3.4.1}Einfache lineare Regression}{18}{subsection.3.4.1}
 \contentsline {subsection}{\numberline {3.4.2}Multiple lineare Regression}{18}{subsection.3.4.2}
 \contentsline {subsection}{\numberline {3.4.3}Logistische Regression}{20}{subsection.3.4.3}
-\contentsline {chapter}{\numberline {4}Statistische Methoden in Datenbanken}{21}{chapter.4}
-\contentsline {section}{\numberline {4.1}Latex Introduction}{21}{section.4.1}
-\contentsline {chapter}{\numberline {5}Erweiterungspotenzial in Datenbanksystemen}{23}{chapter.5}
-\contentsline {section}{\numberline {5.1}Latex Introduction}{23}{section.5.1}
-\contentsline {chapter}{\numberline {6}Fazit}{25}{chapter.6}
-\contentsline {section}{\numberline {6.1}Latex Introduction}{25}{section.6.1}
-\contentsline {part}{Appendix}{29}{part*.7}
-\contentsline {chapter}{\numberline {A}Detailed Descriptions}{29}{appendix.A}
-\contentsline {chapter}{\nonumberline Bibliography}{31}{chapter*.8}
+\contentsline {chapter}{\numberline {4}Vergleich der verschiedenen Implementierungen}{23}{chapter.4}
+\contentsline {chapter}{\numberline {5}Erweiterungspotenzial in Datenbanksystemen}{25}{chapter.5}
+\contentsline {section}{\numberline {5.1}Latex Introduction}{25}{section.5.1}
+\contentsline {chapter}{\numberline {6}Fazit}{27}{chapter.6}
+\contentsline {section}{\numberline {6.1}Latex Introduction}{27}{section.6.1}
+\contentsline {part}{Appendix}{31}{part*.7}
+\contentsline {chapter}{\numberline {A}Detailed Descriptions}{31}{appendix.A}
+\contentsline {chapter}{\nonumberline Bibliography}{33}{chapter*.8}

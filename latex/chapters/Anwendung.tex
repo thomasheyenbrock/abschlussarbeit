@@ -319,3 +319,48 @@ Führt man die multiple lineare Regressionsanalyse in PostgreSQL durch, erhält 
 Da wir dieselben Algorithmen und dieselbe Präzision für Kommazahlen in MySQL und PostgreSQL verwendet haben, stimmen die beiden Ergebnisse sogar exakt überein.
 
 \subsection{Logistische Regression}
+
+Um logistische Regression in SQL betreiben zu können, möchten wir ein Gradientenverfahren zur Lösung implementieren. Wir implementieren denselben Algorithmus in MySQL und PostgreSQL, das heißt die Skripte unterscheiden sich lediglich in der datenbankspezifischen Syntax.
+
+Wir verwenden für das Verfahren mehrere Tabellen, in denen wir gewissen Informationen speichern und verarbeiten werden:
+\begin{itemize}
+  \item Die Tabelle $datapoints$ besteht aus drei Spalten $id$, $variable$ und $value$. Die $id$-Spalte enthält einen hier generierten Wert, der einen Datensatz aus der $sample$-Tabelle identifiziert. Die $variable$-Spalte enthält den Namen der gespeicherten unabhängigen Variable. In unserem Fall steht hier immer $beta_money$, da wir nur eine unabhängige Variable betrachten. Gegebenenfalls können hier mehrere Variablen betrachtet werden. (Die Werte für einen Datenpunkt werden dann also auf mehrere Zeilen aufgeteilt.) Die Spalte $value$ enthält dann den Wert der entsprechenden Variable des jeweiligen Datensatzes.
+  \item Die Tabelle $binary\_values$ besteht aus zwei Spalten $id$ und $value$. Hier werden für jeden Datenpunkt die Werte der abhängigen binären Variable gespeichert, in unserem Fall also die Werte aus der Spalte $prime$.
+  \item Die Tabelle $parameters$ besteht aus drei Spalten $variable$, $old$ und $new$. Die erste Spalte enthält den Namen des Parameters, also $alpha$ oder $beta_money$. Die Spalten $old$ und $new$ enthalten die Werte der Parameter vor bzw. nach dem aktuellen Schritt im Gradientenverfahren. Wir benötigen beide Werte, um überprüfen zu können, ob die neuen Parameter ein besseres Ergebnis liefern als die alten.
+  \item Die Tabelle $logits$ besteht aus drei Spalten $id$, $old$ und $new$. Hier werden für jeden Datenpunkt die Werte der logistischen Funktion $\pi_i$ berechnet. Dabei werden einmal die alten und einmal die neuen Parameter zur Berechnung verwendet.
+  \item Die Tabelle $gradient$ besteht aus zwei Spalten $variable$ und $value$. Hier wird der Gradient bzw. die Werte der partiellen Ableitungen nach jedem Parameter gespeichert.
+\end{itemize}
+
+Wir definieren außerdem einige Hilfsfunktionen:
+\begin{itemize}
+  \item $calculate\_logits$: Diese Funktion berechnet die Werte für die logistische Funktion für alle Datenpunkte und trägt diese in die Tabelle $logit$ ein. Dabei wird die Funktion für beide Parameterwerte ($old$ und $new$) aus der Tabelle $parameters$ durchgeführt.
+  \item $calculate\_gradient$: Diese Funktion berechnet den Gradienten aus Basis der alten Parameterwerte und der Werte der logistischen Funktion aus der Tabelle $logits$.
+  \item $calculate\_parameters$: Diese Funktion nimmt eine Schrittweite als Argument, berechnet daraus und aus den Werten der $gradient$-Tabelle die neuen Parameter und schreibt diese zurück in die Spalte $new$ der Tabelle $parameters$.
+  \item $are\_new\_parameters\_better$: Diese Funktion berechnet den Logarithmus der Likelihoodfunktion für die neuen und alten Parameter aus der Tabelle $parameters$ und gibt einen Wahrheitswert zurück. Die Rückgabe ist wahr, wenn die Likelihoodfunktion für die neuen Parameter einen größeren Wert annimmt als für die alten Parameter.
+\end{itemize}
+
+Wir führen wie schon bei TensorFlow zuerst eine Lineartransformation für die Werte aus $money$ durch und bilden diese linear auf das Interval $[0, 1]$ ab. Das dient erneut dazu, dass die Werte der logistischen Funktion nicht zu nahe an null geraten. Die transformierten Werte fügen wir in die $datapoints$-Tabelle ein. Auch die anderen Tabellen erzeugen wir und fügen initiale Werte ein. Als Anfangswert für Schrittweite wählen wir eins.
+
+Es folgt eine $while$-Schleife, die solange läuft, bis entweder die vorgegebene Anzahl an Schritten erreicht wurde, oder die Schrittweite zu klein für die gewählte Präzision der Kommazahlen wird. Wir berechnen zuerst den Gradienten, dann die neuen Parameter. Dann ist ein Aufruf von $calculate\_logits$ nötig, um die logistische Funktion für die neuen Parameter zu berechnen.
+
+Wir überprüfen, ob die neuen Parameter wirklich besser sind als die alten. Falls nicht, wird die Schrittweite halbiert, die Parameter und die Werte der logistischen Funktion werden erneut berechnet. Das wird solange wiederholt, bis die neuen Parameter besser sind oder die Schrittweite unter die Präzisionsgrenze fällt.
+
+Haben wir die neuen Parameter erfolgreich berechnet, werden die Werte der $old$-Spalten in den Tabellen $parameters$ und $logits$ mit den neuen Werten überschrieben und der Iterationsschritt ist beendet. Nachdem die Schleife beendet wurde, werden die Parameter wieder entsprechend linear transformiert, um den tatsächlichen Werten für $money$ zu entsprechen.
+
+Wir entscheiden und für 1000 Iterationen und führen die Prozeduren im jeweiligen Datenbanksystemen aus. Das Ergebnis ist folgendes:
+
+\begin{center}
+  \captionof{table}{Logistische Regression in MySQL}
+  \begin{tabular}{|c|c|}\hline
+    \textbf{variable} & \textbf{value} \\ \hline
+    alpha & -1.914557182274162638251159505078 \\ \hline
+    beta\_money & 0.000076896120535027827177415284 \\ \hline
+  \end{tabular}
+
+  \captionof{table}{Logistische Regression in PostgreSQL}
+  \begin{tabular}{|c|c|}\hline
+    \textbf{variable} & \textbf{value} \\ \hline
+    alpha &  \\ \hline
+    beta\_money &  \\ \hline
+  \end{tabular}
+\end{center}

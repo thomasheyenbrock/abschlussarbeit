@@ -46,7 +46,7 @@ Bei `simpleLinearRegression.R` und `logisticRegression.R` wird zusätzlich ein P
 Es stehen drei Sripte zur Verfügung:
 * [`simpleLinearRegression.py`](https://github.com/thomasheyenbrock/abschlussarbeit/blob/master/tensorflow/simpleLinearRegression.py)
 * [`multipleLinearRegression.py`](https://github.com/thomasheyenbrock/abschlussarbeit/blob/master/tensorflow/multipleLinearRegression.py)
-* [`logisticRegression.py`](https://github.com/thomasheyenbrock/abschlussarbeit/blob/master/tensorfow/logisticRegression.py)
+* [`logisticRegression.py`](https://github.com/thomasheyenbrock/abschlussarbeit/blob/master/tensorflow/logisticRegression.py)
 
 Eines dieser Skripte kann wiefolgt ausgeführt werden:
 ```

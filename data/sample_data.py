@@ -21,6 +21,15 @@ def outputCsv(data):
 
 def outputSql(data):
     output = [
+        "DROP TABLE IF EXISTS sample;",
+        "",
+        "CREATE TABLE sample (",
+        "  age INTEGER,",
+        "  purchases INTEGER,",
+        "  money INTEGER,",
+        "  prime INTEGER",
+        ");",
+        "",
         "INSERT INTO sample (%s,%s,%s,%s) VALUES" % ("age", "purchases", "money", "prime")
     ]
 

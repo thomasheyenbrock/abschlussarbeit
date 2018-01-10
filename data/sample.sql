@@ -1,3 +1,12 @@
+DROP TABLE IF EXISTS sample;
+
+CREATE TABLE sample (
+  age INTEGER,
+  purchases INTEGER,
+  money INTEGER,
+  prime INTEGER
+);
+
 INSERT INTO sample (age,purchases,money,prime) VALUES
 (30,1,4421,0),
 (30,11,23346,1),

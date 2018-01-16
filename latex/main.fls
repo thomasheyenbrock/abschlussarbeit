@@ -243,9 +243,9 @@ INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/adobe/palatino/pplb8r.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/adobe/palatino/pplb7t.tfm
 INPUT main.toc
 INPUT main.toc
-INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/adobe/palatino/pplb7t.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/vf/adobe/palatino/pplb7t.vf
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/adobe/palatino/pplb8r.tfm
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/adobe/palatino/pplb7t.tfm
 OUTPUT main.toc
 INPUT components/outline.tex
 INPUT components/outline.tex
@@ -305,6 +305,7 @@ INPUT ./main.out
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/enc/dvips/base/8r.enc
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb

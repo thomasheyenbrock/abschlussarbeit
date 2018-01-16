@@ -48,20 +48,20 @@ Hat man ein Modell erstellt, so bietet R einfache Funktionen, um die Parameter f
 
 Betrachten wir also Frage Nummer $1$ aus dem vorherigen Teilkapitel. Die Formel lautet dann einfach $money \sim purchases$. Man liest also die Daten aus der csv-Datei, erstellt das Modell mit der genannten Formel und berechnet die Parameter mit der Funktion $lm$. Insgesamt braucht man also nur drei Zeilen Code. Die print-Funktion dient hierbei nur zur Ausgabe des Ergebnisses.
 
-\begin{lstlisting}
+\begin{minted}[linenos,breaklines,frame=single]{r}
   data <- read.csv2("sample.csv", sep = ",", header = TRUE)
   modell <- as.formula("money ~ purchases")
   slr <- lm(modell, data = data)
   print(slr)
-\end{lstlisting}
+\end{minted}
 
 Das Ergebnis des obigen Codes ist folgendes:
 
-\begin{lstlisting}
+\begin{minted}[linenos,breaklines,frame=single]{r}
   Coefficients:
   (Intercept)    purchases
         1.941     2500.805
-\end{lstlisting}
+\end{minted}
 
 Der Wert unter $(Intercept)$ entspricht dabei dem Paramter $\alpha$ in unserer Notation, der Wert unter $purchases$ entspricht $\beta$.
 
@@ -75,11 +75,11 @@ R verfügt auch über Möglichkeiten zur graphischen Darstellung. Lässt man die
 
 Bei multipler lineare Regression unterscheidet sich der R-Code nur in der Wahl der Formel. Hier wollen wir $money$ durch eine lineare Summe von $purchases$ und $age$ modellieren, deshalb lautet die Formel hier $money \sim purchases + age$. Man erhält das folgende Ergebnis.
 
-\begin{lstlisting}
+\begin{minted}[linenos,breaklines,frame=single]{r}
   Coefficients:
   (Intercept)    purchases          age
      -16.4842    2500.8042       0.5318
-\end{lstlisting}
+\end{minted}
 
 Auch hier eine kurze Interpretation dieses Ergebnisses: Der Wert für $\alpha$ ist wieder relativ klein, der Wert für das $\beta$ zu $purchases$ ist fast exakt derselbe wie bei einfacher linerarer Regression, was bei denselben Daten auch zu erwarten war. Der Wert für das $\beta$ zu $age$ ist dagegen nahe bei null. Das bedeutet, dass das Alter neben der Anzahl der Käufe keinen signifikanten Einfluss auf das ausgegebene Geld hat.
 
@@ -91,16 +91,16 @@ Man braucht wie auch bei linearer Regression ein Formel für das Modell. Diese b
 
 Der gesamte R-Code für die logistische Regression lautet also wiefolgt:
 
-\begin{lstlisting}
+\begin{minted}[linenos,breaklines,frame=single]{r}
   data <- read.csv2("sample.csv", sep = ",", header = TRUE)
   modell <- as.formula("prime ~ money")
   logit <- glm(modell, family = binomial, data = data)
   print(logit)
-\end{lstlisting}
+\end{minted}
 
 Nach der Ausführung erhält man das folgende Ergebnis:
 
-\begin{lstlisting}
+\begin{minted}[linenos,breaklines,frame=single]{r}
   Coefficients:
   (Intercept)        money
   -1.9145608    0.0000769
@@ -108,7 +108,7 @@ Nach der Ausführung erhält man das folgende Ergebnis:
   Degrees of Freedom: 99999 Total (i.e. Null);  99998 Residual
   Null Deviance:	    138600
   Residual Deviance: 100500 	AIC: 100500
-\end{lstlisting}
+\end{minted}
 
 Eine anschauliche Interpretation der zurückgegebenen Parameter ist nicht mehr so einfach. Wir lassen uns das Ergebnis daher wieder als Plot visualisieren:
 
@@ -132,11 +132,11 @@ Es gibt drei Möglichkeiten, Tensoren zu definieren: Als Konstante, als Variable
 
 Wie das Modell exakt definiert wird zeigen die folgenden Teilkapitel. Allgemein gesamt wird eine Kostenfunktion aufgestellt, die dann mit Hilfe eines Gradientenabstiegsverfahrens iterativ minimiert wird. Die Definition dieses sogenannten Trainingsschrittes sieht immer gleich aus:
 
-\begin{lstlisting}[language=Python]
+\begin{minted}[linenos,breaklines,frame=single]{python}
   train_step = tf.train
                  .GradientDescentOptimizer(learn_rate)
                  .minimize(cost)
-\end{lstlisting}
+\end{minted}
 
 Dabei ist $tf$ die importierte TensorFlow-Bibliothek, $learn\_rate$ ist die Geschwindigkeit bzw. Schrittweite des Verfahrens und $cost$ ist die zuvor definierte Kostenfunktion.
 
@@ -146,32 +146,32 @@ Um dann auch wirklich Berechnungen durchführen zu können, muss in TensorFlow e
 
 Hier definieren wir unsere Platzhalter und Variable wiefolgt:
 
-\begin{lstlisting}
+\begin{minted}[linenos,breaklines,frame=single]{python}
   x = tf.placeholder(tf.float32, [None, 1])
   y = tf.placeholder(tf.float32, [None, 1])
   alpha = tf.Variable(tf.zeros([1]))
   beta = tf.Variable(tf.zeros([1, 1]))
-\end{lstlisting}
+\end{minted}
 
 $x$ und $y$ sind die Platzhalter der wahren Werte für das folgende Training. $alpha$ und $beta$ sind die Parameter-Variablen, welche mit null-Werten initiiert werden. Daraus berechnen wir über den linearen funktionalen Zusammenhang die geschätzten $y$ Werte:
 
-\begin{lstlisting}
+\begin{minted}[linenos,breaklines,frame=single]{python}
   y_calc = tf.matmul(x, beta) + alpha
-\end{lstlisting}
+\end{minted}
 
 Die Funktion $matmul$ führt Matrizenmultiplikation durch. Nun definieren wir noch die Kostenfunktion als Mittelwert der Quadrate zwischen den wahren und berechneten $y$-Werten:
 
-\begin{lstlisting}
+\begin{minted}[linenos,breaklines,frame=single]{python}
   cost = tf.reduce_mean(tf.square(y - y_calc))
-\end{lstlisting}
+\end{minted}
 
 Damit können wir die Session starten und unsere Parameter berechnen lassen. Mit einer Schrittweite von $0.0054$ und $2000$ Iterationen erhält man folgendes Ergebnis:
 
-\begin{lstlisting}
+\begin{minted}[linenos,breaklines,frame=single]{python}
   alpha:  1.976688
   beta:   2500.802979
   cost:   13818006.000000
-\end{lstlisting}
+\end{minted}
 
 Die Werte für $alpha$ und $beta$ sind damit schon sehr nahe an den exakten Werten. Zusätzlich wird hier auch der aktuelle Wert für die Kostenfunktion ausgegeben.
 
@@ -179,46 +179,46 @@ Die Werte für $alpha$ und $beta$ sind damit schon sehr nahe an den exakten Wert
 
 Nachdem in diesem Fall nun mehr unabhängige Variablen vorhanden sind, vergrößern wir die Größe der Tensoren $x$ und $beta$ um eins.
 
-\begin{lstlisting}
+\begin{minted}[linenos,breaklines,frame=single]{python}
   x = tf.placeholder(tf.float32, [None, 2])
   beta = tf.Variable(tf.zeros([2, 1]))
-\end{lstlisting}
+\end{minted}
 
 Die restlichen Variablen werden wie bei einfacher linearer Regression definiert. Das Gradientenverfahren ist bei zwei abhängigen Variablen ineffizienter und komplexer, daher muss die Schrittweite verringert werden. Eine Folge davon ist, dass man mehr Schritte für dieselbe Präzision des Ergebnisses durchführen muss. Bei einer Schrittweite von $0.00071$ und $50000$ Schritten erhält man folgendes Ergebnis:
 
-\begin{lstlisting}
+\begin{minted}[linenos,breaklines,frame=single]{python}
   alpha:           -16.035418
   beta_purchases:  2500.799316
   beta_age:        0.521137
   cost:            13817990.000000
-\end{lstlisting}
+\end{minted}
 
 \subsection{Logistische Regression}
 
 Wir definieren nun unsere Tensoren wieder exakt wie bei der einfachen linearen Regression, da wie hier wieder mit je einer unabhängigen und einer abhängigen Variablen arbeiten. Die bisher verwendete Berechnung der $y$-Werte fügen wir nun zusätzlich in die logistische Funktion ein:
 
-\begin{lstlisting}
+\begin{minted}[linenos,breaklines,frame=single]{python}
   y_calc = 1 / (1 + tf.exp(- tf.matmul(x, beta) - alpha))
-\end{lstlisting}
+\end{minted}
 
 Die Kostenfunktion ist nun nicht mehr die Summe der Quadrate sondern im Wesentlichen die Likelihoodfunktion. TensorFlow bietet nur eine API für Minimierung, während wir hier eine Funktion maximieren wollen. Deshalb verwenden wir das Inverse der Likelihoodfunktion als Kostenfunktion. Zusätzlich wenden wir wieder einen Logarithmus auf die Funktion an:
 
-\begin{lstlisting}
+\begin{minted}[linenos,breaklines,frame=single]{python}
   cost = - tf.reduce_sum(
     tf.log(
       y * y_calc +
       (1 - y) * (1 - y_calc)
     )
   )
-\end{lstlisting}
+\end{minted}
 
 Wir wählen eine Schrittweite von $0.0001$ und iterieren $1000$ Schritte, um das folgende Ergebnis zu erhalten:
 
-\begin{lstlisting}
+\begin{minted}[linenos,breaklines,frame=single]{python}
   alpha:  -1.914557
   beta:   0.000077
   cost:   50272.593750
-\end{lstlisting}
+\end{minted}
 
 \section{SQL}
 

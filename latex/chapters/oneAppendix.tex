@@ -1,4 +1,1596 @@
-\chapter{Detailed Descriptions}
-%\section{Detailed Validation Results}
-\label{chapter:DetailedDescriptions}
-Here come the details that are not supposed to be in the regular text.
+\chapter{Python-Skript zum Generieren der Beispieldaten}
+
+\begin{minted}[linenos,breaklines,frame=single]{python}
+  import sys
+  import random
+  import math
+
+  def outputCsv(data):
+    output = ["%s,%s,%s,%s" % (
+      "age",
+      "purchases",
+      "money",
+      "prime"
+    )]
+
+    for datapoint in data:
+      output.append("%s,%s,%s,%a" % (
+        datapoint["age"],
+        datapoint["purchases"],
+        datapoint["money"],
+        datapoint["prime"]
+      ))
+
+    f = open("sample.csv", "w")
+    f.write("\n".join(output))
+
+    return
+
+
+  def outputSql(data):
+    output = [
+      "DROP TABLE IF EXISTS sample;",
+      "",
+      "CREATE TABLE sample (",
+      "  age INTEGER,",
+      "  purchases INTEGER,",
+      "  money INTEGER,",
+      "  prime INTEGER",
+      ");",
+      "",
+      "INSERT INTO sample (%s,%s,%s,%s) VALUES" % (
+        "age",
+        "purchases",
+        "money",
+        "prime"
+      )
+    ]
+
+    for datapoint in data:
+      output.append("(%s,%s,%s,%s)," % (
+        datapoint["age"],
+        datapoint["purchases"],
+        datapoint["money"],
+        datapoint["prime"]
+      ))
+
+    output[-1] = output[-1][:-1] + ";"
+    f = open("sample.sql", "w")
+    f.write("\n".join(output))
+
+    return
+
+
+  def main(argv):
+    if len(argv) < 2:
+      print("Please provide number of datapoints that shall be generated.")
+      return
+
+    data = []
+
+    for i in range(0, int(argv[1])):
+      age = int(max(random.normalvariate(25, 10) + 10, 18))
+      purchases = int(max(random.normalvariate(10, 10), 1))
+      money = int(max(purchases * 25 + random.normalvariate(0, (math.log(purchases) + 1) * 12), 0.01) * 100)
+      if random.uniform(0, 1) > math.exp(0.2 * purchases - 2) / (1 + math.exp(0.2 * purchases - 2)):
+        prime = 0
+      else:
+        prime = 1
+
+      data.append({
+        "age": age,
+        "purchases": purchases,
+        "money": money,
+        "prime": prime
+      })
+
+    outputCsv(data)
+    outputSql(data)
+    return
+
+  if __name__ == "__main__":
+    main(sys.argv)
+\end{minted}
+
+\chapter{R-Skripte}
+
+\section{Einfache lineare Regression}
+
+\begin{minted}[linenos,breaklines,frame=single]{r}
+  args = commandArgs(trailingOnly = TRUE)
+
+  n <- 100000
+  plot <- TRUE
+  if (length(args) == 1) {
+    if (substr(args[1], 1, 1) == "-") {
+      plot <- FALSE
+    } else {
+      n = strtoi(args[1])
+    }
+  }
+  if (length(args) == 2) {
+    if (substr(args[1], 1, 1) == "-") {
+      n = strtoi(args[2])
+    } else {
+      n = strtoi(args[1])
+    }
+    plot <- FALSE
+  }
+
+  start_time <- Sys.time()
+
+  data <- head(read.csv2("./data/sample.csv", sep = ",", header = TRUE), n)
+
+  modell <- as.formula("money ~ purchases")
+  slr <- lm(modell, data = data)
+
+  end_time <- Sys.time()
+
+  print(slr)
+  print(end_time - start_time)
+
+  if (plot) {
+    xmin <- min(data$purchases)
+    xmax <- max(data$purchases)
+
+    ymin <- min(data$money)
+    ymax <- max(data$money)
+
+    b0 <- coef(slr["coefficients"])[1]
+    b1 <- coef(slr["coefficients"])[2]
+
+    xplot <- c(xmin - 1, xmax + 1)
+    yplot <- c(b0 + (xmin - 1) * b1, b0 + (xmax + 1) * b1)
+
+    plot(
+      c(xmin - 1, xmax + 1),
+      c(ymin - 1, ymax + 1),
+      type = "n",
+      xlab = "purchases",
+      ylab = "money",
+      main = "Einfache lineare Regression",
+      sub = paste("money = ", b0, "+", b1, "* purchases"),
+      col.sub = "darkgray"
+    )
+    lines(
+      data$purchases,
+      data$money,
+      type="p"
+    )
+    lines(
+      xplot,
+      yplot,
+      col = "red",
+      lwd = 2
+    )
+  }
+\end{minted}
+
+\section{Multiple lineare Regression}
+
+\begin{minted}[linenos,breaklines,frame=single]{r}
+  args = commandArgs(trailingOnly = TRUE)
+
+  n = 100000
+  if (length(args) > 0) {
+    n = strtoi(args[1])
+  }
+
+  start_time <- Sys.time()
+
+  data <- head(read.csv2("./data/sample.csv", sep = ",", header = TRUE), n)
+
+  modell <- as.formula("money ~ purchases + age")
+  mlr <- lm(modell, data = data)
+
+  end_time <- Sys.time()
+
+  print(mlr)
+  print(end_time - start_time)
+\end{minted}
+
+\section{Logistische Regression}
+
+\begin{minted}[linenos,breaklines,frame=single]{r}
+  args = commandArgs(trailingOnly = TRUE)
+
+  n <- 100000
+  plot <- TRUE
+  if (length(args) == 1) {
+    if (substr(args[1], 1, 1) == "-") {
+      plot <- FALSE
+    } else {
+      n = strtoi(args[1])
+    }
+  }
+  if (length(args) == 2) {
+    if (substr(args[1], 1, 1) == "-") {
+      n = strtoi(args[2])
+    } else {
+      n = strtoi(args[1])
+    }
+    plot <- FALSE
+  }
+
+  start_time <- Sys.time()
+
+  data <- head(read.csv2("./data/sample.csv", sep = ",", header = TRUE), n)
+
+  modell <- as.formula("prime ~ money")
+  logit <- glm(modell, family = binomial, data = data)
+
+  end_time <- Sys.time()
+
+  print(logit)
+  print(end_time - start_time)
+
+  if (plot) {
+    xmin <- min(data$money)
+    xmax <- max(data$money)
+
+    logitFunction <- function(x){
+      b0 <- coef(logit["coefficients"])[1]
+      b1 <- coef(logit["coefficients"])[2]
+      c <- b0 + x * b1
+      return(exp(c) / (1 + exp(c)))
+    }
+
+    xplot <- seq(xmin - 1, xmax + 1, 1000)
+    yplot <- logitFunction(xplot)
+
+    plot(
+      c(xmin - 1, xmax + 1),
+      c(-0.2, 1.2),
+      type = "n",
+      xlab = "money",
+      ylab = "prime",
+      main = "Logistische Regression"
+    )
+    lines(
+      data$money,
+      data$prime,
+      type="p"
+    )
+    lines(
+      xplot,
+      yplot,
+      col = "red",
+      lwd = 2
+    )
+  }
+\end{minted}
+
+\chapter{TensorFlow-Skripte}
+
+\section{Einfache lineare Regression}
+
+\begin{minted}[linenos,breaklines,frame=single]{python}
+  import numpy as np
+  import tensorflow as tf
+  import os.path as p
+  import csv
+  import sys
+  import matplotlib.pyplot as plt
+  from time import time
+
+  def get_data(n_samples):
+    filename = p.abspath(p.join(p.dirname(p.realpath(__file__)), "..", "data", "sample.csv"))
+    csvfile = open(filename, newline="")
+    x = []
+    x_plot = []
+    y = []
+
+    csvreader = csv.reader(csvfile, delimiter=",", quotechar="|")
+    for row in csvreader:
+      if not row[0] == "age":
+        x.append([int(row[1])])
+        x_plot.append(int(row[1]))
+        y.append(int(row[2]))
+
+    return (np.array(x[:n_samples]), x_plot[:n_samples], np.transpose([y[:n_samples]]))
+
+  def main(argv):
+    datapoint_size = 100000
+    plot = True
+    if len(argv) == 2:
+      if argv[1] == "-":
+        plot = False
+      else:
+        datapoint_size = int(argv[1])
+    elif len(argv) == 3:
+      plot = False
+      if argv[1] == "-":
+        datapoint_size = int(argv[2])
+      else:
+        datapoint_size = int(argv[1])
+
+    start_time = time()
+
+    steps = 2000
+    if datapoint_size <= 10:
+      learn_rate = 0.0076
+    elif datapoint_size <= 100:
+      learn_rate = 0.0064
+    elif datapoint_size <= 1000:
+      learn_rate = 0.0056
+    elif datapoint_size <= 10000:
+      learn_rate = 0.0054
+    elif datapoint_size <= 100000:
+      learn_rate = 0.0054
+
+    x = tf.placeholder(tf.float32, [None, 1])
+    y = tf.placeholder(tf.float32, [None, 1])
+    alpha = tf.Variable(tf.zeros([1]))
+    beta = tf.Variable(tf.zeros([1, 1]))
+    y_calc = tf.matmul(x, beta) + alpha
+
+    cost = tf.reduce_mean(tf.square(y - y_calc))
+    train_step = tf.train.GradientDescentOptimizer(learn_rate).minimize(cost)
+
+    (all_xs, plot_xs, all_ys) = get_data(datapoint_size)
+
+    sess = tf.Session()
+    init = tf.global_variables_initializer()
+    sess.run(init)
+
+    for i in range(steps):
+      feed = { x: all_xs, y: all_ys }
+      sess.run(train_step, feed_dict=feed)
+
+    (curr_alpha, curr_beta, curr_cost) = sess.run([alpha, beta, cost], feed_dict=feed)
+
+    end_time = time()
+
+    print("alpha:  %f" % curr_alpha)
+    print("beta:   %f" % curr_beta)
+    print("cost:   %f" % curr_cost)
+    print("")
+    print("time elapsed:  %f sec" % (end_time - start_time))
+
+    if plot:
+      plt.plot(plot_xs, all_ys, "ro", label="Original data")
+      plt.plot(plot_xs, curr_beta * all_xs + curr_alpha , label="Fitted line")
+      plt.legend()
+      plt.show()
+
+  if __name__ == "__main__":
+    main(sys.argv)
+\end{minted}
+
+\section{Multiple lineare Regression}
+
+\begin{minted}[linenos,breaklines,frame=single]{python}
+  import numpy as np
+  import tensorflow as tf
+  import os.path as p
+  import csv
+  import sys
+  from time import time
+
+  def get_data(n_samples):
+    filename = p.abspath(p.join(p.dirname(p.realpath(__file__)), "..", "data", "sample.csv"))
+    csvfile = open(filename, newline="")
+    x = []
+    y = []
+
+    csvreader = csv.reader(csvfile, delimiter=",", quotechar="|")
+    for row in csvreader:
+      if not row[0] == "age":
+        x.append([int(row[1]), int(row[0])])
+        y.append(int(row[2]))
+
+    return (np.array(x[:n_samples]), np.transpose([y[:n_samples]]))
+
+  def main(argv):
+    datapoint_size = 100000
+    if len(argv) == 2:
+      datapoint_size = int(argv[1])
+
+    start_time = time()
+
+    steps = 50000
+    if datapoint_size <= 10:
+      learn_rate = 0.00093
+    elif datapoint_size <= 100:
+      learn_rate = 0.00078
+    elif datapoint_size <= 1000:
+      learn_rate = 0.0007
+    elif datapoint_size <= 10000:
+      learn_rate = 0.00071
+    elif datapoint_size <= 100000:
+      learn_rate = 0.00071
+
+    x = tf.placeholder(tf.float32, [None, 2])
+    y = tf.placeholder(tf.float32, [None, 1])
+    alpha = tf.Variable(tf.zeros([1]))
+    beta = tf.Variable(tf.zeros([2, 1]))
+    y_calc = tf.matmul(x, beta) + alpha
+
+    cost = tf.reduce_mean(tf.square(y - y_calc))
+    train_step = tf.train.GradientDescentOptimizer(learn_rate).minimize(cost)
+
+    (all_xs, all_ys) = get_data(datapoint_size)
+
+    sess = tf.Session()
+    init = tf.global_variables_initializer()
+    sess.run(init)
+
+    for i in range(steps):
+      feed = { x: all_xs, y: all_ys }
+      sess.run(train_step, feed_dict=feed)
+
+    (curr_alpha, curr_beta, curr_cost) = sess.run([alpha, beta, cost], feed_dict=feed)
+
+    end_time = time()
+
+    print("alpha:           %f" % curr_alpha)
+    print("beta_purchases:  %f" % curr_beta[0])
+    print("beta_age:        %f" % curr_beta[1])
+    print("cost:            %f" % curr_cost)
+    print("")
+    print("time elapsed: %f sec" % (end_time - start_time))
+
+  if __name__ == "__main__":
+    main(sys.argv)
+\end{minted}
+
+\section{Logistische Regression}
+
+\begin{minted}[linenos,breaklines,frame=single]{python}
+  import numpy as np
+  import tensorflow as tf
+  import os.path as p
+  import csv
+  import sys
+  import matplotlib.pyplot as plt
+  from time import time
+
+  def get_data(n_samples):
+    filename = p.abspath(p.join(p.dirname(p.realpath(__file__)), "..", "data", "sample.csv"))
+    csvfile = open(filename, newline="")
+    x = []
+    x_plot = []
+    y = []
+
+    csvreader = csv.reader(csvfile, delimiter=",", quotechar="|")
+    for row in csvreader:
+      if not row[0] == "age":
+        x.append([int(row[2])])
+        x_plot.append(int(row[2]))
+        y.append(int(row[3]))
+
+    return (np.array(x[:n_samples]), x_plot[:n_samples], np.transpose([y[:n_samples]]))
+
+  def main(argv):
+    datapoint_size = 100000
+    plot = True
+    if len(argv) == 2:
+      if argv[1] == "-":
+        plot = False
+      else:
+        datapoint_size = int(argv[1])
+    elif len(argv) == 3:
+      plot = False
+      if argv[1] == "-":
+        datapoint_size = int(argv[2])
+      else:
+        datapoint_size = int(argv[1])
+
+    start_time = time()
+
+    steps = 1000
+    if datapoint_size == 10:
+      learn_rate = 1
+    elif datapoint_size == 100:
+      learn_rate = 0.1
+    elif datapoint_size == 1000:
+      learn_rate = 0.01
+    elif datapoint_size == 10000:
+      learn_rate = 0.001
+    elif datapoint_size == 100000:
+      learn_rate = 0.0001
+
+    x = tf.placeholder(tf.float32, [None, 1])
+    y = tf.placeholder(tf.float32, [None, 1])
+    alpha = tf.Variable(tf.zeros([1]))
+    beta = tf.Variable(tf.zeros([1, 1]))
+    y_calc = 1 / (1 + tf.exp(- tf.matmul(x, beta) - alpha))
+
+    cost = - tf.reduce_sum(
+      tf.log(
+        y * y_calc +
+        (1 - y) * (1 - y_calc)
+      )
+    )
+    train_step = tf.train.GradientDescentOptimizer(learn_rate).minimize(cost)
+
+    (all_xs, plot_xs, all_ys) = get_data(datapoint_size)
+
+    min_x = min(all_xs)
+    max_x = max(all_xs)
+    all_xs = (all_xs - min_x) / (max_x - min_x)
+
+    sess = tf.Session()
+    init = tf.global_variables_initializer()
+    sess.run(init)
+
+    for i in range(steps):
+      feed = { x: all_xs, y: all_ys }
+      sess.run(train_step, feed_dict=feed)
+
+    (curr_alpha, curr_beta, curr_cost) = sess.run([alpha, beta, cost], feed_dict=feed)
+
+    curr_beta = curr_beta / (max_x - min_x)
+    curr_alpha = curr_alpha - curr_beta * min_x
+
+    end_time = time()
+
+    print("alpha:  %f" % curr_alpha)
+    print("beta:   %f" % curr_beta)
+    print("cost:   %f" % curr_cost)
+    print("")
+    print("time elapsed: %f sec" % (end_time - start_time))
+
+    if plot:
+      all_xs = all_xs * (max_x - min_x) + min_x
+      plot_ys = 1 / (1 + np.exp(- curr_beta * all_xs - curr_alpha))
+      plot_order = np.argsort(plot_xs)
+      plt.plot(plot_xs, all_ys, "ro", label="Original data")
+      plt.plot(np.array(plot_xs)[plot_order], np.array(plot_ys)[plot_order], label="Fitted line")
+      plt.legend()
+      plt.show()
+
+  if __name__ == "__main__":
+    main(sys.argv)
+\end{minted}
+
+\chapter{MySQL-Skripte}
+
+\section{Einfache lineare Regression}
+
+\begin{minted}[linenos,breaklines,frame=single]{sql}
+  -- drop possibly existing procedures
+  DROP PROCEDURE IF EXISTS simple_linear_regression;
+
+  DELIMITER ;;
+
+  -- main procedure for regression analysis
+  CREATE PROCEDURE `simple_linear_regression`(IN number_datapoints INT(11))
+  BEGIN
+
+  -- declare variables
+  DECLARE purchases_mean DECIMAL(40, 20);
+  DECLARE money_mean DECIMAL(40, 20);
+  DECLARE alpha DECIMAL(40, 20);
+  DECLARE beta DECIMAL(40, 20);
+
+  -- create temporary table with datapoints
+  DROP TEMPORARY TABLE IF EXISTS datapoints;
+  CREATE TEMPORARY TABLE datapoints (
+    purchases INT(11),
+    money INT(11)
+  );
+  INSERT INTO datapoints
+  SELECT purchases, money
+  FROM sample
+  LIMIT number_datapoints;
+
+  -- calculate means
+  SET purchases_mean = (
+    SELECT AVG(purchases)
+    FROM datapoints
+  );
+  SET money_mean = (
+    SELECT AVG(money)
+    FROM datapoints
+  );
+
+  -- calculate beta
+  SET beta = (
+    SELECT SUM((purchases - purchases_mean) * (money - money_mean))
+    FROM datapoints
+  );
+  SET beta = beta / (
+    SELECT SUM(POWER(purchases - purchases_mean, 2))
+    FROM datapoints
+  );
+
+  -- calculate alpha
+  SET alpha = money_mean - (beta * purchases_mean);
+
+  -- print parameters alpha and beta
+  SELECT 'alpha' AS `variable`, alpha AS `value`
+  UNION
+  SELECT 'beta' AS `variable`, beta AS `value`;
+
+  DROP TEMPORARY TABLE IF EXISTS datapoints;
+
+  END;;
+
+  DELIMITER ;
+\end{minted}
+
+\section{Multiple lineare Regression}
+
+\begin{minted}[linenos,breaklines,frame=single]{sql}
+  -- drop possibly existing procedures
+  DROP PROCEDURE IF EXISTS multiple_linear_regression;
+
+  DELIMITER ;;
+
+  -- main procedure for regression analysis
+  CREATE PROCEDURE multiple_linear_regression(IN number_datapoints INT(11))
+  BEGIN
+
+  -- declare variables
+  DECLARE m INT(11);
+  DECLARE n INT(11);
+  DECLARE counter_1 INT(11);
+  DECLARE counter_2 INT(11);
+  DECLARE counter_3 INT(11);
+  DECLARE pivot DECIMAL(40, 20);
+
+  -- set matrix dimensions
+  SET m = number_datapoints;
+  SET n = 3;
+
+  -- drop temporary tables if existing
+  DROP TEMPORARY TABLE IF EXISTS matrix_X;
+  DROP TEMPORARY TABLE IF EXISTS matrix_transposed;
+  DROP TEMPORARY TABLE IF EXISTS matrix_product_1;
+  DROP TEMPORARY TABLE IF EXISTS matrix_inverse;
+  DROP TEMPORARY TABLE IF EXISTS matrix_product_2;
+  DROP TEMPORARY TABLE IF EXISTS matrix_y;
+  DROP TEMPORARY TABLE IF EXISTS matrix_result;
+
+  -- create temporary tables
+  CREATE TEMPORARY TABLE matrix_X (
+    `row` INT(11),
+    `column` INT(11),
+    `value` DECIMAL(40, 20)
+  );
+  CREATE TEMPORARY TABLE matrix_transposed (
+    `row` INT(11),
+    `column` INT(11),
+    `value` DECIMAL(40, 20)
+  );
+  CREATE TEMPORARY TABLE matrix_product_1 (
+    `row` INT(11),
+    `column` INT(11),
+    `value` DECIMAL(40, 20)
+  );
+  CREATE TEMPORARY TABLE matrix_inverse (
+    `row` INT(11),
+    `column` INT(11),
+    `value` DECIMAL(40, 20)
+  );
+  CREATE TEMPORARY TABLE matrix_product_2 (
+    `row` INT(11),
+    `column` INT(11),
+    `value` DECIMAL(40, 20)
+  );
+  CREATE TEMPORARY TABLE matrix_y (
+    `row` INT(11),
+    `column` INT(11),
+    `value` DECIMAL(40, 20)
+  );
+  CREATE TEMPORARY TABLE matrix_result (
+    `row` INT(11),
+    `column` INT(11),
+    `value` DECIMAL(40, 20)
+  );
+
+  -- insert constant values in matrix_X
+  SET @id = 0;
+
+  INSERT INTO matrix_X
+  SELECT
+    @id := (@id + 1) AS `row`,
+    1 AS `column`,
+    1 AS `value`
+  FROM sample
+  LIMIT number_datapoints;
+
+  -- insert values for purchases in matrix_X
+  SET @id = 0;
+
+  INSERT INTO matrix_X
+  SELECT
+    @id := (@id + 1) AS `row`,
+    2 AS `column`,
+    purchases AS `value`
+  FROM sample
+  LIMIT number_datapoints;
+
+  -- insert values for age in matrix_X
+  SET @id = 0;
+
+  INSERT INTO matrix_X
+  SELECT
+    @id := (@id + 1) AS `row`,
+    3 AS `column`,
+    age AS `value`
+  FROM sample
+  LIMIT number_datapoints;
+
+  -- insert values for money in matrix_y
+  SET @id = 0;
+
+  INSERT INTO matrix_y
+  SELECT
+    @id := (@id + 1) AS `row`,
+    1 AS `column`,
+    money AS `value`
+  FROM sample
+  LIMIT number_datapoints;
+
+  -- calculate matrix_transposed
+  INSERT INTO matrix_transposed
+  SELECT
+    `column` AS `row`,
+    `row` AS `column`,
+    `value` AS `value`
+  FROM matrix_X;
+
+  -- calculate Matrix_Product1
+  SET counter_1 = 1;
+
+  WHILE counter_1 <= n DO
+
+    SET counter_2 = 1;
+
+    WHILE counter_2 <= n DO
+
+      INSERT INTO matrix_product_1 VALUES (
+        counter_1,
+        counter_2,
+        (
+          SELECT SUM(T1.`value` * T2.`value`)
+          FROM (
+            SELECT * FROM matrix_X WHERE `column` = counter_2
+          ) T1
+          JOIN (
+            SELECT * FROM matrix_transposed WHERE `row` = counter_1
+          ) T2
+          ON T2.`column` = T1.`row`
+        )
+      );
+
+      SET counter_2 = counter_2 + 1;
+
+    END WHILE;
+
+    SET counter_1 = counter_1 + 1;
+
+  END WHILE;
+
+  -- calculate matrix_inverse
+  INSERT INTO matrix_inverse
+  SELECT *
+  FROM matrix_product_1;
+
+  SET counter_1 = 0;
+
+  WHILE counter_1 < n DO
+
+    SET counter_1 = counter_1 + 1;
+
+    DROP TEMPORARY TABLE IF EXISTS pivot_row;
+    CREATE TEMPORARY TABLE pivot_row (
+        `column` INT(11),
+        `value` DECIMAL(40, 20)
+    );
+
+    INSERT INTO pivot_row
+    SELECT `column`, `value`
+    FROM matrix_inverse
+    WHERE `row` = counter_1;
+
+    SET pivot = (
+        SELECT `value`
+        FROM matrix_inverse
+        WHERE `row` = counter_1 AND `column` = counter_1
+    );
+
+    UPDATE matrix_inverse
+    SET `value` = `value` / pivot
+    WHERE `row` = counter_1 AND `column` <> counter_1;
+
+    UPDATE matrix_inverse
+    SET `value` = - `value` / pivot
+    WHERE `row` <> counter_1 AND `column` = counter_1;
+
+    SET counter_2 = 1;
+
+    WHILE counter_2 <= n DO
+
+      IF counter_2 <> counter_1 THEN
+
+        SET counter_3 = 1;
+
+        WHILE counter_3 <= n DO
+
+          IF counter_3 <> counter_1 THEN
+
+            SET pivot = (
+              SELECT `value`
+              FROM pivot_row
+              WHERE `column` = counter_3
+            ) * (
+              SELECT `value`
+              FROM matrix_inverse
+              WHERE `row` = counter_2 AND `column` = counter_1
+            );
+
+            UPDATE matrix_inverse
+            SET `value` = `value` + pivot
+            WHERE `row` = counter_2 AND `column` = counter_3;
+
+          END IF;
+
+          SET counter_3 = counter_3 + 1;
+
+        END WHILE;
+
+      END IF;
+
+      SET counter_2 = counter_2 + 1;
+
+    END WHILE;
+
+    UPDATE matrix_inverse
+    SET `value` = 1 / `value`
+    WHERE `row` = counter_1 AND `column` = counter_1;
+
+  END WHILE;
+
+  -- calculate matrix_product_2
+  SET counter_1 = 1;
+
+  WHILE counter_1 <= n DO
+
+    INSERT INTO matrix_product_2 VALUES (
+      counter_1,
+      1,
+      (
+        SELECT SUM(T1.`value` * T2.`value`)
+        FROM (
+          SELECT * FROM matrix_y
+        ) T1
+        JOIN (
+          SELECT * FROM matrix_transposed WHERE `row` = counter_1
+        ) T2
+        ON T2.`column` = T1.`row`
+      )
+    );
+
+    SET counter_1 = counter_1 + 1;
+
+  END WHILE;
+
+  -- calculate matrix_result
+
+  SET counter_1 = 1;
+
+  WHILE counter_1 <= n DO
+
+    INSERT INTO matrix_result VALUES (
+      counter_1,
+      1,
+      (
+        SELECT SUM(T1.`value` * T2.`value`)
+        FROM (
+          SELECT * FROM matrix_product_2
+        ) T1
+        JOIN (
+          SELECT * FROM matrix_inverse WHERE `row` = counter_1
+        ) T2
+        ON T2.`column` = T1.`row`
+      )
+    );
+
+    SET counter_1 = counter_1 + 1;
+
+  END WHILE;
+
+  SELECT
+    CASE row
+      WHEN 1 THEN 'alpha'
+      WHEN 2 THEN 'beta_purchases'
+      WHEN 3 THEN 'beta_age'
+    END AS `variable`,
+    value
+  FROM matrix_result;
+
+  END;;
+
+  DELIMITER ;
+\end{minted}
+
+\section{Logistische Regression}
+
+\begin{minted}[linenos,breaklines,frame=single]{sql}
+  DROP PROCEDURE IF EXISTS calculate_gradient;
+  DROP PROCEDURE IF EXISTS calculate_new_parameters;
+  DROP PROCEDURE IF EXISTS calculate_logit;
+  DROP PROCEDURE IF EXISTS are_new_parameters_better;
+  DROP PROCEDURE IF EXISTS logistic_regression;
+
+  DELIMITER ;;
+  -- this procedure calculates the logits for current parameter values
+  CREATE PROCEDURE `calculate_logit`()
+  BEGIN
+
+  DECLARE alpha_old DECIMAL(65, 30);
+  DECLARE alpha_new DECIMAL(65, 30);
+
+  SET alpha_old = (
+    SELECT old
+    FROM parameters
+    WHERE variable = 'alpha'
+  );
+
+  SET alpha_new = (
+    SELECT new
+    FROM parameters
+    WHERE variable = 'alpha'
+  );
+
+  DELETE FROM logits;
+
+  INSERT INTO logits
+    SELECT
+      d.id,
+      1 / (1 + exp(- SUM(d.value * p.old) - alpha_old)) AS `old`,
+      1 / (1 + exp(- SUM(d.value * p.new) - alpha_new)) AS `new`
+    FROM datapoints d
+    JOIN parameters p ON p.variable = d.variable
+    GROUP BY d.id;
+
+  END;;
+
+  -- this procedure calculates the gradient for the current parameter values
+  CREATE PROCEDURE `calculate_gradient`()
+  BEGIN
+
+  DELETE FROM gradient;
+
+  -- calculate gradient for alpha
+  INSERT INTO gradient
+  SELECT 'alpha' AS `variable`, SUM(bv.value - l.old) AS `value`
+  FROM logits l
+  JOIN binary_values bv ON bv.id = l.id;
+
+  -- calculate other gradients
+  INSERT INTO gradient
+  SELECT d.variable, SUM(d.value * (bv.value - l.old)) AS `value`
+  FROM logits l
+  JOIN binary_values bv ON bv.id = l.id
+  JOIN datapoints d ON d.id = l.id
+  GROUP BY d.variable;
+
+  END;;
+
+  -- this procedure calculates the new parameters
+  CREATE PROCEDURE `calculate_new_parameters`(IN step DECIMAL(65, 30))
+  BEGIN
+
+  UPDATE parameters
+  JOIN gradient ON gradient.variable = parameters.variable
+  SET parameters.new = parameters.old + step * gradient.value;
+
+  END;;
+
+  -- this procedure calculates the log likelihood function for current parameter values
+  -- and states if the new parameters are really better
+  CREATE PROCEDURE `are_new_parameters_better`(OUT better INT(1))
+  BEGIN
+
+  SET better = (
+    SELECT
+      SUM(LOG(bv.value * l.new + (1 - bv.value) * (1 - l.new))) >
+      SUM(LOG(bv.value * l.old + (1 - bv.value) * (1 - l.old)))
+    FROM logits l
+    JOIN binary_values bv ON bv.id = l.id
+  );
+
+  END;;
+
+  -- main procedure for execution
+  CREATE PROCEDURE `logistic_regression`(IN number_datapoints INT(11), IN rounds INT(11), step DECIMAL(65, 30))
+  BEGIN
+
+  DECLARE min INT(11);
+  DECLARE max INT(11);
+  DECLARE transform DECIMAL(65, 30);
+  DECLARE better INT(1);
+  DECLARE counter INT(11);
+
+  -- create a temporary table for the data
+  DROP TEMPORARY TABLE IF EXISTS datapoints;
+  CREATE TEMPORARY TABLE datapoints (
+    id INT(11),
+    variable VARCHAR(32),
+    value DECIMAL(65, 30),
+    PRIMARY KEY (id, variable)
+  );
+
+  -- calculate min and max values for money
+  SET min = (SELECT MIN(money) FROM sample);
+  SET max = (SELECT MAX(money) FROM sample);
+
+  -- insert all linear transformed values for column 'money' into data
+  SET @counter = 0;
+  INSERT INTO datapoints
+  SELECT
+    @counter := @counter + 1 AS `id`,
+    'beta_money' AS `variable`,
+    (money - min) / (max - min) AS `value`
+  FROM sample
+  LIMIT number_datapoints;
+
+  -- create temporary table for binary variable
+  DROP TEMPORARY TABLE IF EXISTS binary_values;
+  CREATE TEMPORARY TABLE binary_values (
+    id INT(11),
+    value INT(1),
+    PRIMARY KEY (id)
+  );
+
+  -- insert all values for column 'prime' into binary_values
+  SET @counter = 0;
+  INSERT INTO binary_values
+  SELECT
+    @counter := @counter + 1 AS `id`,
+    prime AS `value`
+  FROM sample
+  LIMIT number_datapoints;
+
+  -- create temporary table for parameters
+  DROP TEMPORARY TABLE IF EXISTS parameters;
+  CREATE TEMPORARY TABLE parameters (
+    variable VARCHAR(32),
+    old DECIMAL(65, 30),
+    new DECIMAL(65, 30),
+    PRIMARY KEY (variable)
+  );
+
+  -- set initial parameters
+  INSERT INTO parameters VALUES
+    ('alpha', 0, 0),
+    ('beta_money', 0, 0);
+
+  -- create temporary table for logits
+  DROP TEMPORARY TABLE IF EXISTS logits;
+  CREATE TEMPORARY TABLE logits (
+    id INT(11),
+    old DECIMAL(65, 30),
+    new DECIMAL(65, 30),
+    PRIMARY KEY (id)
+  );
+
+  -- insert initial values into logit table
+  CALL calculate_logit();
+
+  -- create temporary table for gradient
+  DROP TEMPORARY TABLE IF EXISTS gradient;
+  CREATE TEMPORARY TABLE gradient (
+    variable VARCHAR(32),
+    value DECIMAL(65, 30),
+    PRIMARY KEY (variable)
+  );
+
+  -- insert variables in gradient table
+  INSERT INTO gradient VALUES
+    ('alpha', 0),
+    ('beta_money', 0);
+
+  -- loop
+  SET counter = 0;
+  WHILE counter < rounds AND step > 0.000000000000000000000000000001 DO
+
+    CALL calculate_gradient();
+    CALL calculate_new_parameters(step);
+    CALL calculate_logit();
+
+    WHILE (
+      SELECT
+        SUM(LOG(bv.value * l.new + (1 - bv.value) * (1 - l.new))) >
+        SUM(LOG(bv.value * l.old + (1 - bv.value) * (1 - l.old)))
+      FROM logits l
+      JOIN binary_values bv ON bv.id = l.id
+    ) = 0 AND step > 0.000000000000000000000000000001 DO
+
+      SET step = step / 2;
+      CALL calculate_new_parameters(step);
+      CALL calculate_logit();
+
+    END WHILE;
+
+    UPDATE parameters
+    SET parameters.old = parameters.new;
+
+    UPDATE logits
+    SET logits.old = logits.new;
+
+    SET counter = counter + 1;
+
+  END WHILE;
+
+  UPDATE parameters
+  SET old = old / (max - min)
+  WHERE variable = 'beta_money';
+
+  SET transform = (SELECT old FROM parameters WHERE variable = 'beta_money');
+
+  UPDATE parameters
+  SET old = old - transform * min
+  WHERE variable = 'alpha';
+
+  SELECT variable, old AS `value`
+  FROM parameters;
+
+  END;;
+  DELIMITER ;
+\end{minted}
+
+\chapter{PostgreSQL-Skripte}
+
+\section{Einfache lineare Regression}
+
+\begin{minted}[linenos,breaklines,frame=single]{sql}
+  -- main procedure for regression analysis
+  CREATE OR REPLACE FUNCTION simple_linear_regression(number_datapoints INTEGER)
+  RETURNS TABLE (
+    variable VARCHAR(50),
+    value NUMERIC(65, 30)
+  ) AS $$
+  BEGIN
+
+  DROP TABLE IF EXISTS datapoints;
+  CREATE TEMPORARY TABLE datapoints (
+    purchases INTEGER,
+    money INTEGER
+  );
+
+  INSERT INTO datapoints
+  SELECT purchases, money
+  FROM sample
+  LIMIT number_datapoints;
+
+  RETURN QUERY
+  WITH
+    means AS (
+      SELECT
+        AVG(purchases) AS mean_purchases,
+        AVG(money) AS mean_money
+      FROM datapoints
+    ),
+    sums AS (
+      SELECT
+        SUM((purchases - (SELECT mean_purchases FROM means)) * (money - (SELECT mean_money FROM means))) AS nominator,
+        SUM(POWER(purchases - (SELECT mean_purchases FROM means), 2)) AS denominator
+      FROM datapoints
+    ),
+    beta AS (
+      SELECT
+        'beta'::VARCHAR(50) AS variable,
+        nominator / denominator AS value
+      FROM sums
+    ),
+    alpha AS (
+      SELECT
+        'alpha'::VARCHAR(50) AS variable,
+        mean_money - (SELECT beta.value FROM beta) * mean_purchases AS value
+      FROM means
+    )
+  SELECT *
+  FROM alpha
+  UNION
+  SELECT *
+  FROM beta;
+
+  END;
+  $$ LANGUAGE plpgsql;
+\end{minted}
+
+\section{Multiple lineare Regression}
+
+\begin{minted}[linenos,breaklines,frame=single]{sql}
+  -- procedure for transposing a matrix
+  CREATE OR REPLACE FUNCTION matrix_transpose(a NUMERIC(40, 20)[][])
+  RETURNS NUMERIC(40, 20)[][] AS $$
+  DECLARE
+    rows_a INTEGER := array_length(a, 1);
+    columns_a INTEGER := array_length(a, 2);
+    i INTEGER;
+    j INTEGER;
+    c NUMERIC(40, 20)[][];
+    new_row NUMERIC(40, 20)[];
+  BEGIN
+
+  i := 1;
+  WHILE i <= columns_a LOOP
+
+    j := 1;
+    WHILE j <= rows_a LOOP
+      new_row[j] := a[j][i];
+      j := j + 1;
+    END LOOP;
+
+    c := array_cat(c, array[new_row]);
+    i := i + 1;
+  END LOOP;
+
+  RETURN c;
+
+  END;
+  $$ LANGUAGE plpgsql;
+
+  -- procedure for matrix multiplication
+  CREATE OR REPLACE FUNCTION matrix_multiplication(a NUMERIC(40, 20)[][], b NUMERIC(40, 20)[][])
+  RETURNS NUMERIC(40, 20)[][] AS $$
+  DECLARE
+    rows_a INTEGER := array_length(a, 1);
+    columns_a INTEGER := array_length(a, 2);
+    columns_b INTEGER := array_length(b, 2);
+    new_row NUMERIC(40, 20)[];
+    c NUMERIC(40, 20)[][];
+    counter_1 INTEGER;
+    counter_2 INTEGER;
+    counter_3 INTEGER;
+  BEGIN
+
+  counter_1 := 1;
+  WHILE counter_1 <= rows_a LOOP
+
+    counter_2 := 1;
+    WHILE counter_2 <= columns_b LOOP
+
+      new_row[counter_2] := 0;
+      counter_3 := 1;
+      WHILE counter_3 <= columns_a LOOP
+        new_row[counter_2] := new_row[counter_2] + a[counter_1][counter_3] * b[counter_3][counter_2];
+        counter_3 := counter_3 + 1;
+      END LOOP;
+
+      counter_2 := counter_2 + 1;
+    END LOOP;
+
+    c := array_cat(c, array[new_row]);
+    counter_1 := counter_1 + 1;
+  END LOOP;
+
+  RETURN c;
+
+  END;
+  $$ LANGUAGE plpgsql;
+
+  -- main procedure for matrix inversion
+  CREATE OR REPLACE FUNCTION matrix_inversion(a NUMERIC(40, 20)[][])
+  RETURNS NUMERIC(40, 20)[][] AS $$
+  DECLARE
+    n INTEGER := array_length(a, 1);
+    p INTEGER := 0;
+    i INTEGER;
+    j INTEGER;
+    c NUMERIC(40, 20)[][] := a;
+    o NUMERIC(40, 20)[][];
+  BEGIN
+
+  WHILE p < n LOOP
+
+    p := p + 1;
+
+    o := c;
+
+    j := 1;
+    WHILE j <= n LOOP
+      IF j <> p THEN
+        c[p][j] := c[p][j] / c[p][p];
+      END IF;
+      j := j + 1;
+    END LOOP;
+
+    i := 1;
+    WHILE i <= n LOOP
+      IF i <> p THEN
+        c[i][p] := - c[i][p] / c[p][p];
+      END IF;
+      i := i + 1;
+    END LOOP;
+
+    i := 1;
+    WHILE i <= n LOOP
+      IF i <> p THEN
+        j := 1;
+        WHILE j <= n LOOP
+          IF j <> p THEN
+            c[i][j] := c[i][j] + o[p][j] * c[i][p];
+          END IF;
+          j := j + 1;
+        END LOOP;
+      END IF;
+      i := i + 1;
+    END LOOP;
+
+    c[p][p] := 1 / c[p][p];
+
+  END LOOP;
+
+  RETURN c;
+
+  END;
+  $$ LANGUAGE plpgsql;
+
+  -- main procedure for regression analysis
+  CREATE OR REPLACE FUNCTION multiple_linear_regression(number_datapoints INTEGER)
+  RETURNS TABLE (
+    variable VARCHAR(50),
+    value NUMERIC(65, 30)
+  ) AS $$
+  DECLARE
+    x INTEGER[][]:= (
+      SELECT ARRAY(
+        SELECT ARRAY[1, purchases, age]
+        FROM sample
+        LIMIT number_datapoints
+      )
+    );
+    y INTEGER[]:= (
+      SELECT ARRAY(
+        SELECT ARRAY[money]
+        FROM sample
+        LIMIT number_datapoints
+      )
+    );
+    b NUMERIC[][];
+  BEGIN
+
+  b := matrix_multiplication(
+    matrix_inversion(
+      matrix_multiplication(
+        matrix_transpose(x),
+        x
+      )
+    ),
+    matrix_multiplication(
+      matrix_transpose(x),
+      y
+    )
+  );
+
+  RETURN QUERY
+  SELECT 'alpha'::VARCHAR(50) AS variable, b[1][1] AS value
+  UNION
+  SELECT 'beta_purchases'::VARCHAR(50) AS variable, b[2][1] AS value
+  UNION
+  SELECT 'beta_age'::VARCHAR(50) AS variable, b[3][1] AS value;
+
+  END;
+  $$ LANGUAGE plpgsql;
+\end{minted}
+
+\section{Logistische Regression}
+
+\begin{minted}[linenos,breaklines,frame=single]{sql}
+  -- this procedure calculates the logits for current parameter values
+  CREATE OR REPLACE FUNCTION calculate_logit()
+  RETURNS void AS $$
+  BEGIN
+
+  DELETE FROM logits;
+
+  WITH
+    alpha_old AS (
+      SELECT old
+      FROM parameters
+      WHERE variable = 'alpha'
+    ),
+    alpha_new AS (
+      SELECT new
+      FROM parameters
+      WHERE variable = 'alpha'
+    )
+  INSERT INTO logits
+    SELECT
+      d.id,
+      1 / (1 + EXP(- SUM(d.value * p.old) - (SELECT old FROM alpha_old))) AS old,
+      1 / (1 + EXP(- SUM(d.value * p.new) - (SELECT new FROM alpha_new))) AS new
+    FROM datapoints d
+    JOIN parameters p ON p.variable = d.variable
+    GROUP BY d.id;
+
+  RETURN;
+
+  END;
+  $$ LANGUAGE plpgsql;
+
+  -- this procedure calculates the gradient for the current parameter values
+  CREATE OR REPLACE FUNCTION calculate_gradient()
+  RETURNS void AS $$
+  BEGIN
+
+  DELETE FROM gradient;
+
+  -- calculate gradient for alpha
+  INSERT INTO gradient
+  SELECT 'alpha' AS variable, SUM(bv.value - l.old) AS value
+  FROM logits l
+  JOIN binary_values bv ON bv.id = l.id;
+
+  -- calculate other gradients
+  INSERT INTO gradient
+  SELECT d.variable, SUM(d.value * (bv.value - l.old)) AS value
+  FROM logits l
+  JOIN binary_values bv ON bv.id = l.id
+  JOIN datapoints d ON d.id = l.id
+  GROUP BY d.variable;
+
+  RETURN;
+
+  END;
+  $$ LANGUAGE plpgsql;
+
+  -- this procedure calculates the new parameters
+  CREATE OR REPLACE FUNCTION calculate_new_parameters(step NUMERIC(65, 30))
+  RETURNS void AS $$
+  BEGIN
+
+  UPDATE parameters
+  SET new = old + step * gradient.value
+  FROM gradient
+  WHERE gradient.variable = parameters.variable;
+
+  RETURN;
+
+  END;
+  $$ LANGUAGE plpgsql;
+
+  -- this procedure calculates the log likelihood function for current parameter values
+  -- and states if the new parameters are really better
+  CREATE OR REPLACE FUNCTION are_new_parameters_better()
+  RETURNS BOOLEAN AS $$
+  DECLARE
+    better BOOLEAN;
+  BEGIN
+
+  SELECT
+    SUM(LOG(bv.value * l.new + (1 - bv.value) * (1 - l.new))) >
+    SUM(LOG(bv.value * l.old + (1 - bv.value) * (1 - l.old))) INTO better
+  FROM logits l
+  JOIN binary_values bv ON bv.id = l.id;
+
+  RETURN better;
+
+  END;
+  $$ LANGUAGE plpgsql;
+
+  -- main procedure for execution
+  CREATE OR REPLACE FUNCTION logistic_regression(number_datapoints INTEGER, rounds INTEGER, step NUMERIC(65, 30))
+  RETURNS TABLE (
+    variable VARCHAR(50),
+    value NUMERIC(65, 30)
+  ) AS $$
+  DECLARE
+    better BOOLEAN;
+    counter INTEGER;
+  BEGIN
+
+  -- create a temporary table for the data
+  DROP TABLE IF EXISTS datapoints;
+  CREATE TEMPORARY TABLE datapoints (
+    id INTEGER,
+    variable VARCHAR(50),
+    value NUMERIC(65, 30)
+  );
+
+  -- insert all linear transformed values for column 'money' into data
+  INSERT INTO datapoints
+  SELECT
+    row_number() OVER () AS id,
+    'beta_money' AS variable,
+    (money - (
+      SELECT MIN(money) FROM sample
+    ))::NUMERIC / ((
+      SELECT MAX(money) FROM sample
+    ) - (
+      SELECT MIN(money) FROM sample
+    ))::NUMERIC AS value
+  FROM sample
+  LIMIT number_datapoints;
+
+  -- create temporary table for binary variable
+  DROP TABLE IF EXISTS binary_values;
+  CREATE TEMPORARY TABLE binary_values (
+    id INTEGER,
+    value INTEGER
+  );
+
+  -- insert all values for column 'prime' into binary_values
+  INSERT INTO binary_values
+  SELECT
+    row_number() OVER () AS id,
+    prime AS value
+  FROM sample
+  LIMIT number_datapoints;
+
+  -- create temporary table for parameters
+  DROP TABLE IF EXISTS parameters;
+  CREATE TEMPORARY TABLE parameters (
+    variable VARCHAR(50),
+    old NUMERIC(65, 30),
+    new NUMERIC(65, 30)
+  );
+
+  -- set initial parameters
+  INSERT INTO parameters VALUES
+    ('alpha', 0, 0),
+    ('beta_money', 0, 0);
+
+  -- create temporary table for logits
+  DROP TABLE IF EXISTS logits;
+  CREATE TEMPORARY TABLE logits (
+    id INTEGER,
+    old NUMERIC(65, 30),
+    new NUMERIC(65, 30)
+  );
+
+  -- insert initial values into logit table
+  PERFORM calculate_logit();
+
+  -- create temporary table for gradient
+  DROP TABLE IF EXISTS gradient;
+  CREATE TEMPORARY TABLE gradient (
+    variable VARCHAR(50),
+    value DECIMAL(65, 30)
+  );
+
+  -- insert variables in gradient table
+  INSERT INTO gradient VALUES
+    ('alpha', 0),
+    ('beta_money', 0);
+
+  -- loop
+  counter := 0;
+  WHILE counter < rounds AND step > 0.000000000000000000000000000001 LOOP
+
+    PERFORM calculate_gradient();
+    PERFORM calculate_new_parameters(step);
+    PERFORM calculate_logit();
+    better := are_new_parameters_better();
+
+    WHILE NOT better AND step > 0.000000000000000000000000000001 LOOP
+
+      step := step / 2;
+      PERFORM calculate_new_parameters(step);
+      PERFORM calculate_logit();
+      better := are_new_parameters_better();
+
+    END LOOP;
+
+    UPDATE parameters
+    SET old = new;
+
+    UPDATE logits
+    SET old = new;
+
+    counter := counter + 1;
+
+  END LOOP;
+
+  UPDATE parameters
+  SET old = old / ((SELECT MAX(money) FROM sample) - (SELECT MIN(money) FROM sample))
+  WHERE parameters.variable = 'beta_money';
+
+  UPDATE parameters
+  SET old = old - (SELECT old FROM parameters p2 WHERE p2.variable = 'beta_money') * (SELECT MIN(money) FROM sample)
+  WHERE parameters.variable = 'alpha';
+
+  RETURN QUERY
+  SELECT parameters.variable::VARCHAR(50), old AS value
+  FROM parameters;
+
+  END;
+  $$ LANGUAGE plpgsql;
+\end{minted}

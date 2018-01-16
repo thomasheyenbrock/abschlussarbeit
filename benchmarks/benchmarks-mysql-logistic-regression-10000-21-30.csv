@@ -1,0 +1,11 @@
+language,type,datapoints,time
+mysql,logistic regression,10000,270.26018810272217
+mysql,logistic regression,10000,274.2907190322876
+mysql,logistic regression,10000,271.19357895851135
+mysql,logistic regression,10000,399.8285870552063
+mysql,logistic regression,10000,270.2674877643585
+mysql,logistic regression,10000,511.1411929130554
+mysql,logistic regression,10000,275.13705801963806
+mysql,logistic regression,10000,271.77021980285645
+mysql,logistic regression,10000,270.82087302207947
+mysql,logistic regression,10000,270.25730895996094

@@ -16,8 +16,8 @@ DECLARE beta DECIMAL(40, 20);
 -- create temporary table with datapoints
 DROP TEMPORARY TABLE IF EXISTS datapoints;
 CREATE TEMPORARY TABLE datapoints (
-    purchases INT(11),
-    money INT(11)
+  purchases INT(11),
+  money INT(11)
 );
 INSERT INTO datapoints
 SELECT purchases, money
@@ -26,22 +26,22 @@ LIMIT number_datapoints;
 
 -- calculate means
 SET purchases_mean = (
-    SELECT AVG(purchases)
-    FROM datapoints
+  SELECT AVG(purchases)
+  FROM datapoints
 );
 SET money_mean = (
-    SELECT AVG(money)
-    FROM datapoints
+  SELECT AVG(money)
+  FROM datapoints
 );
 
 -- calculate beta
 SET beta = (
-    SELECT SUM((purchases - purchases_mean) * (money - money_mean))
-    FROM datapoints
+  SELECT SUM((purchases - purchases_mean) * (money - money_mean))
+  FROM datapoints
 );
 SET beta = beta / (
-    SELECT SUM(POWER(purchases - purchases_mean, 2))
-    FROM datapoints
+  SELECT SUM(POWER(purchases - purchases_mean, 2))
+  FROM datapoints
 );
 
 -- calculate alpha

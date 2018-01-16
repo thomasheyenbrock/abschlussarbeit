@@ -2,7 +2,7 @@ args = commandArgs(trailingOnly = TRUE)
 
 n = 100000
 if (length(args) > 0) {
-    n = strtoi(args[1])
+  n = strtoi(args[1])
 }
 
 start_time <- Sys.time()

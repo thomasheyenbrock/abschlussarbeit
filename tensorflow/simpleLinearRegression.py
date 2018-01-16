@@ -7,13 +7,13 @@ import matplotlib.pyplot as plt
 from time import time
 
 def get_data(n_samples):
-  filename = p.abspath(p.join(p.dirname(p.realpath(__file__)), '..', 'data', 'sample.csv'))
-  csvfile = open(filename, newline='')
+  filename = p.abspath(p.join(p.dirname(p.realpath(__file__)), "..", "data", "sample.csv"))
+  csvfile = open(filename, newline="")
   x = []
   x_plot = []
   y = []
 
-  csvreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+  csvreader = csv.reader(csvfile, delimiter=",", quotechar="|")
   for row in csvreader:
     if not row[0] == "age":
       x.append([int(row[1])])
@@ -26,13 +26,13 @@ def main(argv):
   datapoint_size = 100000
   plot = True
   if len(argv) == 2:
-    if argv[1] == '-':
+    if argv[1] == "-":
       plot = False
     else:
       datapoint_size = int(argv[1])
   elif len(argv) == 3:
     plot = False
-    if argv[1] == '-':
+    if argv[1] == "-":
       datapoint_size = int(argv[2])
     else:
       datapoint_size = int(argv[1])
@@ -81,8 +81,8 @@ def main(argv):
   print("time elapsed:  %f sec" % (end_time - start_time))
 
   if plot:
-    plt.plot(plot_xs, all_ys, 'ro', label='Original data')
-    plt.plot(plot_xs, curr_beta * all_xs + curr_alpha , label='Fitted line')
+    plt.plot(plot_xs, all_ys, "ro", label="Original data")
+    plt.plot(plot_xs, curr_beta * all_xs + curr_alpha , label="Fitted line")
     plt.legend()
     plt.show()
 

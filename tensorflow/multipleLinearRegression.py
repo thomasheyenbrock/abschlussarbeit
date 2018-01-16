@@ -6,12 +6,12 @@ import sys
 from time import time
 
 def get_data(n_samples):
-  filename = p.abspath(p.join(p.dirname(p.realpath(__file__)), '..', 'data', 'sample.csv'))
-  csvfile = open(filename, newline='')
+  filename = p.abspath(p.join(p.dirname(p.realpath(__file__)), "..", "data", "sample.csv"))
+  csvfile = open(filename, newline="")
   x = []
   y = []
 
-  csvreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+  csvreader = csv.reader(csvfile, delimiter=",", quotechar="|")
   for row in csvreader:
     if not row[0] == "age":
       x.append([int(row[1]), int(row[0])])

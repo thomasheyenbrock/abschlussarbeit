@@ -3,7 +3,12 @@ import random
 import math
 
 def outputCsv(data):
-  output = ["%s,%s,%s,%s" % ("age", "purchases", "money", "prime")]
+  output = ["%s,%s,%s,%s" % (
+    "age",
+    "purchases",
+    "money",
+    "prime"
+  )]
 
   for datapoint in data:
     output.append("%s,%s,%s,%a" % (
@@ -30,7 +35,12 @@ def outputSql(data):
     "  prime INTEGER",
     ");",
     "",
-    "INSERT INTO sample (%s,%s,%s,%s) VALUES" % ("age", "purchases", "money", "prime")
+    "INSERT INTO sample (%s,%s,%s,%s) VALUES" % (
+      "age",
+      "purchases",
+      "money",
+      "prime"
+    )
   ]
 
   for datapoint in data:
@@ -50,7 +60,7 @@ def outputSql(data):
 
 def main(argv):
   if len(argv) < 2:
-    print('Please provide number of datapoints that shall be generated.')
+    print("Please provide number of datapoints that shall be generated.")
     return
 
   data = []

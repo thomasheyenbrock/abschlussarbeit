@@ -91,13 +91,12 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- main procedure for execution
-CREATE OR REPLACE FUNCTION logistic_regression(number_datapoints INTEGER, rounds INTEGER)
+CREATE OR REPLACE FUNCTION logistic_regression(number_datapoints INTEGER, rounds INTEGER, step NUMERIC(65, 30))
 RETURNS TABLE (
   variable VARCHAR(50),
   value NUMERIC(65, 30)
 ) AS $$
 DECLARE
-  step NUMERIC(65, 30);
   better BOOLEAN;
   counter INTEGER;
 BEGIN
@@ -175,9 +174,6 @@ CREATE TEMPORARY TABLE gradient (
 INSERT INTO gradient VALUES
   ('alpha', 0),
   ('beta_money', 0);
-
--- set initial step distance
-step := 1;
 
 -- loop
 counter := 0;

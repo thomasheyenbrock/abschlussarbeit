@@ -74,9 +74,9 @@ cat postgresql/simpleLinearRegression.sql | psql <database-name>
 Die erzeugten Prozeduren heißen:
 * `simple_linear_regression(IN number_datapoints INTEGER)`
 * `multiple_linear_regression(IN number_datapoints INTEGER)`
-* `logistic_regression(IN number_datapoints INTEGER, IN rounds INTEGER)`
+* `logistic_regression(IN number_datapoints INTEGER, IN rounds INTEGER, IN step INTEGER)`
 
-`number_datapoints` ist wieder der Parameter für die Anzahl der Datepunkte. Die Prozedur für logistische Regression arbeitet iterativ, deshalb muss man hier außerdem die Anzahl der Interation `rounds` spezifizieren. Eine gute Wahl liegt in der Regel zwischen `100` und `1000`, je nach gewünschter Präzision.
+`number_datapoints` ist wieder der Parameter für die Anzahl der Datepunkte. Die Prozedur für logistische Regression arbeitet iterativ, deshalb muss man hier außerdem die Anzahl der Interation `rounds` und die Schrittweite pro Iteration `step` spezifizieren. Eine gute Wahl liegt in der Regel zwischen `100` und `1000` für die Iterationen und `0.001` bis `0.01` für die Schrittweite, je nach gewünschter Präzision.
 
 Eine MySQL-Prozedur führt man wiefolgt über das Terminal aus:
 ```

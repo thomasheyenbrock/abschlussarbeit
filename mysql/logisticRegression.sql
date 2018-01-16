@@ -85,10 +85,9 @@ SET better = (
 END;;
 
 -- main procedure for execution
-CREATE PROCEDURE `logistic_regression`(IN number_datapoints INT(11), IN rounds INT(11))
+CREATE PROCEDURE `logistic_regression`(IN number_datapoints INT(11), IN rounds INT(11), step DECIMAL(65, 30))
 BEGIN
 
-DECLARE step DECIMAL(65, 30);
 DECLARE min INT(11);
 DECLARE max INT(11);
 DECLARE transform DECIMAL(65, 30);
@@ -173,9 +172,6 @@ CREATE TEMPORARY TABLE gradient (
 INSERT INTO gradient VALUES
   ('alpha', 0),
   ('beta_money', 0);
-
--- set initial step distance
-SET step = 1;
 
 -- loop
 SET counter = 0;

@@ -1,4 +1,5 @@
 \chapter{Grundlagen statistischer Methoden}
+\label{chapter:2}
 
 Bei der Regressionsanalyse geht es im Allgemeinen darum, das Verhalten einer Größe $Y$ in Abhängigkeit einer oder mehrerer anderer Größen $X_1, X_2, \dots, X_n$ zu modellieren. Die Größe $Y$ wird abhängig genannt, die Größen $X_i$ nennt man unabhängig. Für diese Arbeit wollen wir zunächst einige Annahnmen treffen. Diese Punkte sollen immer gelten, falls nicht explizit etwas anderes festgelegt wird.
 \begin{itemize}
@@ -29,6 +30,7 @@ Im Allgemeinen ist es nicht möglich eine solche Funktion zu finden. Man verwirf
 Je näher ein Fehlerterm bei null liegt, desto besser ist die Annäherung. Um eine gute Approximation für die gesamte Datenmenge zu erhalten, sollten also alle diese Fehlerterme möglichst klein bleiben. Das Ziel der Regressionsanalyse ist nun die Bestimmung der Funktion $f$. Dazu nimmt man in der Regel an, dass $f$ eine bestimmte Form hat. Diese Annahme kann sich je nach der Problemstellung unterscheiden. Oft arbeitet man mit linearen Funktionen $f$, aber auch quadratische, exponentielle oder logistische Funktionen sind nicht unüblich.
 
 \section{Lineare Regression}
+\label{section:2:1}
 
 Bei der linearen Regression geht man von einem linearen Zusammenhang zwischen der abhängigen und den unabhängigen Variablen aus. Die Funktion $f$ ist also von folgender Form:
 \begin{align*}
@@ -56,6 +58,7 @@ Durch Nullsetzen der partiellen Ableitungen erhält man ein lineares Gleichungss
 Die Lösung dieses Gleichungssystems (falls diese existiert) ist das gesuchte Minimum. Damit hat man also die gesuchten Parameter für die lineare Funktion $f$ gefunden.
 
 \subsection{Einfache lineare Regression}
+\label{subsection:2:1:1}
 
 Man spricht von einfacher linearer Regression, wenn man mit nur eine unabhängige Variable arbeitet. Anschaulich möchte mann hier die bestmögliche Schätzgerade durch eine gegebene Punktwolke legen.
 
@@ -76,6 +79,7 @@ Dabei bezeichnen $\bar x$ und $\bar y$ die Mittelwerte von $X$ respektive $Y$, a
 Die Herleitung dieser Lösung soll nicht Gegenstand dieser Arbeit sein. Der interessierte Leser findet diese in [*zitiere ein Statistik-Buch*].
 
 \subsection{Multible lineare Regression}
+\label{subsection:2:1:2}
 
 Bei multibler linearer Regression existieren mindestens zwei unabhängige Variablen. Hier ist es nicht mehr zweckmäßig eine explizite Lösung anzugeben. Nun sind alternative Methoden zur Berechnung der Parameter nötig.
 
@@ -104,6 +108,7 @@ Dabei ist $b$ der Vektor mit den gesuchten Parametern für die Minimierung der k
 \end{align*}
 
 \section{Logistische Regression}
+\label{section:2:2}
 
 Die logistische Regression findet Anwendung im Falle, dass die abhängige Variable eine binäre Variable ist, also eine Variable, die nur zwei Werte annehmen kann. Oft handelt es sich um eine Eigenschaft oder einen Gegenstand, den man entweder besitzt oder nicht, wie zum Beispiel ein Premium-Abonnement für eine Web-Service oder der Besitz eines Auto. Auch das Geschlecht einer Person ist ein Beispiel für eine binäre Variable. Wir bezeichnen die beiden möglichen Werte einer solchen Variablen mit $0$ und $1$. Die Zuordnung vom Merkmal zur Zahl ist frei wählbar.
 
@@ -151,6 +156,7 @@ Um dieses Regressionsproblem zu lösen, muss man also die Parameter $\hat\alpha,
 In diesem Fall kommt man nicht mehr an einer iterativen Lösung vorbei, da das lineare Gleichungssystem aus den partiellen Ableitungen nicht mehr exakt lösbar ist. Eine der einfachsten Methoden zur Lösung von Optimierungsproblemen ist das Gradientenverfahren, welches im kommenden Teilkapitel kurz eingeführt wird. Danach wird gezeigt, wie man das Gradientenverfahren für logistische Regression anwendet.
 
 \subsection{Gradientenverfahren}
+\label{subsection:2:2:1}
 
 Das Gradientenverfahren ist ein iterativer Algorithmus zur Lösung von Optimierungsproblemen. Nachdem wir hier bei der logistischen Regression eine Funktion maximieren wollen führen wir das Gradientenverfahren dementsprechend als Maximierungsalgorithmus ein. Man kann dasselbe Verfahren aber aßuch zur Lösung von Minimierungsproblemen einsetzen. Gegeben sei also eine Funktion der folgenden Form, die maximiert werden soll:
 \begin{align*}
@@ -186,6 +192,7 @@ Danach muss noch getestet werden, dass $L$ für die neuen Parameter auch wirklic
 Über die Konvergenz des Gradientenverfahrens wollen wir im Zuge dieser Arbeit keine weiteren Aussagen treffen. Es sei jedoch angemerkt, dass die Likelihoodfunktion nach oben durch $1$ beschränkt ist. Das Verfahren konvergiert also mit Sicherheit gegen ein lokales Maximum von $L$.
 
 \subsection{Gradient bei logistischer Regression}
+\label{subsection:2:2:2}
 
 Um das Gradientenverfahren bei logistischer Regression einsetzen zu können, muss der Gradient für den Logarithmus der Likelihoodfunktion bekannt sein. In diesem Kapitel berechnen wir also die partiellen Ableitungen nach allen Parametern.
 

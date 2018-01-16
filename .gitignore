@@ -1,2 +1,13 @@
 .vscode
 logs
+
+latex/main.aux
+latex/main.bbl
+latex/main.blg
+latex/main.fdb_latexmk
+latex/main.fls
+latex/main.glo
+latex/main.log
+latex/main.out
+latex/main.pdf
+latex/main.toc

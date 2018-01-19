@@ -2003,6 +2003,15 @@ tensorflow,multiple linear regression,10,165.90111088752747
 tensorflow,multiple linear regression,10,166.82364702224731
 tensorflow,multiple linear regression,10,166.1889820098877
 tensorflow,multiple linear regression,10,172.17108702659607
+tensorflow,multiple linear regression,10,167.29964804649353
+tensorflow,multiple linear regression,100,168.22644186019897
+tensorflow,multiple linear regression,1000,167.18672919273376
+tensorflow,multiple linear regression,10000,169.81768989562988
+tensorflow,multiple linear regression,100000,166.9421100616455
+tensorflow,multiple linear regression,100000,167.47623586654663
+tensorflow,multiple linear regression,100000,167.0178689956665
+tensorflow,multiple linear regression,100000,167.38326573371887
+tensorflow,multiple linear regression,100000,167.1806378364563
 tensorflow,logistic regression,10,2.876955986022949
 tensorflow,logistic regression,10,3.1760921478271484
 tensorflow,logistic regression,10,3.0867021083831787
@@ -4953,8 +4962,120 @@ postgresql,logistic regression,10,3.565850257873535
 postgresql,logistic regression,10,3.518476963043213
 postgresql,logistic regression,10,3.5550169944763184
 postgresql,logistic regression,10,3.5361058712005615
-postgresql,logistic regression,100,47.370927810668945
-postgresql,logistic regression,100,48.338741064071655
-postgresql,logistic regression,100,48.376335859298706
-postgresql,logistic regression,100,47.20766305923462
-postgresql,logistic regression,100,48.23003911972046
+postgresql,logistic regression,100,48.565621852874756
+postgresql,logistic regression,100,48.27727484703064
+postgresql,logistic regression,100,48.54126000404358
+postgresql,logistic regression,100,48.080910205841064
+postgresql,logistic regression,100,48.13383913040161
+postgresql,logistic regression,100,48.3665452003479
+postgresql,logistic regression,100,48.81218385696411
+postgresql,logistic regression,100,48.471750259399414
+postgresql,logistic regression,100,47.484707832336426
+postgresql,logistic regression,100,47.87120723724365
+postgresql,logistic regression,100,47.61457300186157
+postgresql,logistic regression,100,48.67997694015503
+postgresql,logistic regression,100,48.56625008583069
+postgresql,logistic regression,100,47.56957817077637
+postgresql,logistic regression,100,48.349422216415405
+postgresql,logistic regression,100,47.77671504020691
+postgresql,logistic regression,100,48.32321500778198
+postgresql,logistic regression,100,48.45691895484924
+postgresql,logistic regression,100,48.185829877853394
+postgresql,logistic regression,100,47.80354118347168
+postgresql,logistic regression,100,47.41426682472229
+postgresql,logistic regression,100,48.530251026153564
+postgresql,logistic regression,100,48.31047296524048
+postgresql,logistic regression,100,48.23524475097656
+postgresql,logistic regression,100,48.74564599990845
+postgresql,logistic regression,100,50.78660702705383
+postgresql,logistic regression,100,50.49708890914917
+postgresql,logistic regression,100,50.113741874694824
+postgresql,logistic regression,100,50.27035999298096
+postgresql,logistic regression,100,50.3537437915802
+postgresql,logistic regression,100,50.315343141555786
+postgresql,logistic regression,100,50.07127499580383
+postgresql,logistic regression,100,50.316534996032715
+postgresql,logistic regression,100,50.0690131187439
+postgresql,logistic regression,100,50.1711642742157
+postgresql,logistic regression,100,50.73772692680359
+postgresql,logistic regression,100,50.684394121170044
+postgresql,logistic regression,100,50.693315744400024
+postgresql,logistic regression,100,49.89925003051758
+postgresql,logistic regression,100,50.463104009628296
+postgresql,logistic regression,100,50.193994998931885
+postgresql,logistic regression,100,50.213006019592285
+postgresql,logistic regression,100,50.286320209503174
+postgresql,logistic regression,100,50.10397219657898
+postgresql,logistic regression,100,50.246740102767944
+postgresql,logistic regression,100,50.50287318229675
+postgresql,logistic regression,100,50.38923501968384
+postgresql,logistic regression,100,50.411314249038696
+postgresql,logistic regression,100,50.444231033325195
+postgresql,logistic regression,100,50.491694927215576
+postgresql,logistic regression,100,50.31578183174133
+postgresql,logistic regression,100,50.313902854919434
+postgresql,logistic regression,100,50.233420848846436
+postgresql,logistic regression,100,50.219362020492554
+postgresql,logistic regression,100,53.14744782447815
+postgresql,logistic regression,100,49.3532977104187
+postgresql,logistic regression,100,48.346004009246826
+postgresql,logistic regression,100,48.40432381629944
+postgresql,logistic regression,100,48.373717069625854
+postgresql,logistic regression,100,48.237614154815674
+postgresql,logistic regression,100,48.083709955215454
+postgresql,logistic regression,100,48.29371118545532
+postgresql,logistic regression,100,48.38443899154663
+postgresql,logistic regression,100,48.37148404121399
+postgresql,logistic regression,100,48.16171598434448
+postgresql,logistic regression,100,48.46877074241638
+postgresql,logistic regression,100,48.39996695518494
+postgresql,logistic regression,100,48.227445125579834
+postgresql,logistic regression,100,47.64451885223389
+postgresql,logistic regression,100,47.93988299369812
+postgresql,logistic regression,100,47.545632123947144
+postgresql,logistic regression,100,47.52665901184082
+postgresql,logistic regression,100,47.8466157913208
+postgresql,logistic regression,100,48.35544490814209
+postgresql,logistic regression,100,47.322839975357056
+postgresql,logistic regression,100,47.950841188430786
+postgresql,logistic regression,100,47.4347710609436
+postgresql,logistic regression,100,48.31777596473694
+postgresql,logistic regression,100,48.41113305091858
+postgresql,logistic regression,100,48.39047312736511
+postgresql,logistic regression,100,48.4050931930542
+postgresql,logistic regression,100,48.20202994346619
+postgresql,logistic regression,100,48.337990045547485
+postgresql,logistic regression,100,48.67263317108154
+postgresql,logistic regression,100,48.258227825164795
+postgresql,logistic regression,100,47.68625211715698
+postgresql,logistic regression,100,48.448516845703125
+postgresql,logistic regression,100,47.789268016815186
+postgresql,logistic regression,100,48.29912495613098
+postgresql,logistic regression,100,48.48381996154785
+postgresql,logistic regression,100,47.82712507247925
+postgresql,logistic regression,100,47.40705394744873
+postgresql,logistic regression,100,48.33777832984924
+postgresql,logistic regression,100,48.39001107215881
+postgresql,logistic regression,100,48.47369599342346
+postgresql,logistic regression,100,48.4520308971405
+postgresql,logistic regression,100,47.52142524719238
+postgresql,logistic regression,100,48.19730472564697
+postgresql,logistic regression,100,47.539482831954956
+postgresql,logistic regression,100,47.882731914520264
+postgresql,logistic regression,1000,519.0758037567139
+postgresql,logistic regression,1000,526.0557091236115
+postgresql,logistic regression,1000,524.2226052284241
+postgresql,logistic regression,1000,517.6457889080048
+postgresql,logistic regression,1000,522.6568360328674
+postgresql,logistic regression,1000,524.2434730529785
+postgresql,logistic regression,1000,524.800537109375
+postgresql,logistic regression,1000,520.055682182312
+postgresql,logistic regression,1000,517.0982391834259
+postgresql,logistic regression,1000,524.1607999801636
+postgresql,logistic regression,1000,521.9975159168243
+postgresql,logistic regression,1000,526.5103151798248
+postgresql,logistic regression,1000,550.7238111495972
+postgresql,logistic regression,1000,556.7784860134125
+postgresql,logistic regression,1000,533.9229228496552
+postgresql,logistic regression,1000,507.52117466926575
+postgresql,logistic regression,1000,526.6672661304474

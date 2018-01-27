@@ -131,11 +131,11 @@ CREATE TEMPORARY TABLE binary_values (
   value INTEGER
 );
 
--- insert all values for column 'prime' into binary_values
+-- insert all values for column 'premium' into binary_values
 INSERT INTO binary_values
 SELECT
   row_number() OVER () AS id,
-  prime AS value
+  premium AS value
 FROM sample
 LIMIT number_datapoints;
 

@@ -1,3 +1,4 @@
+% TODO: Skripte ganz zum Schluss nochmal pasten
 \chapter{Python-Skript zum Generieren der Beispieldaten}
 \label{appendix:A}
 
@@ -11,7 +12,7 @@
       "age",
       "purchases",
       "money",
-      "prime"
+      "premium"
     )]
 
     for datapoint in data:
@@ -19,7 +20,7 @@
         datapoint["age"],
         datapoint["purchases"],
         datapoint["money"],
-        datapoint["prime"]
+        datapoint["premium"]
       ))
 
     f = open("sample.csv", "w")
@@ -36,14 +37,14 @@
       "  age INTEGER,",
       "  purchases INTEGER,",
       "  money INTEGER,",
-      "  prime INTEGER",
+      "  premium INTEGER",
       ");",
       "",
       "INSERT INTO sample (%s,%s,%s,%s) VALUES" % (
         "age",
         "purchases",
         "money",
-        "prime"
+        "premium"
       )
     ]
 
@@ -52,7 +53,7 @@
         datapoint["age"],
         datapoint["purchases"],
         datapoint["money"],
-        datapoint["prime"]
+        datapoint["premium"]
       ))
 
     output[-1] = output[-1][:-1] + ";"
@@ -74,15 +75,15 @@
       purchases = int(max(random.normalvariate(10, 10), 1))
       money = int(max(purchases * 25 + random.normalvariate(0, (math.log(purchases) + 1) * 12), 0.01) * 100)
       if random.uniform(0, 1) > math.exp(0.2 * purchases - 2) / (1 + math.exp(0.2 * purchases - 2)):
-        prime = 0
+        premium = 0
       else:
-        prime = 1
+        premium = 1
 
       data.append({
         "age": age,
         "purchases": purchases,
         "money": money,
-        "prime": prime
+        "premium": premium
       })
 
     outputCsv(data)
@@ -221,7 +222,7 @@
 
   data <- head(read.csv2("./data/sample.csv", sep = ",", header = TRUE), n)
 
-  modell <- as.formula("prime ~ money")
+  modell <- as.formula("premium ~ money")
   logit <- glm(modell, family = binomial, data = data)
 
   end_time <- Sys.time()
@@ -248,12 +249,12 @@
       c(-0.2, 1.2),
       type = "n",
       xlab = "money",
-      ylab = "prime",
+      ylab = "premium",
       main = "Logistische Regression"
     )
     lines(
       data$money,
-      data$prime,
+      data$premium,
       type="p"
     )
     lines(
@@ -1050,12 +1051,12 @@
     PRIMARY KEY (id)
   );
 
-  -- insert all values for column 'prime' into binary_values
+  -- insert all values for column 'premium' into binary_values
   SET @counter = 0;
   INSERT INTO binary_values
   SELECT
     @counter := @counter + 1 AS `id`,
-    prime AS `value`
+    premium AS `value`
   FROM sample
   LIMIT number_datapoints;
 
@@ -1524,11 +1525,11 @@
     value INTEGER
   );
 
-  -- insert all values for column 'prime' into binary_values
+  -- insert all values for column 'premium' into binary_values
   INSERT INTO binary_values
   SELECT
     row_number() OVER () AS id,
-    prime AS value
+    premium AS value
   FROM sample
   LIMIT number_datapoints;
 

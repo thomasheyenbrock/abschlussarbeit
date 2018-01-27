@@ -1,7 +1,7 @@
 \chapter{Grundlagen statistischer Methoden}
 \label{chapter:2}
 
-Bei der Regressionsanalyse geht es im Allgemeinen darum, das Verhalten einer Größe $Y$ in Abhängigkeit einer oder mehrerer anderer Größen $X_1, X_2, \dots, X_n$ zu modellieren. Die Größe $Y$ wird abhängig genannt, die Größen $X_i$ nennt man unabhängig. Für diese Arbeit wollen wir zunächst einige Annahnmen treffen. Diese Punkte sollen immer gelten, falls nicht explizit etwas anderes festgelegt wird.
+Bei der Regressionsanalyse geht es im Allgemeinen darum, das Verhalten einer Größe $Y$ in Abhängigkeit einer oder mehrerer anderer Größen $X_1, X_2, \dots, X_n$ zu modellieren. Die Größe $Y$ wird abhängig genannt, die Größen $X_i$ nennt man unabhängig. Für diese Arbeit wollen wir zunächst einige Annahmen treffen. Diese sollen immer gelten, falls nicht explizit etwas anderes festgelegt wird.
 \begin{itemize}
     \item Die genannten Größen sind Zufallsvariablen. Eine solche Zufallsvariable ist eine Funktion deren Werte die Ergebnisse eines Zufallsvorgangs darstellt.
     \item Die Zufallsvariablen sind auf der Menge $M = \{1, \dots, m\}$ definiert und bilden in die reellen Zahlen ab:
@@ -19,7 +19,7 @@ Bei der Regressionsanalyse geht es im Allgemeinen darum, das Verhalten einer Gr�
         (y_1, x_{1,1}, \dots, x_{1,n}), \dots, (y_m, x_{m,1}, \dots, x_{m,n})
     \end{align*}
 \end{itemize}
-Nun definieren wir ein Modell, mit dem der Zusammenhang zwischen der abhängigen und den unabhängigen Variablen dargestellt werden soll. Dazu verwenden wir eine Funktion $f$, welche für Werte von  $X_1$ bis $X_n$ einen geschätzten Wert für $Y$ liefert. Idealerweise existiert eine Funktion, die zum Einen eine einfache Darstellung (z.B. durch eine arithmetische Formel) besitzt und zum Anderen alle unabhängigen Werte der Datenmenge exakt prognostiziert. Das bedeutet:
+Nun definieren wir ein Modell, mit dem der Zusammenhang zwischen der abhängigen und den unabhängigen Variablen dargestellt werden soll. Dazu verwenden wir eine Funktion $f$, welche für Werte von  $X_1$ bis $X_n$ einen geschätzten Wert für $Y$ liefert. Idealerweise existiert eine Funktion, die zum einen eine einfache Darstellung (z.B. durch eine arithmetische Formel) besitzt und zum anderen alle unabhängigen Werte der Datenmenge exakt prognostiziert. Das bedeutet:
 \begin{align*}
     y_i = f(x_{i, 1}, \dots, x_{i, n}) ~~~\text{für alle}~~ 1 \leq i \leq m
 \end{align*}
@@ -51,7 +51,7 @@ Um dieses Minimierungsproblem zu lösen berechnen wir die partiellen Ableitungen
     \dfrac{\partial E}{\partial \beta_k} &= \sum_{i=1}^m 2 \cdot \left( y_i - \alpha - \sum_{j=1}^n \beta_j \cdot x_{i, j} \right) \cdot (- x_{i, k}) \\
     &= - 2 \cdot \sum_{i=1}^m x_{i, k} \cdot \left( y_i - \alpha - \sum_{j=1}^n \beta_j \cdot x_{i, j} \right) \\
 \end{align*}
-Durch Nullsetzen der partiellen Ableitungen erhält man ein lineares Gleichungssystem mit $(n + 1)$ Gleichungen und ebensovielen Unbekannten.
+Durch Nullsetzen der partiellen Ableitungen erhält man ein lineares Gleichungssystem mit $(n + 1)$ Gleichungen und ebenso vielen Unbekannten.
 \begin{align*}
     \dfrac{\partial E}{\partial \alpha} = 0, ~~ \dfrac{\partial E}{\partial \beta_1} = 0, ~~ \dots, ~~ \dfrac{\partial E}{\partial \beta_n} = 0
 \end{align*}
@@ -62,7 +62,7 @@ Die Lösung dieses Gleichungssystems (falls diese existiert) ist das gesuchte Mi
 
 Man spricht von einfacher linearer Regression, wenn man mit nur eine unabhängige Variable arbeitet. Anschaulich möchte mann hier die bestmögliche Schätzgerade durch eine gegebene Punktwolke legen.
 
-Wir nennen die unabhängige Variable in diesem Kapitel statt $X_1$ einfach nur $X$. Ebenso schreiben wir $\beta := \beta_1$ und $x_i := x_{i, 1}$. Dann können wir das lineare Gleichungssystem zum Auffinden des Minimums wiefolgt explizit aufschreiben:
+Wir nennen die unabhängige Variable in diesem Kapitel statt $X_1$ einfach nur $X$. Ebenso schreiben wir $\beta := \beta_1$ und $x_i := x_{i, 1}$. Dann können wir das lineare Gleichungssystem zum Auffinden des Minimums wie folgt explizit aufschreiben:
 \begin{align*}
     0 &= - 2 \cdot \sum_{i=1}^m (y_i - \alpha - \beta \cdot x_i)\\
     0 &= - 2 \cdot \sum_{i=1}^m x_i \cdot (y_i - \alpha - \beta \cdot x_i)
@@ -76,12 +76,12 @@ Dabei bezeichnen $\bar x$ und $\bar y$ die Mittelwerte von $X$ respektive $Y$, a
 \begin{align*}
     \bar x = \dfrac{1}{m} \sum_{i=1}^m x_i ~~,~~~ \bar y &= \dfrac{1}{m} \sum_{i=1}^m y_i
 \end{align*}
-Die Herleitung dieser Lösung soll nicht Gegenstand dieser Arbeit sein. Der interessierte Leser findet diese in [*zitiere ein Statistik-Buch*].
+Die Herleitung dieser Lösungen findet sich in [*zitiere ein Statistik-Buch*].
 
-\subsection{Multible lineare Regression}
+\subsection{Multiple lineare Regression}
 \label{subsection:2:1:2}
 
-Bei multibler linearer Regression existieren mindestens zwei unabhängige Variablen. Hier ist es nicht mehr zweckmäßig eine explizite Lösung anzugeben. Nun sind alternative Methoden zur Berechnung der Parameter nötig.
+Bei multipler linearer Regression existieren mindestens zwei unabhängige Variablen. Hier ist es nicht mehr zweckmäßig eine explizite Lösung anzugeben. Nun sind alternative Methoden zur Berechnung der Parameter nötig.
 
 Neben einer Vielzahl von Algorithmen, die ein Optimierungsproblem iterativ lösen, gibt es auch die Möglichkeit die Parameter durch Matrizenmultiplikation zu berechnen. Definieren wir dazu die folgenden Matrizen und Vektoren:
 \begin{align*}
@@ -140,7 +140,7 @@ Man möchte die Parameter $\alpha$ und $\beta_k$ nun so schätzen, dass die Wahr
     &= \prod_{i=1}^m y_i \cdot \pi_i(\alpha, \beta_1, \dots, \beta_n) + (1 - y_i) \cdot (1 - \pi_i(\alpha, \beta_1, \dots, \beta_n)) \\
     &= \prod_{i=1}^m y_i \cdot \pi_i(\alpha, \beta_1, \dots, \beta_n) + (1 - y_i) \cdot \pi_i(- \alpha, - \beta_1, \dots, - \beta_n))
 \end{align*}
-Da alle $y_i$ im Fall der logistischen Regression entweder gleich $0$ oder gleich $1$ sind, ist immer nur einer der beidem Summanden in jedem Faktor nicht null. Diese Fallunterscheidung kann man auch in das Vorzeichen der Parameter verschieben, da sich die beiden möglichen Faktoren nur darin unterscheiden. Dann erhält man:
+Da alle $y_i$ im Fall der logistischen Regression entweder gleich $0$ oder gleich $1$ sind, ist immer nur einer der beiden Summanden in jedem Faktor nicht null. Diese Fallunterscheidung kann man auch in das Vorzeichen der Parameter verschieben, da sich die beiden möglichen Faktoren nur darin unterscheiden. Dann erhält man:
 \begin{align*}
     L(\alpha, \beta_1, \dots, \beta_n) = \prod_{i=1}^m \pi(&(2 \cdot y_i - 1) \cdot \alpha, \\
     &(2 \cdot y_i - 1) \cdot \beta_1, \\
@@ -158,13 +158,13 @@ In diesem Fall kommt man nicht mehr an einer iterativen Lösung vorbei, da das l
 \subsection{Gradientenverfahren}
 \label{subsection:2:2:1}
 
-Das Gradientenverfahren ist ein iterativer Algorithmus zur Lösung von Optimierungsproblemen. Nachdem wir hier bei der logistischen Regression eine Funktion maximieren wollen führen wir das Gradientenverfahren dementsprechend als Maximierungsalgorithmus ein. Man kann dasselbe Verfahren aber aßuch zur Lösung von Minimierungsproblemen einsetzen. Gegeben sei also eine Funktion der folgenden Form, die maximiert werden soll:
+Das Gradientenverfahren ist ein iterativer Algorithmus zur Lösung von Optimierungsproblemen. Nachdem wir hier bei der logistischen Regression eine Funktion maximieren wollen führen wir das Gradientenverfahren dementsprechend als Maximierungsalgorithmus ein. Man kann dasselbe Verfahren aber auch zur Lösung von Minimierungsproblemen einsetzen. Gegeben sei also eine Funktion der folgenden Form, die maximiert werden soll:
 \begin{align*}
     L: \mathbb{R}^{n+1} \rightarrow \mathbb{R},~~ (\alpha, \beta_1, \dots, \beta_n) \mapsto L(\alpha, \beta_1, \dots, \beta_n)
 \end{align*}
-Beim Gradientenverfahren beginnt man mit beliebigen Startwerten $\alpha^0$ und $\beta_k^0$ und einer Schrittweite $s \in \mathbb{R}^+$. Vom Startpunkt aus geht man nun in die Richtung des steilsten Anstieges der Funktion und erhält dadurch neue Werte $\alpha^1$ und $\beta_k^1$. Diese Richtung ist gerade der sogenannte Gradient der Funktion $L$.
+Beim Gradientenverfahren beginnt man mit beliebigen Startwerten $\alpha^0$ und $\beta_k^0$ und einer Schrittweite $s \in \mathbb{R}^+$. Vom Startpunkt aus geht man nun in die Richtung des steilsten Anstieges der Funktion und erhält dadurch neue Werte $\alpha^1$ und $\beta_k^1$. Diese Richtung ist der Gradient der Funktion $L$.
 
-Der Gradient ist ein Vektor, der sich aus den partiellen Ableitungen von $L$ nach jeweils einer Variablen zusammensetzt und wird wiefolgt notiert:
+Der Gradient ist ein Vektor, der sich aus den partiellen Ableitungen von $L$ nach jeweils einer Variablen zusammensetzt und wird wie folgt notiert:
 \begin{align*}
     \text{grad}(L) = \begin{pmatrix}
         \partial L / \partial \alpha \\
@@ -173,7 +173,7 @@ Der Gradient ist ein Vektor, der sich aus den partiellen Ableitungen von $L$ nac
         \partial L / \partial \beta_n
     \end{pmatrix}
 \end{align*}
-Der Gradient von $L$ ist wieder eine Funktion, die Werte $\alpha$ und $\beta_k$ auf einen Vektor der Länge $n+1$ abbildet. Der iterative Schritt des Verfahrens definiert sich wiefolgt:
+Der Gradient von $L$ ist wieder eine Funktion, die Werte $\alpha$ und $\beta_k$ auf einen Vektor der Länge $n+1$ abbildet. Der iterative Schritt des Verfahrens definiert sich wie folgt:
 \begin{align*}
     \begin{pmatrix}
         \alpha^{i + 1} \\
@@ -187,8 +187,9 @@ Der Gradient von $L$ ist wieder eine Funktion, die Werte $\alpha$ und $\beta_k$ 
         \beta_n^i
     \end{pmatrix} + s \cdot \text{grad}(L) (\alpha^i, \beta_1^i, \dots, \beta_n^i)
 \end{align*}
-Danach muss noch getestet werden, dass $L$ für die neuen Parameter auch wirklich einen größeren Wert annimmt also zuvor. Falls nicht, muss die Schrittweite $s$ verkleinert werden, zum Beispiel um einen festen zuvor definierten Faktor.
+Danach muss noch getestet werden, dass $L$ für die neuen Parameter auch wirklich einen größeren Wert annimmt also zuvor. Falls nicht, muss die Schrittweite $s$ verkleinert werden, zum Beispiel um einen festen, zuvor definierten Faktor.
 
+% TODO: entweder erklären oder streichen
 Über die Konvergenz des Gradientenverfahrens wollen wir im Zuge dieser Arbeit keine weiteren Aussagen treffen. Es sei jedoch angemerkt, dass die Likelihoodfunktion nach oben durch $1$ beschränkt ist. Das Verfahren konvergiert also mit Sicherheit gegen ein lokales Maximum von $L$.
 
 \subsection{Gradient bei logistischer Regression}
@@ -202,7 +203,7 @@ Um $L_{log} = \ln(L)$ partiell ableiten zu können, berechnen wir zuerst die par
     &= \left( 1 + \exp \left(- \alpha - \sum_{j=1}^n \beta_j \cdot x_{i, j} \right) \right)^{-1} \cdot \left( 1 + \exp \left(\alpha + \sum_{j=1}^n \beta_j \cdot x_{i, j} \right) \right)^{-1} \\
     &= \pi_i(\alpha, \beta_1, \dots, \beta_n) \cdot \pi_i(- \alpha, - \beta_1, \dots, - \beta_n)
 \end{align*}
-Die partiellen Ableitungen einem der $\beta_k$ für $k = 1, \dots, n$ kann fast analog gebildet werden. Bei der Anwendung der Kettenregel auf die innerste lineare Funktion bleibt jedoch noch der konstanter Faktor $x_{i, k}$ übrig.
+Die partiellen Ableitungen einem der $\beta_k$ für $k = 1, \dots, n$ kann fast analog gebildet werden. Bei der Anwendung der Kettenregel auf die innerste lineare Funktion bleibt jedoch noch der konstante Faktor $x_{i, k}$ übrig.
 \begin{align*}
     \dfrac{\partial \pi_i}{\partial \beta_k} = x_{i, k} \cdot \pi_i(\alpha, \beta_1, \dots, \beta_n) \cdot \pi_i(- \alpha, - \beta_1, \dots, - \beta_n)
 \end{align*}
@@ -238,4 +239,4 @@ Damit können wir die partiellen Ableitungen weiter vereinfachen:
     \dfrac{\partial L_{log}}{\partial \alpha} &= \sum_{i=1}^m y_i - \pi_i(\alpha, \beta_1, \dots, \beta_n) \\
     \dfrac{\partial L_{log}}{\partial \beta_k} &= \sum_{i=1}^m x_{i, k} \cdot \big(y_i - \pi_i(\alpha, \beta_1, \dots, \beta_n) \big)
 \end{align*}
-Diese Darstellung der partiellen Ableitungen verwenden wir später in SQL zur Berechnung des Gradienten. Der Term innerhalb der Summe wird für jeden Zeile der Tabelle der Datenpunkte berechnet, danach wird die resultierende Spalte mit einer Gruppierung summiert.
+Diese Darstellung der partiellen Ableitungen verwenden wir später in SQL zur Berechnung des Gradienten. Der Term innerhalb der Summe wird für jedes Tupel der Relation der Datenpunkte berechnet, danach wird das resultierende Attribut mit einer Gruppierung summiert.

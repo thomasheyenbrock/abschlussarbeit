@@ -6,16 +6,17 @@ In diesem Kapitel werden mehrere Programmiersprachen vorgestellt, die sich für 
 \section{Beispieldaten}
 \label{section:3:1}
 
+% TODO: kürzen
 Um Regressionsanalyse auch praktisch betreiben zu können, arbeiten wir in dieser Arbeit mit Beispieldaten. Diese Daten wurden mit einem Python-Skript erstellt, welches im als Ganzes im Anhang A zu finden ist. Dabei werden die einzelnen Merkmale eines Datensatzes so erstellt, dass eine Korrelation zwischen diesen bewusst erzeugt oder nicht erzeugt wird. Diese Beispieldaten liegen in Form einer csv-Datei vor, welche in so gut wie jeder Sprache einfach eingelesen werden kann.
 
-Wir betrachten hier fiktive Kunden von Amazon. Für jeden Kunden wissen wir das Alter, die Anzahl seiner Käufe, die Summe des ausgegebenen Geldes und ob der Kunde Amazon-Prime Mitglied ist oder nicht. Der ausgegebene Betrag wird in Cent angegeben, um mit ganzen Zahlen rechnen zu können. Die Prime-Mitgliedschaft wird mit einer 1 symbolisiert, während eine 0 das Gegenteil bedeutet.
+Wir betrachten hier fiktive Kunden eines Onlinehandels. Für jeden Kunden wissen wir das Alter, die Anzahl seiner Käufe, die Summe des ausgegebenen Geldes und ob der Kunde eine Premium Mitgliedschaft besitzt oder nicht. Der ausgegebene Betrag wird in Cent angegeben, um mit ganzen Zahlen rechnen zu können. Die Premium-Mitgliedschaft wird mit einer 1 symbolisiert, während eine 0 das Gegenteil bedeutet.
 
 Insgesamt wurden für diese Arbeit 100.000 solcher Datensätze erzeugt. In der folgenden Tabelle sind die ersten 10 dieser Datensätze dargestellt.
 
 \begin{center}
   \captionof{table}{Auszug aus den Beispieldaten}
   \begin{tabular}{|c|c|c|c|}\hline
-    \textbf{age} & \textbf{purchases} & \textbf{money} & \textbf{prime} \\ \hline
+    \textbf{age} & \textbf{purchases} & \textbf{money} & \textbf{premium} \\ \hline
     30 & 1 & 4421 & 0 \\ \hline
     30 & 11 & 23346 & 1 \\ \hline
     33 & 1 & 4010 & 0 \\ \hline
@@ -33,27 +34,27 @@ Wir definieren uns außerdem drei Fragestellungen, welche wir mit den in Kapitel
 \begin{enumerate}
   \item Als Erstes wollen wir wissen, ob das ausgegebene Geld mit der Anzahl der Käufe in linearem Zusammenhang steht. Diese Fragen können wir mit einfacher linearer Regression beantworten. $money$ ist hierbei die abhängige Variable und $purchases$ ist die unabhängige Variable.
   \item Die zweite Frage ist ähnlich der Ersten. Hier wollen wir wissen, ob neben der Anzahl der Käufe auch das Alter des Kunden einen Einfluss auf das ausgegebene Geld hat. Hier haben wir nun zwei unabhängige Variablen, nämlich $age$ und $purchases$. Die abhängige Variable bleibt $money$. Diese Frage beantworten wir mit multipler linearer Regression.
-  \item Zuletzt interessiert uns, ob eine Prime-Mitgliedschaft von der Summe des ausgegebenen Geldes zusammenhängt. $money$ ist also nun die unabhängige Variable, während $prime$ die abhängige Variable ist. Nachdem $prime$ eine binäre Variable ist, nutzen wir hier logistische Regression.
+  \item Zuletzt interessiert uns, ob eine Premium-Mitgliedschaft von der Summe des ausgegebenen Geldes zusammenhängt. $money$ ist also nun die unabhängige Variable, während $premium$ die abhängige Variable ist. Nachdem $premium$ eine binäre Variable ist, nutzen wir hier logistische Regression.
 \end{enumerate}
 
 \section{R-Projekt}
 \label{section:3:2}
 
-Das R-Projekt oder einfach nur R ist eine Sprache für statistische Berechnungen und graphische Darstellung. Damit ist R wie geschaffen für Regressionsanalyse. Wir werden sehen, dass von allen hier behandelten Sprachen R die einfachste und direkteste ist, wenn man Regression analysieren möchte.
+Das R-Projekt oder einfach nur R ist eine Sprache für statistische Berechnungen und graphische Darstellung. Damit ist R wie geschaffen für Regressionsanalyse.
 
 \subsection{Grundprinzip}
 \label{subsection:3:2:1}
 
-In R sind Datenstrukturen wie Vektoren, Matrizen und Listen als Datentypen vorhanden. Darauf aufbauend existieren sogenannten Dataframes. Ein Dataframe ist eine Liste von Vektoren der gleichen Länge und wird in R zur Repräsentation von Datentabellen verwendet. Die Vektoren der Liste entsprechen den Spalten der Tabelle. In einen solchen Dataframe importieren wir als erstes immer die Beispieldaten aus der csv-Datei.
+In R sind Datenstrukturen wie Vektoren, Matrizen und Listen als Datentypen vorhanden. Darauf aufbauend existieren sogenannten Dataframes. Ein Dataframe ist eine Liste von Vektoren der gleichen Länge und wird in R zur Repräsentation von Datentabellen verwendet. Die Vektoren der Liste entsprechen den Attributen einer Relation. In einen solchen Dataframe importieren wir als erstes immer die Beispieldaten aus der csv-Datei.
 
 In R lassen sich außerdem sogenannte Modelle definieren, welche als Eingabe nur die Daten und eine Formel benötigen. Eine Formel ist ein String der Form "$y \sim modell$" und symbolisiert den funktionalen Zusammenhang zwischen der abhängigen und den unabhängigen Variablen.
 
-Hat man ein Modell erstellt, so bietet R einfache Funktionen, um die Parameter für das gegebene Modell mittels Regressionsanalyse zu berechnen. Wir werden im Folgenden von den Funktionen $lm$ (für "linear model") und $glm$ (für "generalized linear model") Gebrauch machen.
+Hat man ein Modell erstellt, so bietet R Funktionen, um die Parameter für das gegebene Modell mittels Regressionsanalyse zu berechnen. Wir werden im Folgenden von den Funktionen $lm$ (für "linear model") und $glm$ (für "generalized linear model") Gebrauch machen.
 
 \subsection{Einfache lineare Regression}
 \label{subsection:3:2:2}
 
-Betrachten wir also Frage Nummer $1$ aus dem vorherigen Teilkapitel. Die Formel lautet hier einfach "$money \sim purchases$". Man liest also die Daten aus der csv-Datei, erstellt das Modell mit der genannten Formel und berechnet die Parameter mit der Funktion $lm$. Mit nur drei Zeilen Code lässt sich also die komplette Regressionsanalyse implementieren. Die print-Funktion dient zur Ausgabe des Ergebnisses.
+Betrachten wir also Frage Nummer $1$ aus dem vorherigen Teilkapitel. Die Formel lautet hier "$money \sim purchases$". Man liest also die Daten aus der csv-Datei, erstellt das Modell mit der genannten Formel und berechnet die Parameter mit der Funktion $lm$. Mit nur drei Zeilen Code lässt sich also die komplette Regressionsanalyse implementieren. Die print-Funktion dient zur Ausgabe des Ergebnisses.
 
 \begin{minted}[linenos,breaklines,frame=single]{r}
   data <- read.csv2("sample.csv", sep = ",", header = TRUE)
@@ -72,7 +73,7 @@ Das Ergebnis des obigen Codes ist folgendes:
 
 Der Wert unter "$(Intercept)$" entspricht dabei dem Paramter $\alpha$ in unserer Notation, der Wert unter "$purchases$" entspricht $\beta$.
 
-Wir wollen dieses Ergebnis kurz interpretieren. Der kleine Wert für $\alpha$ entspricht der Intuition, dass ein Kunde ohne Käufe auch kein Geld ausgegeben hat. Der relativ große Wert von ca. $2500$ für $\beta$ zeigt, dass die Anzahl der gekauften Artikel sehr einen großen Einfluss auf das ausgegebene Geld hat. Ein Kunde gibt pro gekauftem Artikel etwa $2500$ Cent, also $25$ Euro aus.
+Der kleine Wert für $\alpha$ entspricht der Intuition, dass ein Kunde ohne Käufe auch kein Geld ausgegeben hat. Der relativ große Wert von ca. $2500$ für $\beta$ zeigt, dass die Anzahl der gekauften Artikel sehr einen großen Einfluss auf das ausgegebene Geld hat. Ein Kunde gibt pro gekauftem Artikel etwa $2500$ Cent, also $25$ Euro aus.
 
 R verfügt auch über Möglichkeiten zur graphischen Darstellung. Lässt man die die Datenpunkte und die lineare Ausgleichsfunktion mit den berechneten Parameter plotten, erhält man dieses Diagramm:
 
@@ -89,20 +90,20 @@ Bei multipler lineare Regression unterscheidet sich der R-Code nur in der Wahl d
      -16.4842    2500.8042       0.5318
 \end{minted}
 
-Auch hier eine kurze Interpretation dieses Ergebnisses: Der Wert für $\alpha$ ist wieder relativ klein, der Wert für das $\beta$ zu $purchases$ ist fast exakt derselbe wie bei einfacher linerarer Regression, was bei denselben Daten auch zu erwarten war. Der Wert für das $\beta$ zu $age$ ist dagegen nahe bei null. Das bedeutet, dass das Alter im Vergleich zu der Anzahl der Käufe keinen signifikanten Einfluss auf das ausgegebene Geld hat.
+Der Wert für $\alpha$ ist wieder relativ klein, der Wert für das $\beta$ zu $purchases$ ist fast exakt derselbe wie bei einfacher linerarer Regression, was bei denselben Daten auch zu erwarten war. Der Wert für das $\beta$ zu $age$ ist dagegen nahe bei null. Das bedeutet, dass das Alter im Vergleich zu der Anzahl der Käufe keinen signifikanten Einfluss auf das ausgegebene Geld hat.
 
 \subsection{Logistische Regression}
 \label{subsection:3:2:4}
 
 Bei logistischer Regression nutzen wir nun nicht mehr ein lineares Modell wie bisher, sondern ein generalisiertes lineares Modell. Logistische Regression ist im Wesentlichen ein Spezialfall dieses Modelles. Hier nutzen wir also die $glm$-Funktion. Um logistische Regression damit betreiben zu können, wählt man den Parameter $family$ dieser Funktion als $binomial$.
 
-Man braucht wie auch bei linearer Regression ein Formel für das Modell. Diese bildet man analog wie bisher, indem mal die abhängige Variable mit den unabhängigen Variablen über eine Tilde verbindet. Im Fall unserer dritten Fragestellung wählen man also die Formel als "$prime \sim money$".
+Man braucht wie auch bei linearer Regression ein Formel für das Modell. Diese bildet man analog wie bisher, indem mal die abhängige Variable mit den unabhängigen Variablen über eine Tilde verbindet. Im Fall unserer dritten Fragestellung wählt man also die Formel als "$premium \sim money$".
 
 Der gesamte R-Code für die logistische Regression ist wieder ähnlich zu dem Code aus \ref{subsection:3:2:1} und lautet wiefolgt:
 
 \begin{minted}[linenos,breaklines,frame=single]{r}
   data <- read.csv2("sample.csv", sep = ",", header = TRUE)
-  modell <- as.formula("prime ~ money")
+  modell <- as.formula("premium ~ money")
   logit <- glm(modell, family = binomial, data = data)
   print(logit)
 \end{minted}
@@ -123,25 +124,25 @@ Eine anschauliche Interpretation der zurückgegebenen Parameter ist nicht mehr s
 
 \includegraphics[width=\textwidth]{r-logisticRegression}
 
-Für Kunden, die weniger als $100$ Euro ausgegeben haben ist die Wahrscheinlichkeit Prime-Mitglied zu sein mit etwa $25\%$ relativ gering. Je höher die Summe aber wird, desto größer wird auch die genannte Wahrscheinlichkeit. So ist ein Kunde mit mehr als $800$ Euro Ausgaben so gut wie immer ein Prime-Mitglied.
+Für Kunden, die weniger als $100$ Euro ausgegeben haben ist die Wahrscheinlichkeit Premium-Mitglied zu sein mit etwa $25\%$ relativ gering. Je höher die Summe aber wird, desto größer wird auch die genannte Wahrscheinlichkeit. So ist ein Kunde mit mehr als $800$ Euro Ausgaben so gut wie immer ein Premium-Mitglied.
 
 \section{TensorFlow}
 \label{section:3:3}
 
-TensorFlow ist eine Software-Bibliothek, die unter der Haube von Google für die Umsetzung von Algorithmen für maschinelles Lernen entwickelt wurde. Das umfasst insbesondere auch die Möglichkeit zur iterativen Optimierung von Kostenfunktionen, was wir nun zur Regressionsanalyse nutzen wollen.
+TensorFlow ist eine Software-Bibliothek, die von Google für die Umsetzung von Algorithmen für maschinelles Lernen entwickelt wurde. Das umfasst insbesondere auch die Möglichkeit zur iterativen Optimierung von Kostenfunktionen, was wir nun zur Regressionsanalyse nutzen wollen.
 
-TensorFlow bietet APIs für verschiedene Programmiersprachen an. Die Skripte, welche für dieser Arbeit erstellt wurden, sind in Python geschrieben. Wir werden hier nicht exakt dieselben Ergebnisse wie in den R-Skripten erhalten. Wir verwenden TensorFlows Implementierung eines Gradientenabstiegsverfahrens, für welches man die Anzahl der Schritte und die Abstiegsgeschwindigkeit selbst wählen muss. Die Genauigkeit des Ergebnisses hängt also zusätzlich von einer angemessenen Auswahl dieser Werte ab.
+TensorFlow bietet APIs für verschiedene Programmiersprachen an. Die Skripte, welche für dieser Arbeit erstellt wurden, sind in Python geschrieben. Wir verwenden TensorFlows Implementierung eines Gradientenabstiegsverfahrens, für welches man die Anzahl der Schritte und die Abstiegsgeschwindigkeit selbst wählen muss. Die Genauigkeit des Ergebnisses hängt also zusätzlich von einer angemessenen Auswahl dieser Werte ab.
 
-Die Python-Skripte umfassen nun zwischen 70 und 100 Codezeilen, daher findet man diese Skripte im Ganzen nur im Anhang \ref{appendix:B}. Die wichsten Ausschnitte aus dem Code sollen in den folgenden Teilkapiteln aber einen Einblick in die Funktioneweise des Codes geben.
+Die Python-Skripte umfassen nun zwischen 70 und 100 Codezeilen, daher findet man diese Skripte im Ganzen nur im Anhang \ref{appendix:B}. Die wichtigsten Ausschnitte aus dem Code sollen in den folgenden Teilkapiteln aber einen Einblick in die Funktioneweise des Codes geben.
 
 \subsection{Grundprinzip}
 \label{subsection:3:3:1}
 
-TensorFlow arbeitet mit Tensoren als grundliegende Datenstruktur. Solche sind im Wesentlichen Matrizen mit festen Dimensionen. Tensoren können dann mit Hilfe aller möglicher Operatoren weiterverarbeitet werden.
+TensorFlow arbeitet mit Tensoren als grundliegende Datenstruktur. Solche sind im Wesentlichen Matrizen mit festen Dimensionen. Tensoren können dann mit Hilfe verschiedenster Operatoren weiterverarbeitet werden.
 
 Es gibt drei Möglichkeiten, Tensoren zu definieren: Als Konstante, als Variable oder als Platzhalter. Während Konstanten ihren Wert nicht mehr ändern können, sind die beiden letztgenannten veränderbar. Der Unterschied besteht darin, dass Variablen mit einem Startwert initiiert werden, Platzhalter besitzen dagegen anfangs keinen Wert. Wir werden Variablen nutzen, um die Parameter über die Iterationen zu speichern. Die Daten, mit denen wir das Modell trainieren werden, übergeben wir an Platzhalter.
 
-Wie das Modell exakt definiert wird zeigen die folgenden Teilkapitel. Wir stellen immer eine Kostenfunktion auf, die dann mit Hilfe eines Gradientenabstiegsverfahrens iterativ minimiert wird. Die Definition dieses sogenannten Trainingsschrittes sieht immer gleich aus:
+Wie das Modell exakt definiert wird, zeigen die folgenden Teilkapitel. Wir stellen immer eine Kostenfunktion auf, die dann mit Hilfe eines Gradientenabstiegsverfahrens iterativ minimiert wird. Die Definition dieses sogenannten Trainingsschrittes sieht immer gleich aus:
 
 \begin{minted}[linenos,breaklines,frame=single]{python}
   train_step = tf.train
@@ -156,7 +157,7 @@ Um dann auch wirklich Berechnungen durchführen zu können, muss in TensorFlow e
 \subsection{Einfache lineare Regression}
 \label{subsection:3:3:2}
 
-Hier definieren wir unsere Platzhalter und Variable wiefolgt:
+Hier definieren wir unsere Platzhalter und Variablen wiefolgt:
 
 \begin{minted}[linenos,breaklines,frame=single]{python}
   x = tf.placeholder(tf.float32, [None, 1])
@@ -215,7 +216,7 @@ Wir definieren unsere Tensoren exakt wie bei einfacher linearer Regression, da w
   y_calc = 1 / (1 + tf.exp(- tf.matmul(x, beta) - alpha))
 \end{minted}
 
-Hier minimieren wir nicht mehr die Summe der Quadrate sondern maximieren die Likelihoodfunktion. TensorFlow bietet allerdings nur eine API für Minimierung, weshalb wir das Inverse der Likelihoodfunktion als Kostenfunktion verwenden. Zusätzlich wenden wir wieder den natürlichen Logarithmus auf die Funktion an. Die Kostenfunktion sieht also wiefolgt aus:
+Hier minimieren wir nicht mehr die Summe der Quadrate sondern maximieren die Likelihoodfunktion. TensorFlow bietet allerdings nur eine API für Minimierung, weshalb wir das Inverse der Likelihoodfunktion als Kostenfunktion verwenden. Zusätzlich wenden wir wieder den natürlichen Logarithmus auf die Funktion an. Die Kostenfunktion sieht also wie folgt aus:
 
 \begin{minted}[linenos,breaklines,frame=single]{python}
   cost = - tf.reduce_sum(
@@ -237,20 +238,18 @@ Wir wählen eine Schrittweite von $0.0001$ und iterieren $1000$ Schritte, um das
 \section{SQL}
 \label{section:3:4}
 
-Die "Structured Query Language" alias "SQL" ist eine Sprache zur Definition und Verarbeitung von Datenstrukturen in Datenbanksystemen und wird in nahezu allen Implementierungen relationaler Datenbanken unterstützt. Of liegen die Daten, welche man für Regressionsanalyse verwenden möchte in einer solchen Datenbank.
+Die "Structured Query Language" alias "SQL" ist eine Sprache zur Definition und Verarbeitung von Datenstrukturen in Datenbanksystemen und wird in nahezu allen Implementierungen relationaler Datenbanken unterstützt. Oft liegen die Daten, welche man für Regressionsanalyse verwenden möchte in einer solchen Datenbank.
 
-Methoden für Regression gehören nicht zum Portfolio von SQL. Statistik und Datenanalyse sind ja auch nicht der primäre Einsatzzweck dieser Sprache. Trotzdem ist es in nahezu allen Systemen möglch, mit standardisierten SQL-Methoden Regression direkt in der Datenbank zu betreiben. Die konkrete Umsetzung hängt von dem spezifischen Datenbanksystem ab.
-
-In diesem Kapitel soll das nun für zwei der beliebtesten Open-Source-Datenbanksystemen demonstriert werden, nämlich MySQL und PostgreSQL. Der vollständige SQL-Code befindet sich wegen der Länge wieder komplett im Anhang. Die MySQL-Skripte sind unter \ref{appendix:C} zu finden, die Skripte für PostgreSQL liegen in \ref{appendix:D}.
+SQL als Programmiersprache ist Turing-vollständig. Es ist also mit standardisierten SQL-Methoden möglich, Regression direkt in der Datenbank zu betreiben. Die konkrete Umsetzung hängt von der Art der Regression und dem spezifischen Datenbanksystem ab. In diesem Kapitel soll das nun für zwei Open-Source-Datenbanksystemen demonstriert werden, nämlich MySQL und PostgreSQL. Der vollständige SQL-Code befindet sich wegen der Länge wieder komplett im Anhang. Die MySQL-Skripte sind unter \ref{appendix:C} zu finden, die Skripte für PostgreSQL liegen in \ref{appendix:D}.
 
 Im Gegensatz zu den beiden bisher vorgestellten Sprachen verfolgen wir hier kein einheitliches Grundprinzip, in dem sich alle Arten der Regression ähnlich sind. Die einzige Gemeinsamkeit ist, dass wir in allen SQL-Skripten Prozeduren bzw. Funktionen definieren, welche bei Aufruf die Regressionsanalyse durchführen. Wir nehmen dazu an, dass die Daten für die Regression in einer Tabelle namens $sample$ liegen.
 
-Bei einfacher linearer Regression berechnen wir die Parameter exakt über die Formeln aus Kapitel \ref{subsection:2:1:1}. Bei multipler Regression verwenden wir die Matrixformel aus Kapitel \ref{subsection:2:1:2}. Hier müssen wir zusätzlich Algorithmen zur Transponierung, Multiplikation und Invertierung von Matrizen implementieren. Für logistische Regression implementieren wir dann ein Gradientenverfahren.
+Bei einfacher linearer Regression berechnen wir die Parameter exakt über die Formeln aus Kapitel \ref{subsection:2:1:1}. Bei multipler Regression verwenden wir die Matrixformel aus Kapitel \ref{subsection:2:1:2}. Hier müssen wir zusätzlich Algorithmen zur Transponierung, Multiplikation und Invertierung von Matrizen implementieren. Für logistische Regression steht uns keine explitize Formel zur Verfügung, weshalb wir ein Gradientenverfahren zur Lösung des Optimierungsproblems implementieren.
 
 \subsection{Einfache lineare Regression}
 \label{subsection:3:4:1}
 
-Einfache lineare Regression stellt uns in SQL noch vor wenig Herausforderungen. Wir berechnen zuerst die Mittelwerte über die Spalten $purchases$ und $money$, dann die Summen in Zähler und Nenner der Formel für $\beta$ und können dann mit einfacher Arithmetik die beiden Paramter bestimmen.
+Einfache lineare Regression kann ohne größeren Aufwand mit SQL umgesetzt werden. Wir berechnen zuerst die Mittelwerte über die Spalten $purchases$ und $money$, dann die Summen in Zähler und Nenner der Formel für $\beta$ und können dann mit einfacher Arithmetik die beiden Paramter bestimmen.
 
 Diese Berechnung kann man sogar in einer einzelnen Abfrage umsetzen. Das Skript für PostgreSQL tut das auch und definiert die genannten Berechnungsschritte als einzelne Views. In MySQL existiert die VIEW-Syntax nicht. Deshalb wird die Berechnung der Übersicht halber auf mehrere Abfragen aufgeteilt.
 
@@ -277,7 +276,7 @@ Führen wir die Prozeduren im jeweiligen Datenbanksystem aus, erhalten wir folge
 
 Wir wollen zur Lösung dieses Regressionsproblems die Matrix-Formel aus Kapitel \ref{subsection:2:1:2} anwenden. Dazu müssen Methoden für das Transponieren, Multiplizieren und Invertieren von Matrizen implementiert werden, da weder MySQL noch PostgreSQL über solche Funktionen verfügen. Wir müssen außerdem einen Weg finden, Matrizen im jeweiligen Datenbanksystem zu repräsentieren.
 
-Letzteres Problem lösen wir unterschiedlich in den beiden Datenbanksystemen. Beginnen wir mit MySQL. Hier definieren wir uns temporäre Tabellen, welche jeweils eine Matrix repräsentieren. Jede solche Tabelle besteht aus drei Spalten, nämlich $row$, $column$ und $value$. Die ersten beiden enthalten die Indizes des Matrixelements, letztere enthält den Wert des jeweiligen Elements.
+Die Matrizenrepräsentierung lösen wir unterschiedlich in den beiden Datenbanksystemen. In MySQL definieren wir uns temporäre Tabellen, welche jeweils eine Matrix repräsentieren. Jede solche Tabelle besitzt dasselbe Schema, nämlich aus den Attributen $row$, $column$ und $value$. Die ersten beiden enthalten die Indizes des Matrixelements, letztere enthält den Wert des jeweiligen Elements.
 
 Wir definieren insgesamt sieben solcher Tabellen:
 \begin{itemize}
@@ -292,11 +291,11 @@ Wir definieren insgesamt sieben solcher Tabellen:
 
 Die ersten beiden dieser Tabellen werden einfach mit den vorhandenen Werten aus der Tabelle $sample$ befüllt. Die Tabelle $matrix\_transposed$ wird mit einem einfachen Query aus der Tabelle $matrix\_X$ berechnet, indem die Indizes für Zeile und Spalte vertauscht werden.
 
-Die Tabellen $matrix\_product\_1$, $matrix\_product\_2$ und $matrix\_result$ sind Ergebnisse von Matrizenmultiplikationen. Diese Produkte werden mit zwei Schleifen berechnet, die über die Zeilen und Spalten der Ergebnismatrix iterieren. Das jeweilige Element der zu berechnenden Matrix wird über eine Abfrage eingefügt, welche die entsprechende Zeile und Spalte der beiden Faktor-Tabellen zusammenjoint und über das Ergebnis summiert.
+Die Tabellen $matrix\_product\_1$, $matrix\_product\_2$ und $matrix\_result$ sind Ergebnisse von Matrizenmultiplikationen. Diese Produkte werden mit zwei Schleifen berechnet, die über die Tupel und Attribute der Ergebnismatrix iterieren. Der jeweilige Wert zusammen mit dem Zeilen- und Spaltenindex der zu berechnenden Matrix wird über eine Abfrage eingefügt. Diese Abfrage nimmt das Kreuzprodukt beider Tabellen und betrachtet nur die aktuelle Zeile der ersten Tabelle und die aktuelle Spalte der zweiten Tabelle. Außerdem sollen die Zeilenindizes der ersten Tabelle gleich den Indizes der zweiten Tabelle sein. Der Wert für die zu berechnende Matrix ergibt sich als Summe über die Produkte der Werte der verbleibenden Tupel.
 
-Bei den Tabellen $matrix\_product\_2$ und $matrix\_result$ ist die Spaltenanzahl der zu berechnenden Tabelle gleich eins. Die zweite Schleife besitzt also hier nur eine Iteration, weswegen sie auch einfach weggelassen werden kann.
+Bei den Tabellen $matrix\_product\_2$ und $matrix\_result$ ist die Spaltenanzahl der zu berechnenden Tabelle gleich eins. Wegen der einen notwendigen Iteration braucht man hier sogar nur eine Schleife.
 
-Für die Berechnung der inversen Matrix, also für die Tabelle $matrix\_inverse$, wird ein einfacher iterativer Algorithmus verwendet, welcher über alle Zeilen der zu invertierenden Matrix läuft. In jedem Schritt werden alle Elemente der Matrix nach einem bestimmten Schema angepasst, sodass man am Ende das Inverse erhält. Details zu dem verwendeten Algorithmus findet man in \cite{matrix}.
+Für die Berechnung der inversen Matrix, also für die Tabelle $matrix\_inverse$, wird ein einfacher iterativer Algorithmus verwendet, welcher über alle Zeilen der zu invertierenden Matrix läuft. In jedem Schritt werden alle Elemente der Matrix nach einem bestimmten Vorgehen angepasst, sodass man am Ende das Inverse erhält. Details zu dem verwendeten Algorithmus findet man in \cite{matrix}.
 
 Die komplette Berechnung wurde in eine Prozedur verpackt. Führt man diese aus, erhält man das folgende Ergebnis:
 
@@ -310,16 +309,16 @@ Die komplette Berechnung wurde in eine Prozedur verpackt. Führt man diese aus, 
   \end{tabular}
 \end{center}
 
-Betrachten wir nun die Implementierung in PostgreSQL. Gegenüber MySQL hat man hier den Vorteil, dass mehrdimensionale Listen als Datentyp existieren. Wir brauchen also keine temporären Tabellen für die Matrizen mehr, sondern speichern diese einfach als zweidimensionales Array.
+Betrachten wir nun die Implementierung in PostgreSQL. Gegenüber MySQL hat man hier den Vorteil, dass mehrdimensionale Felder als Datentyp existieren. Wir brauchen also keine temporären Tabellen für die Matrizen mehr, sondern speichern diese einfach als zweidimensionales Array.
 
 Neben der eigentlichen Prozedur zum Ausführen der Regression definieren wir drei weitere Funktionen:
 \begin{itemize}
-  \item $matrix\_transpose$: Diese Funktion nimmt ein zweidimensionales Array von Typ $NUMERIC$ als Input und gibt die transponierte Matrix zurück. Die Transponierte wird mit zwei Schleifen über die Zeilen und Spalten gebildet, welche die Zeilen- und Spaltenindizes vertauschen.
+  \item $matrix\_transpose$: Diese Funktion nimmt ein zweidimensionales Array von Typ $NUMERIC$ als Input und gibt die transponierte Matrix zurück. Die transponierte Matrix wird mit zwei Schleifen über die Zeilen und Spalten gebildet, welche die Zeilen- und Spaltenindizes vertauschen.
   \item $matrix\_multiplication$: Diese Funktion nimmt zwei zweidimensionale Arrays vom Typ $NUMERIC$ als Input und gibt das Produkt der beiden Matrizen zurück. Hier werden drei Schleifen zur Berechnung verwendet. Die ersten beiden iterieren über die Zeilen und Spalten der Ausgabematrix. Die dritte iteriert über die Zeile bzw. Spalte, welche zur Berechnung der aktuellen Elements verwendet werden und addiert die Produkte der Elemente dieser Zeile und Spalte auf.
   \item $matrix\_inversion$: Diese Funktion nimmt ein zweidimensionales Array vom Typ $NUMERIC$ als Input und gibt das Inverse dieser Matrix zurück. Dabei wird derselbe Algorithmus verwendet, der auch in MySQL implementiert wurde.
 \end{itemize}
 
-Mit diesen drei Funktionen lässt sich die Formel aus Kapitel \ref{subsection:2:1:2} mit drei Abfragen umsetzen. Dazu erzeugen wir zuerst zwei Matrizen $x$ und $y$ mit den unabhängigen und der abhängigen Variable als Elemente aus der $sample$-Tabelle. Im dritten Query nutzen wir die genannten Funktionen, um die Matrix mit den gesuchten Parametern zu berechnen.
+Mit diesen drei Funktionen lässt sich die Formel aus Kapitel \ref{subsection:2:1:2} mit drei Abfragen umsetzen. Dazu erzeugen wir zuerst zwei Matrizen $x$ und $y$ mit den unabhängigen und der abhängigen Variable als Elemente aus der $sample$-Relation. Im dritten Query nutzen wir die genannten Funktionen, um die Matrix mit den gesuchten Parametern zu berechnen.
 
 Führt man die multiple lineare Regressionsanalyse in PostgreSQL durch, erhält man das folgende Ergebnis:
 
@@ -333,7 +332,7 @@ Führt man die multiple lineare Regressionsanalyse in PostgreSQL durch, erhält 
   \end{tabular}
 \end{center}
 
-Da wir dieselben Algorithmen und dieselbe Präzision für Kommazahlen in MySQL und PostgreSQL verwendet haben, stimmen die beiden Ergebnisse sogar exakt überein.
+Da wir dieselben Algorithmen und dieselbe Präzision für Kommazahlen in MySQL und PostgreSQL verwendet haben, stimmen die beiden Ergebnisse sogar überein.
 
 \subsection{Logistische Regression}
 \label{subsection:3:4:3}
@@ -342,11 +341,11 @@ Zur Lösung des logistischen Regressionsproblems möchten wir in SQL ein Gradien
 
 Wir verwenden für das Verfahren mehrere Tabellen, in denen gewisse Informationen gespeichert und verarbeiten werden:
 \begin{itemize}
-  \item Die Tabelle $datapoints$ besteht aus drei Spalten $id$, $variable$ und $value$. Die $id$-Spalte enthält einen generierten Wert, der einen Datensatz aus der $sample$-Tabelle identifiziert. Die $variable$-Spalte enthält den Namen der gespeicherten unabhängigen Variable. In unserem Fall steht hier immer $beta\_money$, da wir nur eine unabhängige Variable betrachten. Gegebenenfalls können hier mehrere Variablen betrachtet werden. (Die Werte für einen Datenpunkt werden dann also auf mehrere Zeilen aufgeteilt.) Die Spalte $value$ enthält dann den Wert der entsprechenden Variable des jeweiligen Datensatzes.
-  \item Die Tabelle $binary\_values$ besteht aus zwei Spalten $id$ und $value$. Hier werden für jeden Datenpunkt die Werte der abhängigen binären Variable gespeichert, in unserem Fall also die Werte aus der Spalte $prime$.
-  \item Die Tabelle $parameters$ besteht aus drei Spalten $variable$, $old$ und $new$. Die erste Spalte enthält den Namen des Parameters, also $alpha$ oder $beta\_money$. Die Spalten $old$ und $new$ enthalten die Werte der Parameter vor bzw. nach dem aktuellen Iterationsschritt des Gradientenverfahrens. Wir benötigen beide Werte, um überprüfen zu können, ob die neuen Parameter ein besseres Ergebnis liefern als die alten.
-  \item Die Tabelle $logits$ besteht aus drei Spalten $id$, $old$ und $new$. Hier werden für jeden Datenpunkt die Werte der logistischen Funktion $\pi_i$ berechnet. Dabei werden einmal die alten und einmal die neuen Parameter zur Berechnung verwendet.
-  \item Die Tabelle $gradient$ besteht aus zwei Spalten $variable$ und $value$. Hier wird der Gradient bzw. die Werte der partiellen Ableitungen nach jedem Parameter gespeichert.
+  \item Die Relation $datapoints$ besteht aus drei Spalten $id$, $variable$ und $value$. Die $id$-Spalte enthält einen generierten Wert, der einen Datensatz aus der $sample$-Tabelle identifiziert. Die $variable$-Spalte enthält den Namen der gespeicherten unabhängigen Variable. In unserem Fall steht hier immer $beta\_money$, da wir nur eine unabhängige Variable betrachten. Gegebenenfalls können hier mehrere Variablen betrachtet werden. (Die Werte für einen Datenpunkt werden dann also auf mehrere Zeilen aufgeteilt.) Die Spalte $value$ enthält dann den Wert der entsprechenden Variable des jeweiligen Datensatzes.
+  \item Die Relation $binary\_values$ besteht aus zwei Spalten $id$ und $value$. Hier werden für jeden Datenpunkt die Werte der abhängigen binären Variable gespeichert, in unserem Fall also die Werte aus der Spalte $premium$.
+  \item Die Relation $parameters$ besteht aus drei Spalten $variable$, $old$ und $new$. Die erste Spalte enthält den Namen des Parameters, also $alpha$ oder $beta\_money$. Die Spalten $old$ und $new$ enthalten die Werte der Parameter vor bzw. nach dem aktuellen Iterationsschritt des Gradientenverfahrens. Wir benötigen beide Werte, um überprüfen zu können, ob die neuen Parameter ein besseres Ergebnis liefern als die alten.
+  \item Die Relation $logits$ besteht aus drei Spalten $id$, $old$ und $new$. Hier werden für jeden Datenpunkt die Werte der logistischen Funktion $\pi_i$ berechnet. Dabei werden einmal die alten und einmal die neuen Parameter zur Berechnung verwendet.
+  \item Die Relation $gradient$ besteht aus zwei Spalten $variable$ und $value$. Hier wird der Gradient bzw. die Werte der partiellen Ableitungen nach jedem Parameter gespeichert.
 \end{itemize}
 
 Wir definieren außerdem einige Hilfsfunktionen:
@@ -357,7 +356,7 @@ Wir definieren außerdem einige Hilfsfunktionen:
   \item $are\_new\_parameters\_better$: Diese Funktion berechnet den Logarithmus der Likelihoodfunktion für die neuen und alten Parameter aus der Tabelle $parameters$ und gibt einen Wahrheitswert zurück. Die Rückgabe ist wahr, wenn die Likelihoodfunktion für die neuen Parameter einen größeren Wert annimmt als für die alten Parameter.
 \end{itemize}
 
-Wir führen wie schon bei TensorFlow zuerst eine Lineartransformation für die Werte aus $money$ durch und bilden diese linear auf das Interval $[0, 1]$ ab. Zur Erinnerung: Das dient erneut dazu, dass die Werte der logistischen Funktion nicht zu nahe an null geraten. Die transformierten Werte fügen wir in die $datapoints$-Tabelle ein. Auch die anderen Tabellen erzeugen wir und fügen initiale Werte ein.
+Wir führen wie schon bei TensorFlow zuerst eine Lineartransformation für die Werte aus $money$ durch und bilden diese linear auf das Interval $[0, 1]$ ab. Das dient erneut dazu, dass die Werte der logistischen Funktion nicht zu nahe an null geraten. Die transformierten Werte fügen wir in die $datapoints$-Tabelle ein. Auch die anderen Tabellen erzeugen wir und fügen initiale Werte ein.
 
 Es folgt eine $while$-Schleife, die solange läuft, bis entweder die vorgegebene Anzahl an Schritten erreicht wurde, oder die Schrittweite zu klein für die gewählte Präzision der Kommazahlen wird. Wir berechnen zuerst den Gradienten, dann die neuen Parameter. Dann ist ein Aufruf von $calculate\_logits$ nötig, um die logistische Funktion für die neuen Parameter zu berechnen.
 
@@ -365,7 +364,7 @@ Wir überprüfen, ob die neuen Parameter wirklich besser sind als die alten. Fal
 
 Haben wir die neuen Parameter erfolgreich berechnet, werden die Werte der $old$-Spalten in den Tabellen $parameters$ und $logits$ mit den neuen Werten überschrieben und der Iterationsschritt ist beendet. Nachdem die Schleife beendet wurde, werden die Parameter wieder entsprechend linear transformiert, um den tatsächlichen Werten für $money$ zu entsprechen.
 
-Wir entscheiden und für 1000 Iterationen. Die Schrittweite muss ebenfalls selbst gewählt werden. Eine gute Wahl hängt immer von den gegebenen Datensätzen ab. Hier hat sich eine Schrittweite von $0.00008$ bewährt. Führt man die Prozeduren im jeweiligen Datenbanksystemen aus erhält man das folgende Ergebnis:
+Wir entscheiden und für 1000 Iterationen und wählen eine Schrittweite von $0.00008$. Führt man die Prozeduren im jeweiligen Datenbanksystemen aus erhält man das folgende Ergebnis:
 
 \begin{center}
   \captionof{table}{Logistische Regression in MySQL}

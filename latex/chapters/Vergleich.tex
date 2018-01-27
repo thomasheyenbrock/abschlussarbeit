@@ -1,35 +1,24 @@
 \chapter{Vergleich der verschiedenen Implementierungen}
 \label{chapter:4}
 
-Wir haben im vorherigen Kapitel drei verschiedene Programmiersprachen bzw. Softwarebibliotheken vorgestellt und gezeigt, wie man dort Regressionsanalyse betreiben kann. In diesem Kapitel wollen wir zum Einen konkret auf die Unterschiede eingehen und zum anderen einen Benchmark bezüglich der Laufzeit abhängig von der Anzahl der zu verarbeitenden Datensätze erstellen.
-
-\section{Iterative und explizite Berechnung}
-\label{section:4:1}
-
-Wir haben hier zwei verschiedene Arten zur Berechnung der Parameter verwendet. Bei expliziten Berechnungen wurden verschiedene Berechnungsformeln ausgewertet, bei iterativer Berechnung wurden Optimierungsverfahren verwendet, um die Werte gesuchten Parameter Schritt für Schritt besser zu approximieren.
-
-In R haben wir ausschließlich explizite Berechnungen durchgeführt. Dazu haben wir die bereits implenentierten Funktionen $lm$ und $glm$ verwendet.
-
-In TensorFlow kamen dagegen ausschließlich iterative Berechnungen zum Einsatz, TensorFlow ist ja auch eine Bibliothek, die für diesen Zweck programmiert wurde. Wir haben ein von TensorFlow implementiertes Gradientenverfahren genutzt, um eine jeweils von uns definierte Kostenfunktion zu minimieren oder zu maximieren. Die Kostenfunktionen waren dabei die Summe der kleinsten Quadrate bei linearer Regression und die Likelihoodfunktion bei logistischer Regression.
-
-In SQL haben wir beide Berechnungsarten umgesetzt. Bei linearer Regression haben wir die expliziten Formeln aus den Kapiteln \ref{subsection:2:1:1} und \ref{subsection:2:1:2} verwendet. Bei logistischer Regression wurde wiederum ein Gradientenverfahren angewandt, nur dieses Mal wurde das Verfahren eigens implementiert, nachdem SQL nicht über ein solche Funktion verfügt.
+In diesem Kapitel wollen wir zum einen konkret auf die Unterschiede eingehen und zum anderen die Laufzeit abhängig von der Anzahl der zu verarbeitenden Datensätze evaluieren.
 
 \section{Benchmarking}
-\label{section:4:2}
+\label{section:4:1}
 
-Nun wollen wir die konkreten Laufzeiten für die implememtierten Algorithmen vergleichen. Zu erwarten ist auf jeden Fall, dass Skripte unter Verwendung von iterativen Verfahren länger laufen als solche mit expliziter Berechnung. Außerdem ist zu vermuten, dass die eigenen Implementierungen in SQL langsamer sind, als wie die vorprogrammierten Funktionen in R und TensorFlow.
+Nun wollen wir die konkreten Laufzeiten für die implementierten Algorithmen vergleichen. Zu erwarten ist auf jeden Fall, dass Skripte unter Verwendung von iterativen Verfahren länger laufen als solche mit expliziter Berechnung.
 
-Zur Berechnung der Laufzeiten wurde erneut ein Python-Skript geschrieben. Dieses Skript führt die jeweilige Regression über einen Kommandozeilenbefehl aus und misst die Zeit dieser Operation. Die Anzahl der Wiederholungen und die Anzahl der verwendeten Datenpunkte können als Parameter übergeben werden. Die Ergebnisse der Berechnungen werden als csv-Datei gespeichert. Das Skript findet man im Anhang unter \ref{appendix:F:1}.
+Zur Berechnung der Laufzeiten erfolgt erneut mit einem Python-Skript. Dieses Skript führt die jeweilige Regression über einen Kommandozeilenbefehl aus und misst die Zeit dieser Operation. Die Anzahl der Wiederholungen und die Anzahl der verwendeten Datenpunkte können als Parameter übergeben werden. Die Ergebnisse der Berechnungen werden als csv-Datei gespeichert. Das Skript findet man im Anhang unter \ref{appendix:F:1}.
 
-Auch für das Auswerten der berechneten Benchmarks wurde ein Python-Skript erstellt. Dieses Skript liest eine csv-Datei mit Benchmarks ein und druckt eine Tabelle mit den Werten für jede Art der Regression. Außerdem werden mehrere Plots für die Lautzeiten erzeugt. Alle Benchmarks wurden auf einem MacBook Pro (Mitte 2012) mit einem 2,9 GHz Intel Core i7 Prozessor und 8 GB 1600 MHz DDR3 Arbeitsspeicher berechnet.
+Auch für das Auswerten der berechneten Benchmarks wurde ein Python-Skript erstellt. Dieses Skript liest eine csv-Datei mit Benchmarks und gibt eine Tabelle mit den Werten für jede Art der Regression aus. Außerdem werden mehrere Plots für die Laufzeiten erzeugt. Alle Benchmarks wurden auf einem MacBook Pro (Mitte 2012, Betriebssystem macOS High Sierra 10.13.2) mit einem 2,9 GHz Intel Core i7 Prozessor und 8 GB 1600 MHz DDR3 Arbeitsspeicher berechnet.
 
 \subsection{Einfache lineare Regression}
-\label{subsection:4:2:1}
+\label{subsection:4:1:1}
 
-Folgende Benchmarks erhalten wir bei einfacher linearer Regression:
+Folgende Ergebnisse erhalten wir bei einfacher linearer Regression:
 
 \begin{center}
-  \captionof{table}{Benchmarks für einfache lineare Regression}
+  \captionof{table}{Laufzeiten für einfache lineare Regression}
   \begin{tabular}{|c|c|c|c|c|c|}\hline
     & \textbf{10} & \textbf{100} & \textbf{1000} & \textbf{10000} & \textbf{100000} \\ \hline
     \textbf{r} & 0.38453477 & 0.40336191 & 0.38638819 & 0.40475887 & 0.54730985 \\ \hline
@@ -39,19 +28,19 @@ Folgende Benchmarks erhalten wir bei einfacher linearer Regression:
   \end{tabular}
 \end{center}
 
-Der zugehörige Graph (mit logarithmischen Skalen) sieht folgendermaßen aus:
+Der zugehörige Graph sieht folgendermaßen aus:
 
 \includegraphics[width=\textwidth]{simpleLinearRegressionBenchmark}
 
-TensorFlow und R haben eine relativ konstante Lautzeit, auch be größeren Datenmengen. Dabei ist TensorFlow mit iterativer Berechnung wie erwartet mit Abstand am langsamsten. Die SQL-Implementierungen sind bei geringer Anzahl an Datenpunkten sogar die schnellsten Skripte. Für größer werdende Datenmengen erkennt man aber einen rapiden Anstieg in der Lautzeit.
+TensorFlow und R haben eine relativ konstante Lautzeit, auch bei größeren Datenmengen. Dabei ist TensorFlow mit iterativer Berechnung wie erwartet mit Abstand am langsamsten. Die SQL-Implementierungen sind bei geringer Anzahl an Datenpunkten sogar die schnellsten Skripte. Für größer werdende Datenmengen erkennt man aber einen rapiden Anstieg in der Laufzeit.
 
 \subsection{Multiple lineare Regression}
-\label{subsection:4:2:2}
+\label{subsection:4:1:2}
 
-Die Skripte für multiple lineare Regression besitzten folgende Laufzeiten:
+Die Skripte für multiple lineare Regression besitzen folgende Laufzeiten:
 
 \begin{center}
-  \captionof{table}{Benchmarks für multiple lineare Regression}
+  \captionof{table}{Laufzeiten für multiple lineare Regression}
   \begin{tabular}{|c|c|c|c|c|c|}\hline
     & \textbf{10} & \textbf{100} & \textbf{1000} & \textbf{10000} & \textbf{100000} \\ \hline
     \textbf{r} & 0.38108478 & 0.37967851 & 0.38452695 & 0.39888490 & 0.54517789 \\ \hline
@@ -65,12 +54,12 @@ Das geplottete Ergebnis sieht wiefolgt aus:
 
 \includegraphics[width=\textwidth]{multipleLinearRegressionBenchmark}
 
-Hier zeigt sich ein ähnliches Bild wie schon bei einfacher lineare Regression. Wieder liefern R und TensorFlow relativ konstante Laufzeiten, wobei die Laufzeit des TensorFlow-Skriptes wegen den $50.000$ durchgeführten Iterationen dieses Mal extrem langsam ist. Wieder sind die SQL-Skripte bei kleinen Datenmengen am schnellsten. Bei größeren Datenmengen werden sie allerdings von R geschlagen. Interessant ist außerdem, dass die PostgreSQL-Implementierung noch schneller als die Variante in MySQL. Die Arrays von PostgreSQL arbeiten also effizienter als die temporären Tabellen in MySQL.
+Hier zeigt sich ein ähnliches Bild wie schon bei einfacher linearer Regression. Wieder liefern R und TensorFlow relativ konstante Laufzeiten, wobei die Laufzeit des TensorFlow-Skriptes wegen den $50.000$ durchgeführten Iterationen dieses Mal extrem langsam ist. Wieder sind die SQL-Skripte bei kleinen Datenmengen am schnellsten. Bei größeren Datenmengen werden sie allerdings von R geschlagen. Interessant ist außerdem, dass die PostgreSQL-Implementierung noch schneller als die Variante in MySQL. Die Arrays von PostgreSQL arbeiten also effizienter als die temporären Tabellen in MySQL.
 
 \subsection{Logistische Regression}
-\label{subsection:4:2:3}
+\label{subsection:4:1:3}
 
-Betrachten wir zuletzt noch einige Benchmarks für logistische Regression:
+Betrachten wir zuletzt noch die Laufzeiten für logistische Regression:
 
 \begin{center}
   \captionof{table}{Benchmarks für logistische Regression}
@@ -83,8 +72,9 @@ Betrachten wir zuletzt noch einige Benchmarks für logistische Regression:
   \end{tabular}
 \end{center}
 
-Das visualisierte Pondon der Tabelle sieht so aus:
+Die Visualisierung der Tabelle sieht so aus:
 
 \includegraphics[width=\textwidth]{logisticRegressionBenchmark}
 
+% TODO: Laufzeiten testen
 Wieder erkennt man eine Ähnlichkeit zu den vorherigen Diagrammen. Die SQL-Implementierungen sind nun aber von Anfang an deutlich langsamer als die Skripte in R und TensorFlow. Die Laufzeit steigt außerdem sehr schnell weiter an. So wurden für ab $10.000$ Datenpunkte gar keine Benchmarks mehr berechnet, da die erwartete Laufzeit länger als eine Stunde beträgt. Klarer Gewinner ist hier R, wo auch $100.000$ Datenpunkte in weniger als einer Sekunde verarbeitet werden können.

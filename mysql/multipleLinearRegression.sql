@@ -130,14 +130,11 @@ WHILE counter_1 <= n DO
       counter_1,
       counter_2,
       (
-        SELECT SUM(T1.`value` * T2.`value`)
-        FROM (
-          SELECT * FROM matrix_X WHERE `column` = counter_2
-        ) T1
-        JOIN (
-          SELECT * FROM matrix_transposed WHERE `row` = counter_1
-        ) T2
-        ON T2.`column` = T1.`row`
+        SELECT SUM(matrix_X.`value` * matrix_transposed.`value`)
+        FROM matrix_X, matrix_transposed
+        WHERE matrix_X.`column` = counter_2
+          AND matrix_transposed.`row` = counter_1
+          AND matrix_transposed.`column` = matrix_X.`row`
       )
     );
 
@@ -238,14 +235,10 @@ WHILE counter_1 <= n DO
     counter_1,
     1,
     (
-      SELECT SUM(T1.`value` * T2.`value`)
-      FROM (
-        SELECT * FROM matrix_y
-      ) T1
-      JOIN (
-        SELECT * FROM matrix_transposed WHERE `row` = counter_1
-      ) T2
-      ON T2.`column` = T1.`row`
+      SELECT SUM(matrix_y.`value` * matrix_transposed.`value`)
+      FROM matrix_y, matrix_transposed
+      WHERE matrix_transposed.`row` = counter_1
+        AND matrix_transposed.`column` = matrix_y.`row`
     )
   );
 
@@ -263,14 +256,10 @@ WHILE counter_1 <= n DO
     counter_1,
     1,
     (
-      SELECT SUM(T1.`value` * T2.`value`)
-      FROM (
-        SELECT * FROM matrix_product_2
-      ) T1
-      JOIN (
-        SELECT * FROM matrix_inverse WHERE `row` = counter_1
-      ) T2
-      ON T2.`column` = T1.`row`
+      SELECT SUM(matrix_product_2.`value` * matrix_inverse.`value`)
+      FROM matrix_product_2, matrix_inverse
+      WHERE matrix_inverse.`row` = counter_1
+        AND matrix_inverse.`column` = matrix_product_2.`row`
     )
   );
 

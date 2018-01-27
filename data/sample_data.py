@@ -7,7 +7,7 @@ def outputCsv(data):
     "age",
     "purchases",
     "money",
-    "prime"
+    "premium"
   )]
 
   for datapoint in data:
@@ -15,7 +15,7 @@ def outputCsv(data):
       datapoint["age"],
       datapoint["purchases"],
       datapoint["money"],
-      datapoint["prime"]
+      datapoint["premium"]
     ))
 
   f = open("sample.csv", "w")
@@ -32,14 +32,14 @@ def outputSql(data):
     "  age INTEGER,",
     "  purchases INTEGER,",
     "  money INTEGER,",
-    "  prime INTEGER",
+    "  premium INTEGER",
     ");",
     "",
     "INSERT INTO sample (%s,%s,%s,%s) VALUES" % (
       "age",
       "purchases",
       "money",
-      "prime"
+      "premium"
     )
   ]
 
@@ -48,7 +48,7 @@ def outputSql(data):
       datapoint["age"],
       datapoint["purchases"],
       datapoint["money"],
-      datapoint["prime"]
+      datapoint["premium"]
     ))
 
   output[-1] = output[-1][:-1] + ";"
@@ -70,15 +70,15 @@ def main(argv):
     purchases = int(max(random.normalvariate(10, 10), 1))
     money = int(max(purchases * 25 + random.normalvariate(0, (math.log(purchases) + 1) * 12), 0.01) * 100)
     if random.uniform(0, 1) > math.exp(0.2 * purchases - 2) / (1 + math.exp(0.2 * purchases - 2)):
-      prime = 0
+      premium = 0
     else:
-      prime = 1
+      premium = 1
 
     data.append({
       "age": age,
       "purchases": purchases,
       "money": money,
-      "prime": prime
+      "premium": premium
     })
 
   outputCsv(data)

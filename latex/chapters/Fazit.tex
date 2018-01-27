@@ -1,6 +1,13 @@
 \chapter{Fazit}
 
-Here starts the thesis with an introduction. Please use nice latex and bibtex entries \cite{latex}. Do not spend time on formating your thesis, but on its content.
+\section{Iterative und explizite Berechnung}
+\label{section:6:1}
 
-\section{Latex Introduction}
-There is no need for a latex introduction since there is plenty of literature out there.
+Wir haben hier zwei verschiedene Arten zur Berechnung der Parameter verwendet. Bei expliziten Berechnungen wurden verschiedene Berechnungsformeln ausgewertet, bei iterativer Berechnung wurden Optimierungsverfahren verwendet, um die Werte gesuchter Parameter Schritt für Schritt besser zu approximieren.
+
+% TODO: glm Implementierung beschreiben
+In R haben wir ausschließlich explizite Berechnungen durchgeführt. Dazu haben wir die bereits implenentierten Funktionen $lm$ und $glm$ verwendet.
+
+In TensorFlow kamen dagegen ausschließlich iterative Berechnungen zum Einsatz. Wir haben ein von TensorFlow implementiertes Gradientenverfahren genutzt, um eine jeweils von uns definierte Kostenfunktion zu minimieren oder zu maximieren. Die Kostenfunktionen waren dabei die Summe der kleinsten Quadrate bei linearer Regression und die Likelihoodfunktion bei logistischer Regression.
+
+In SQL haben wir beide Berechnungsarten umgesetzt. Bei linearer Regression haben wir die expliziten Formeln aus den Kapiteln \ref{subsection:2:1:1} und \ref{subsection:2:1:2} verwendet. Bei logistischer Regression wurde wiederum ein Gradientenverfahren angewandt, nur dieses Mal wurde das Verfahren eigens implementiert, nachdem SQL nicht über ein solche Funktion verfügt.

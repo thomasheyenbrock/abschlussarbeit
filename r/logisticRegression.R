@@ -22,7 +22,7 @@ start_time <- Sys.time()
 
 data <- head(read.csv2("./data/sample.csv", sep = ",", header = TRUE), n)
 
-modell <- as.formula("prime ~ money")
+modell <- as.formula("premium ~ money")
 logit <- glm(modell, family = binomial, data = data)
 
 end_time <- Sys.time()
@@ -49,12 +49,12 @@ if (plot) {
     c(-0.2, 1.2),
     type = "n",
     xlab = "money",
-    ylab = "prime",
+    ylab = "premium",
     main = "Logistische Regression"
   )
   lines(
     data$money,
-    data$prime,
+    data$premium,
     type="p"
   )
   lines(

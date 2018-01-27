@@ -1,6 +1,16 @@
 \chapter{Einführung und typische statistische Problemstellungen}
+\label{chapter:1}
 
-Here starts the thesis with an introduction. Please use nice latex and bibtex entries \cite{latex}. Do not spend time on formating your thesis, but on its content.
+Die Statistik ist ein Teilgebiet der Mathematik, in welchem Methoden zum Umgang und zur Verarbeitung von Daten behandelt werden. Dabei wird oft ein vorhandener Satz an Daten, auch Stichprobe genannt, betrachtet und analysiert, um daraus Vorhersagen für die Gesamtheit aller Daten zu treffen. Der Teilbereich der Statistik, welcher sich mit solchen Problemen befasst nennt man auch induktive oder schließende Statistik.
 
-\section{Latex Introduction}
-There is no need for a latex introduction since there is plenty of literature out there.
+Betrachtet man beispielsweise die Körpergröße und das Gewicht von 100 Testpersonen, dann kann man sich fragen, ob diese beiden Merkmale in Zusammenhang stehen. Wenn ja, dann wie? Gibt es eine Formel, welche diese Beziehung möglichst gut beschreiben kann? Gibt es neben der Körpergröße noch andere Faktoren, die einen relevanten Einfluss auf das Gewicht einer Person haben, wie z.B. das Geschlecht oder der Körperfettanteil? Das sind einige Beispiele für Fragestellungen, welchen man in der Statistik regelmäßig begegnet.
+
+Natürlich bietet die Statistik Methoden und Vorgehensweisen, wie man solche Fragen angehen kann. Ein oft verwendetes Verfahren ist die Regression bzw. die Regressionsanalyse. Hier sucht und analysiert man Beziehungen zwischen mehreren Variablen und versucht diese quantitativ zu beschreiben.
+
+Greifen wir das obige Beispiel nochmals auf: Bei der Regression sucht man nach einer Art Formel, welche für gegebene Körpergröße das Gewicht einer Person möglichst gut schätzt. Um eine solche Funktion zu finden, trifft man oft Annahmen über die Art der Beziehung zwischen den Dimensionen, um die Suche a priori einzugrenzen. Oft beschränt man sich auf lineare Funktionen, da solche am leichtersten zu behanden sind. In der Praxis sind aber auch allgemeine Potenzfunktionen, exponentielle Funktionen oder logistische Funktionen bzw. Beziehungen oft anzutreffen.
+
+Natürlich gibt es viel speziell für Statistik entwickelte Software, seien es einfache Programmiersprachen wie das R-Projekt oder komplette Programme mit graphischem Interface wie SPSS von IBM. Die Daten, welche man als Basis für Analysen verwendet werden aber an einer anderen Stelle gespeichert und verwaltet. Oft liegen diese in einer Datenbank und müssen vor Analyse aus der Datenbank exportiert werden.
+
+Konzeptuell ist eine Datenbank nicht für Regressionsanalyse geschaffen. Dennoch ist es in relationalen Datenbanksystemen mit SQL möglich, Regression direkt in der Datenbank durchzuführen. Damit übergeht man den eben genannten Schritt des Exportierens. Mann kann außerdem die Ergebnisse der Analyse direkt aus der Datenbank abfragen oder dort weiterverwenden.
+
+Diese Arbeit hat das Ziel, zuerst das Konzept der Regression einzuführen und die mathematischen Grundlagen darzulegen. Außerdem soll die Anwendung von Regressionsanalyse mit Hilfe von SQL demonstriert werden. Zum Vergleich werden auch noch andere Programmiersprachen vorgestellt, mit denen man Regression durchführen kann.

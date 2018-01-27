@@ -125,12 +125,12 @@ CREATE TEMPORARY TABLE binary_values (
   PRIMARY KEY (id)
 );
 
--- insert all values for column 'prime' into binary_values
+-- insert all values for column 'premium' into binary_values
 SET @counter = 0;
 INSERT INTO binary_values
 SELECT
   @counter := @counter + 1 AS `id`,
-  prime AS `value`
+  premium AS `value`
 FROM sample
 LIMIT number_datapoints;
 

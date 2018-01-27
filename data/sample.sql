@@ -4,10 +4,10 @@ CREATE TABLE sample (
   age INTEGER,
   purchases INTEGER,
   money INTEGER,
-  prime INTEGER
+  premium INTEGER
 );
 
-INSERT INTO sample (age,purchases,money,prime) VALUES
+INSERT INTO sample (age,purchases,money,premium) VALUES
 (30,1,4421,0),
 (30,11,23346,1),
 (33,1,4010,0),

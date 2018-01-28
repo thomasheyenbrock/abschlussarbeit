@@ -27,9 +27,9 @@ WITH
   ),
   sums AS (
     SELECT
-      SUM((purchases - (SELECT mean_purchases FROM means)) * (money - (SELECT mean_money FROM means))) AS nominator,
-      SUM(POWER(purchases - (SELECT mean_purchases FROM means), 2)) AS denominator
-    FROM datapoints
+      SUM((purchases - mean_purchases) * (money - mean_money)) AS nominator,
+      SUM(POWER(purchases - mean_purchases, 2)) AS denominator
+    FROM datapoints, means
   ),
   beta AS (
     SELECT
@@ -40,8 +40,8 @@ WITH
   alpha AS (
     SELECT
       'alpha'::VARCHAR(50) AS variable,
-      mean_money - (SELECT beta.value FROM beta) * mean_purchases AS value
-    FROM means
+      mean_money - value * mean_purchases AS value
+    FROM means, beta
   )
 SELECT *
 FROM alpha

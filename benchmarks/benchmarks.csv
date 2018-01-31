@@ -5079,3 +5079,5 @@ postgresql,logistic regression,1000,556.7784860134125
 postgresql,logistic regression,1000,533.9229228496552
 postgresql,logistic regression,1000,507.52117466926575
 postgresql,logistic regression,1000,526.6672661304474
+postgresql,logistic regression,10000,5100.542334079742
+postgresql,logistic regression,10000,5181.944494009018

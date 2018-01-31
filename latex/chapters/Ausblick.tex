@@ -1,6 +1,227 @@
 \chapter{Erweiterungspotenzial in Datenbanksystemen}
 
-Here starts the thesis with an introduction. Please use nice latex and bibtex entries \cite{latex}. Do not spend time on formating your thesis, but on its content.
+In Kapitel \ref{section:3:4} wurde gezeigt, wie Regressionsanalyse in SQL durchgeführt werden kann. Die dazu implementierten Funktionen können als Erweiterungspotenzial für relationale Datenbanksysteme gesehen werden.
 
-\section{Latex Introduction}
-There is no need for a latex introduction since there is plenty of literature out there.
+In diesen Funktionen sind die zu verwendende Relation und deren Attribute aktuell noch fest implementiert. Um diese Funktionen also nutzbar zu machen, müsste man weitere Parameter einfügen, mit denem man Relation und Attribute zum Zeitpunkt der Ausführung bestimmen kann.
+
+Wir wollen nun die hier implementierten Funktionen und insbesondere deren Abfragen mit Hilfe von Operatorenbäumen darstellen.
+
+\section{Einfache lineare Regression}
+\label{section:5:1}
+
+Die einfache lineare Regression besteht aus mehreren kleinen Teilabfragen. Zuerst berechnet man die Mittelwerte der beiden Attribute für die Regression. Das Ergebnis ist die Tabelle $means$:
+\\\\
+\noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
+  \Tree[
+    .$\rho_{mean\_purchases ~\leftarrow~ avg(purchases),~ mean\_money ~\leftarrow~ avg(money)}$
+    [
+      .$\gamma_{avg(purchases),~ avg(money)}$
+      $datapoints$
+    ]
+  ]
+\end{minipage}}
+\\\\
+Mit diesen Mittelwerten berechnet man die Summen im Nenner und Zähler der Lösungsformel für $\beta$ aus \ref{subsection:2:1:1}. Die Tabelle $sums$ ist das Ergebnis dieser Abfrage:
+\\\\
+\noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
+  \Tree[
+    .$\rho_{denominator ~\leftarrow~ sum(power(purchases - mean\_purchases, 2))}$
+    [
+      .$\rho_{nominator ~\leftarrow~ sum((purchases - mean\_purchases) \cdot (money - mean\_money))}$
+      [
+        .$\gamma_{sum((purchases - mean\_purchases) \cdot (money - mean\_money)),~ sum(power(purchases - mean\_purchases, 2))}$
+        [
+          .X
+          $datapoints$
+          $means$
+        ]
+      ]
+    ]
+  ]
+\end{minipage}}
+\\\\
+
+Damit berechnet man einen Wert für $beta$:
+\\\\
+\noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
+  \Tree[
+    .$\rho_{variable ~\leftarrow~ "beta",~ value ~\leftarrow~ nominator / denominator}$
+    [
+      .$\pi_{"beta",~ nominator / denominator}$
+      $sums$
+    ]
+  ]
+\end{minipage}}
+\\\\
+Mit Hilfe von $beta$ kann man nun auch $alpha$ berechnen:
+\\\\
+\noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
+  \Tree[
+    .$\rho_{variable ~\leftarrow~ "alpha",~ value ~\leftarrow~ mean\_money - value \cdot mean\_purchases}$
+    [
+      .$\pi_{"alpha",~ mean\_money - value \cdot mean\_purchases}$
+      [
+        .X
+        $means$
+        $beta$
+      ]
+    ]
+  ]
+\end{minipage}}
+\\\\
+
+\section{Multiple lineare Regression}
+\label{section:5:2}
+
+Die hier gezeichneten Bäume entsprechen nicht der Implementierung in PostgreSQL. Dort verwenden wir Arrays und Schleifen zur Berechnung. In MySQL verwenden wir dagegen Tabellen und verarbeiten diese mit den angegebenen Bäumen.
+
+Hier beginnen wir mit der Berechnung der transponierten Matrix von $X$. Die zugehörige Tabelle wird $matrix\_transposed$ genannt:
+\\\\
+\noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
+  \Tree[
+    .$\rho_{row ~\leftarrow~ column, column ~\leftarrow~ row}$
+    $matrix\_X$
+  ]
+\end{minipage}}
+\\\\
+Die Matrixprodukte werden auch in MySQL mit Schleifen berechnet. Dabei wird ein Element der zu berechnenden Matrix mit folgender Abfrage bestimmt. Dabei sind die Iteratoren $counter\_1$ und $counter\_2$ durch die Schleifen gegeben
+\\\\
+\noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
+% --------------------------------------------------------------
+% Dieser Baum entspricht der Implementierung ohne Schleifen.
+% --------------------------------------------------------------
+%   \Tree[
+%     .$\gamma_{matrix\_transposed.row, matrix\_X.column, sum(matrix\_transposed.value \cdot matrix\_X.value)}$
+%     [
+%       .$\sigma_{matrix\_transposed.column = matrix\_X.row}$
+%       [
+%         .X
+%         $matrix\_transposed$
+%         $matrix\_X$
+%       ]
+%     ]
+%   ]
+  \Tree[
+    .$\gamma_{sum(m1.value \cdot m2.value)}$
+    [
+      .$\sigma_{m1.row = counter\_1,~ m2.column = counter\_2,~ m1.column = m2.row}$
+      [
+        .X
+        [
+          .$\rho_{m1}$
+          $matrix\_transposed$
+        ]
+        [
+          .$\rho_{m2}$
+          $matrix\_X$
+        ]
+      ]
+    ]
+  ]
+\end{minipage}}
+\\\\
+Die beiden Matrixprodukte zur Berechnung von $matrix\_product\_2$ und $matrix\_result$ besitzen denselben Operatorenbaum, nur dass die beiden Relationen $matrix\_transposed$ und $matrix\_y$ bzw. $matrix\_inverse$ und $matrix\_product\_2$ verwendet werden.
+
+Zur Berechnung der inversen Matrix für die Relation $matrix\_inverse$ wird in PostgreSQL und MySQL ein iterativer Algorithmus verwendet, der sich nicht als Operatorenbaum darstellen lässt.
+
+\section{Logistische Regression}
+\label{section:5:3}
+
+Die Prozedur für die logistische Regression ist schon in verschiedene Teilprozeduren aufgeteilt, die jeweils eine Abfrage durchführen. In $calculate\_logit$ wird die Relation $logits$ mit folgender Abfrage befüllt:
+\\\\
+\noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
+  \Tree[
+    .$\gamma_{d.id,~ 1 / (1 + exp(- SUM(d.value \cdot p.old) - p2.old)),~ 1 / (1 + exp(- SUM(d.value \cdot p.new) - p2.new))}$
+    [
+      .$\bowtie_{p2.variable = "alpha"}$
+      [
+        .$\bowtie_{p.variable = d.variable}$
+        [
+          .$\rho_d$
+          $datapoints$
+        ]
+        [
+          .$\rho_p$
+          $parameters$
+        ]
+      ]
+      [
+        .$\rho_{p2}$
+        $parameters$
+      ]
+    ]
+  ]
+\end{minipage}}
+\\\\
+Die Prozedur, die den Gradienten in die Relation $gradient$ schreibt, heißt $calculate\_gradient$ und führt diese Abfrage aus:
+\\\\
+\noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
+  \Tree[
+    .$\cup$
+    [
+      .$\gamma_{"alpha",~ sum(bv.value - l.old)}$
+      [
+        .$\bowtie_{bv.id = l.id}$
+        [
+          .$\rho_l$
+          $logits$
+        ]
+        [
+          .$\rho_{bv}$
+          $binary\_values$
+        ]
+      ]
+    ]
+    [
+      .$\gamma_{d.variable,~ sum(d.value \cdot (bv.value - l.old))}$
+      [
+        .$\bowtie_{d.id = l.id}$
+        [
+          .$\bowtie_{bv.id = l.id}$
+          [
+            .$\rho_l$
+            $logits$
+          ]
+          [
+            .$\rho_{bv}$
+            $binary\_values$
+          ]
+        ]
+        [
+          .$\rho_d$
+          $datapoints$
+        ]
+      ]
+    ]
+  ]
+\end{minipage}}
+\\\\
+Die Prozedur $calculate\_new\_parameters$ führt einen Update-Query durch, hierfür zeichnen wir keinen Operatorenbaum.
+
+In der Prozedur $are\_new\_parameters\_better$ wird der gesuchte Wahrheitswert wie folgt berechnet:
+\\\\
+\noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
+  \Tree[
+    .$\pi_{old > new}$
+    [
+      .$\rho_{new ~\leftarrow~ sum(log(bv.value \cdot l.new + (1 - bv.value) \cdot (1 - l.new)))}$
+      [
+        .$\rho_{old ~\leftarrow~ sum(log(bv.value \cdot l.old + (1 - bv.value) \cdot (1 - l.old)))}$
+        [
+          .$\gamma_{sum(log(bv.value \cdot l.new + (1 - bv.value) \cdot (1 - l.new))),~ sum(log(bv.value \cdot l.old + (1 - bv.value) \cdot (1 - l.old)))}$
+          [
+            .$\bowtie_{bv.id = l.id}$
+            [
+              .$\rho_l$
+              $logits$
+            ]
+            [
+              .$\rho_{bv}$
+              $binary\_values$
+            ]
+          ]
+        ]
+      ]
+    ]
+  ]
+\end{minipage}}

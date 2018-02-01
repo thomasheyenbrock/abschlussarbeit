@@ -155,7 +155,7 @@ def plot(benchmarks, regression_type, plot_title):
         benchmarks[regression_type][str(i)]["r"]["count"]
       )
     else:
-      r.append(0)
+      r.append(None)
 
     if benchmarks[regression_type][str(i)]["tensorflow"]["count"] > 0:
       t.append(
@@ -163,21 +163,21 @@ def plot(benchmarks, regression_type, plot_title):
         benchmarks[regression_type][str(i)]["tensorflow"]["count"]
       )
     else:
-      t.append(0)
+      t.append(None)
     if benchmarks[regression_type][str(i)]["mysql"]["count"]:
       m.append(
         benchmarks[regression_type][str(i)]["mysql"]["time"] /
         benchmarks[regression_type][str(i)]["mysql"]["count"]
       )
     else:
-      m.append(0)
+      m.append(None)
     if benchmarks[regression_type][str(i)]["postgresql"]["count"]:
       p.append(
         benchmarks[regression_type][str(i)]["postgresql"]["time"] /
         benchmarks[regression_type][str(i)]["postgresql"]["count"]
       )
     else:
-      p.append(0)
+      p.append(None)
 
   plt.loglog(x, r, "r-", label="R")
   plt.loglog(x, t, "y-", label="TensorFlow")

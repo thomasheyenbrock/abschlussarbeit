@@ -3862,6 +3862,16 @@ mysql,logistic regression,10000,275.8721468448639
 mysql,logistic regression,10000,278.36069798469543
 mysql,logistic regression,10000,282.98258423805237
 mysql,logistic regression,10000,278.47732877731323
+mysql,logistic regression,100000,2712.044063091278
+mysql,logistic regression,100000,2674.3959460258484
+mysql,logistic regression,100000,2729.787137031555
+mysql,logistic regression,100000,2638.9421241283417
+mysql,logistic regression,100000,2723.6466460227966
+mysql,logistic regression,100000,2680.348520040512
+mysql,logistic regression,100000,2690.6123859882355
+mysql,logistic regression,100000,2622.490166902542
+mysql,logistic regression,100000,2687.8015661239624
+mysql,logistic regression,100000,2644.237137079239
 postgresql,simple linear regression,10,0.061617136001586914
 postgresql,simple linear regression,10,0.030347824096679688
 postgresql,simple linear regression,10,0.03176593780517578

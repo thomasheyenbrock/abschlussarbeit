@@ -1,30 +1,32 @@
--- drop possibly existing procedures
+-- Lösche die bestehende Prozedur, falls vorhanden.
 DROP PROCEDURE IF EXISTS simple_linear_regression;
 
 DELIMITER ;;
 
--- main procedure for regression analysis
+-- Erstelle die Prozedur für einfache lineare Regression.
 CREATE PROCEDURE `simple_linear_regression`(IN number_datapoints INT(11))
 BEGIN
 
--- declare variables
+-- Deklariere die verwendeten Variablen.
 DECLARE purchases_mean DECIMAL(40, 20);
 DECLARE money_mean DECIMAL(40, 20);
 DECLARE alpha DECIMAL(40, 20);
 DECLARE beta DECIMAL(40, 20);
 
--- create temporary table with datapoints
+-- Erstelle eine temporäre Tabelle für die zu verwendenden Datenpunkte.
 DROP TEMPORARY TABLE IF EXISTS datapoints;
 CREATE TEMPORARY TABLE datapoints (
   purchases INT(11),
   money INT(11)
 );
+
+-- Füge die gewünschte Anzahl der Datenpunkte in die temporäre Tabelle ein.
 INSERT INTO datapoints
 SELECT purchases, money
 FROM sample
 LIMIT number_datapoints;
 
--- calculate means
+-- Berechne die Mittelwerte der abhängigen und unabhängigen Variable.
 SET purchases_mean = (
   SELECT AVG(purchases)
   FROM datapoints
@@ -34,7 +36,7 @@ SET money_mean = (
   FROM datapoints
 );
 
--- calculate beta
+-- Berechne beta.
 SET beta = (
   SELECT SUM((purchases - purchases_mean) * (money - money_mean))
   FROM datapoints
@@ -44,14 +46,15 @@ SET beta = beta / (
   FROM datapoints
 );
 
--- calculate alpha
+-- Berechne alpha.
 SET alpha = money_mean - (beta * purchases_mean);
 
--- print parameters alpha and beta
+-- Gib eine Tabelle mit Parametername und zugehörigem Wert zurück.
 SELECT 'alpha' AS `variable`, alpha AS `value`
 UNION
 SELECT 'beta' AS `variable`, beta AS `value`;
 
+-- Lösche die temporäre Tabelle mit den Datenpunkten wieder.
 DROP TEMPORARY TABLE IF EXISTS datapoints;
 
 END;;

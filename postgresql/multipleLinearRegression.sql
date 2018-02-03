@@ -1,4 +1,4 @@
--- procedure for transposing a matrix
+-- Erstelle Funktion für die Berechnung der transponierten Matrix.
 CREATE OR REPLACE FUNCTION matrix_transpose(a NUMERIC(40, 20)[][])
 RETURNS NUMERIC(40, 20)[][] AS $$
 DECLARE
@@ -10,15 +10,18 @@ DECLARE
   new_row NUMERIC(40, 20)[];
 BEGIN
 
+-- Iteriere über alle Zeilen und Spalten der ursprüglichen Matrix.
 i := 1;
 WHILE i <= columns_a LOOP
 
   j := 1;
   WHILE j <= rows_a LOOP
+    -- Erzeuge ein Array mit der neuen Zeile der transponierten Matrix aus der Spalte der ursprünglichen Matrix.
     new_row[j] := a[j][i];
     j := j + 1;
   END LOOP;
 
+  -- Füge die Zeile in die Ergebnismatrix ein.
   c := array_cat(c, array[new_row]);
   i := i + 1;
 END LOOP;
@@ -28,7 +31,7 @@ RETURN c;
 END;
 $$ LANGUAGE plpgsql;
 
--- procedure for matrix multiplication
+-- Erstelle Funktion für die Berechnung des Produktes zweier Matrizen.
 CREATE OR REPLACE FUNCTION matrix_multiplication(a NUMERIC(40, 20)[][], b NUMERIC(40, 20)[][])
 RETURNS NUMERIC(40, 20)[][] AS $$
 DECLARE
@@ -42,15 +45,20 @@ DECLARE
   counter_3 INTEGER;
 BEGIN
 
+-- Iteriere über die Zeilen und Spalten der Ergebnismatrix.
 counter_1 := 1;
 WHILE counter_1 <= rows_a LOOP
 
   counter_2 := 1;
   WHILE counter_2 <= columns_b LOOP
 
+    -- Initiiere den Wert des aktuellen Elementes der Ergebnismatrix mit 0.
     new_row[counter_2] := 0;
+
+    -- Iteriere über die Summanden zur Berechnung des aktuellen Matrixelements.
     counter_3 := 1;
     WHILE counter_3 <= columns_a LOOP
+      -- Addiere den aktuellen Summanden zum Wert des aktuellen Elementes.
       new_row[counter_2] := new_row[counter_2] + a[counter_1][counter_3] * b[counter_3][counter_2];
       counter_3 := counter_3 + 1;
     END LOOP;
@@ -67,7 +75,7 @@ RETURN c;
 END;
 $$ LANGUAGE plpgsql;
 
--- main procedure for matrix inversion
+-- Erstelle Funktion für die Berechnung der inversen Matrix.
 CREATE OR REPLACE FUNCTION matrix_inversion(a NUMERIC(40, 20)[][])
 RETURNS NUMERIC(40, 20)[][] AS $$
 DECLARE
@@ -79,6 +87,7 @@ DECLARE
   o NUMERIC(40, 20)[][];
 BEGIN
 
+-- Verwende den in der Arbeit referenzierten Algorithmus.
 WHILE p < n LOOP
 
   p := p + 1;
@@ -124,13 +133,14 @@ RETURN c;
 END;
 $$ LANGUAGE plpgsql;
 
--- main procedure for regression analysis
+-- Erstelle die Funktion für multiple lineare Regression.
 CREATE OR REPLACE FUNCTION multiple_linear_regression(number_datapoints INTEGER)
 RETURNS TABLE (
   variable VARCHAR(50),
   value NUMERIC(65, 30)
 ) AS $$
 DECLARE
+  -- Erzeuge die Matrix X mit der gewünschten Anzahl an Datenpunkten.
   x INTEGER[][]:= (
     SELECT ARRAY(
       SELECT ARRAY[1, purchases, age]
@@ -138,6 +148,7 @@ DECLARE
       LIMIT number_datapoints
     )
   );
+  -- Erzeuge die Matrix y mit der gewünschten Anzahl an Datenpunkten.
   y INTEGER[]:= (
     SELECT ARRAY(
       SELECT ARRAY[money]
@@ -148,6 +159,7 @@ DECLARE
   b NUMERIC[][];
 BEGIN
 
+-- Berechne die Lösungsformel unter Verwendung der zuvor definierten Funktionen.
 b := matrix_multiplication(
   matrix_inversion(
     matrix_multiplication(
@@ -161,6 +173,7 @@ b := matrix_multiplication(
   )
 );
 
+-- Gib eine Tabelle mit Parameternamen und zugehörigen Werten zurück.
 RETURN QUERY
 SELECT 'alpha'::VARCHAR(50) AS variable, b[1][1] AS value
 UNION

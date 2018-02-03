@@ -1,4 +1,4 @@
--- this procedure calculates the logits for current parameter values
+-- Erstelle (oder ersetzte falls vorhanden) eine Prozedur zur Berechnung der Werte der logistischen Funktion.
 CREATE OR REPLACE FUNCTION calculate_logit()
 RETURNS void AS $$
 BEGIN
@@ -6,6 +6,7 @@ BEGIN
 DELETE FROM logits;
 
 WITH
+  -- Bestimme den alten und neuen Wert von alpha.
   alpha_old AS (
     SELECT old
     FROM parameters
@@ -16,6 +17,7 @@ WITH
     FROM parameters
     WHERE variable = 'alpha'
   )
+-- Berechne die Werte der logistischen Funktion für alle Datenpunkte.
 INSERT INTO logits
   SELECT
     d.id,
@@ -30,20 +32,20 @@ RETURN;
 END;
 $$ LANGUAGE plpgsql;
 
--- this procedure calculates the gradient for the current parameter values
+-- Erstelle (oder ersetze falls vorhanden) eine Prozedur zur Berechnung des Gradienten.
 CREATE OR REPLACE FUNCTION calculate_gradient()
 RETURNS void AS $$
 BEGIN
 
 DELETE FROM gradient;
 
--- calculate gradient for alpha
+-- Berechne die partielle Ableitung nach alpha.
 INSERT INTO gradient
 SELECT 'alpha' AS variable, SUM(bv.value - l.old) AS value
 FROM logits l
 JOIN binary_values bv ON bv.id = l.id;
 
--- calculate other gradients
+-- Berechne die partielle Ableitung nach allen beta-Parametern.
 INSERT INTO gradient
 SELECT d.variable, SUM(d.value * (bv.value - l.old)) AS value
 FROM logits l
@@ -56,7 +58,7 @@ RETURN;
 END;
 $$ LANGUAGE plpgsql;
 
--- this procedure calculates the new parameters
+-- Erzeuge (oder ersetze falls vorhanden) eine Prozedur zur Berechnung der neuen Parameter abhängig von der aktuellen Schrittweite.
 CREATE OR REPLACE FUNCTION calculate_new_parameters(step NUMERIC(65, 30))
 RETURNS void AS $$
 BEGIN
@@ -71,14 +73,14 @@ RETURN;
 END;
 $$ LANGUAGE plpgsql;
 
--- this procedure calculates the log likelihood function for current parameter values
--- and states if the new parameters are really better
+-- Erzeuge (oder ersetze falls vorhanden) eine Prozedur, um herauszufinden, ob die neuen Parameterwerte besser sind als die alten.
 CREATE OR REPLACE FUNCTION are_new_parameters_better()
 RETURNS BOOLEAN AS $$
 DECLARE
   better BOOLEAN;
 BEGIN
 
+-- Berechne und vergleiche die Werte der Likelihoodfunktion für die alten und neuen Parameterwerte.
 SELECT
   SUM(LOG(bv.value * l.new + (1 - bv.value) * (1 - l.new))) >
   SUM(LOG(bv.value * l.old + (1 - bv.value) * (1 - l.old))) INTO better
@@ -90,7 +92,7 @@ RETURN better;
 END;
 $$ LANGUAGE plpgsql;
 
--- main procedure for execution
+-- Erstelle die Prozedur für logistische Regression.
 CREATE OR REPLACE FUNCTION logistic_regression(number_datapoints INTEGER, rounds INTEGER, step NUMERIC(65, 30))
 RETURNS TABLE (
   variable VARCHAR(50),
@@ -101,7 +103,7 @@ DECLARE
   counter INTEGER;
 BEGIN
 
--- create a temporary table for the data
+-- Erstelle eine Tabelle für die Werte der unabhängigen Variablen.
 DROP TABLE IF EXISTS datapoints;
 CREATE TEMPORARY TABLE datapoints (
   id INTEGER,
@@ -109,7 +111,7 @@ CREATE TEMPORARY TABLE datapoints (
   value NUMERIC(65, 30)
 );
 
--- insert all linear transformed values for column 'money' into data
+-- Füge die linear transformierten Werte der unabhängigen Variablen in die Tabelle datapoints ein.
 INSERT INTO datapoints
 SELECT
   row_number() OVER () AS id,
@@ -124,14 +126,14 @@ SELECT
 FROM sample
 LIMIT number_datapoints;
 
--- create temporary table for binary variable
+-- Erstelle eine Tabelle für die (binären) Werte der abhängigen Variablen.
 DROP TABLE IF EXISTS binary_values;
 CREATE TEMPORARY TABLE binary_values (
   id INTEGER,
   value INTEGER
 );
 
--- insert all values for column 'premium' into binary_values
+-- Füge die Werte der abhängingen Variable ein.
 INSERT INTO binary_values
 SELECT
   row_number() OVER () AS id,
@@ -139,7 +141,7 @@ SELECT
 FROM sample
 LIMIT number_datapoints;
 
--- create temporary table for parameters
+-- Erstelle eine Tabelle für die alten und neuen Parameterwerte.
 DROP TABLE IF EXISTS parameters;
 CREATE TEMPORARY TABLE parameters (
   variable VARCHAR(50),
@@ -147,12 +149,12 @@ CREATE TEMPORARY TABLE parameters (
   new NUMERIC(65, 30)
 );
 
--- set initial parameters
+-- Füge die Initialwerte der Parameter ein.
 INSERT INTO parameters VALUES
   ('alpha', 0, 0),
   ('beta_money', 0, 0);
 
--- create temporary table for logits
+-- Erstelle eine Tabelle für die Werte der logistischen Funktion für alle Datenpunkte.
 DROP TABLE IF EXISTS logits;
 CREATE TEMPORARY TABLE logits (
   id INTEGER,
@@ -160,30 +162,27 @@ CREATE TEMPORARY TABLE logits (
   new NUMERIC(65, 30)
 );
 
--- insert initial values into logit table
+-- Befülle die Tabelle für die Werte der logistischen Funktion.
 PERFORM calculate_logit();
 
--- create temporary table for gradient
+-- Erstelle eine Tabelle für den Gradienten.
 DROP TABLE IF EXISTS gradient;
 CREATE TEMPORARY TABLE gradient (
   variable VARCHAR(50),
   value DECIMAL(65, 30)
 );
 
--- insert variables in gradient table
-INSERT INTO gradient VALUES
-  ('alpha', 0),
-  ('beta_money', 0);
-
--- loop
+-- Iteriere über die Anzahl der gewünschten Iterationen.
 counter := 0;
 WHILE counter < rounds AND step > 0.000000000000000000000000000001 LOOP
 
+  -- Berechne den Gradienten und die neuen Parameter mit der aktuellen Schrittweite.
   PERFORM calculate_gradient();
   PERFORM calculate_new_parameters(step);
   PERFORM calculate_logit();
   better := are_new_parameters_better();
 
+  -- Verringere die Schrittweite solange, bis die neuen Parameter ein besseres Ergebnis liefern als die alten.
   WHILE NOT better AND step > 0.000000000000000000000000000001 LOOP
 
     step := step / 2;
@@ -193,6 +192,7 @@ WHILE counter < rounds AND step > 0.000000000000000000000000000001 LOOP
 
   END LOOP;
 
+  -- Ersetze die alten Werte durch die neuen Werte.
   UPDATE parameters
   SET old = new;
 
@@ -203,6 +203,7 @@ WHILE counter < rounds AND step > 0.000000000000000000000000000001 LOOP
 
 END LOOP;
 
+-- Transformiere die Parameter linear, um den originalen Daten zu entsprechen.
 UPDATE parameters
 SET old = old / ((SELECT MAX(money) FROM sample) - (SELECT MIN(money) FROM sample))
 WHERE parameters.variable = 'beta_money';
@@ -211,9 +212,17 @@ UPDATE parameters
 SET old = old - (SELECT old FROM parameters p2 WHERE p2.variable = 'beta_money') * (SELECT MIN(money) FROM sample)
 WHERE parameters.variable = 'alpha';
 
+-- Gib eine Tabelle mit Parametername und zugehörigem Wert zurück.
 RETURN QUERY
 SELECT parameters.variable::VARCHAR(50), old AS value
 FROM parameters;
+
+-- Lösche die Tabellen wieder.
+DROP TABLE IF EXISTS datapoints;
+DROP TABLE IF EXISTS binary_values;
+DROP TABLE IF EXISTS parameters;
+DROP TABLE IF EXISTS logits;
+DROP TABLE IF EXISTS gradient;
 
 END;
 $$ LANGUAGE plpgsql;

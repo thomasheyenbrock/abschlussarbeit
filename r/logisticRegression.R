@@ -1,6 +1,6 @@
 args = commandArgs(trailingOnly = TRUE)
 
-n <- 100000
+n <- 1000
 plot <- TRUE
 if (length(args) == 1) {
   if (substr(args[1], 1, 1) == "-") {

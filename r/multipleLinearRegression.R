@@ -1,6 +1,6 @@
 args = commandArgs(trailingOnly = TRUE)
 
-n = 100000
+n = 1000
 if (length(args) > 0) {
   n = strtoi(args[1])
 }

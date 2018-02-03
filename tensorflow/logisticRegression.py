@@ -23,7 +23,7 @@ def get_data(n_samples):
   return (np.array(x[:n_samples]), x_plot[:n_samples], np.transpose([y[:n_samples]]))
 
 def main(argv):
-  datapoint_size = 100000
+  datapoint_size = 1000
   plot = True
   if len(argv) == 2:
     if argv[1] == "-":

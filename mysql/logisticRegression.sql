@@ -1,3 +1,4 @@
+-- Lösche die bestehenden Prozeduren, falls vorhanden.
 DROP PROCEDURE IF EXISTS calculate_gradient;
 DROP PROCEDURE IF EXISTS calculate_new_parameters;
 DROP PROCEDURE IF EXISTS calculate_logit;
@@ -5,27 +6,28 @@ DROP PROCEDURE IF EXISTS are_new_parameters_better;
 DROP PROCEDURE IF EXISTS logistic_regression;
 
 DELIMITER ;;
--- this procedure calculates the logits for current parameter values
+-- Erstelle eine Prozedur zur Berechnung der Werte der logistischen Funktion.
 CREATE PROCEDURE `calculate_logit`()
 BEGIN
 
+-- Deklariere die benötigten Variablen.
 DECLARE alpha_old DECIMAL(65, 30);
 DECLARE alpha_new DECIMAL(65, 30);
 
+-- Bestimme den alten und neuen Wert von alpha.
 SET alpha_old = (
   SELECT old
   FROM parameters
   WHERE variable = 'alpha'
 );
-
 SET alpha_new = (
   SELECT new
   FROM parameters
   WHERE variable = 'alpha'
 );
 
+-- Berechne die Werte der logistischen Funktion für alle Datenpunkte.
 DELETE FROM logits;
-
 INSERT INTO logits
   SELECT
     d.id,
@@ -37,19 +39,19 @@ INSERT INTO logits
 
 END;;
 
--- this procedure calculates the gradient for the current parameter values
+-- Erstelle eine Prozedur zur Berechnung des Gradienten.
 CREATE PROCEDURE `calculate_gradient`()
 BEGIN
 
 DELETE FROM gradient;
 
--- calculate gradient for alpha
+-- Berechne die partielle Ableitung nach alpha.
 INSERT INTO gradient
 SELECT 'alpha' AS `variable`, SUM(bv.value - l.old) AS `value`
 FROM logits l
 JOIN binary_values bv ON bv.id = l.id;
 
--- calculate other gradients
+-- Berechne die partielle Ableitung nach allen beta-Parametern.
 INSERT INTO gradient
 SELECT d.variable, SUM(d.value * (bv.value - l.old)) AS `value`
 FROM logits l
@@ -59,7 +61,7 @@ GROUP BY d.variable;
 
 END;;
 
--- this procedure calculates the new parameters
+-- Erzeuge eine Prozedur zur Berechnung der neuen Parameter abhängig von der aktuellen Schrittweite.
 CREATE PROCEDURE `calculate_new_parameters`(IN step DECIMAL(65, 30))
 BEGIN
 
@@ -69,11 +71,11 @@ SET parameters.new = parameters.old + step * gradient.value;
 
 END;;
 
--- this procedure calculates the log likelihood function for current parameter values
--- and states if the new parameters are really better
+-- Erzeuge eine Prozedur, um herauszufinden, ob die neuen Parameterwerte besser sind als die alten.
 CREATE PROCEDURE `are_new_parameters_better`(OUT better INT(1))
 BEGIN
 
+-- Berechne und vergleiche die Werte der Likelihoodfunktion für die alten und neuen Parameterwerte.
 SET better = (
   SELECT
     SUM(LOG(bv.value * l.new + (1 - bv.value) * (1 - l.new))) >
@@ -84,17 +86,18 @@ SET better = (
 
 END;;
 
--- main procedure for execution
+-- Erstelle die Prozedur für logistische Regression.
 CREATE PROCEDURE `logistic_regression`(IN number_datapoints INT(11), IN rounds INT(11), step DECIMAL(65, 30))
 BEGIN
 
+-- Deklariere die verwendeten Variablen.
 DECLARE min INT(11);
 DECLARE max INT(11);
 DECLARE transform DECIMAL(65, 30);
 DECLARE better INT(1);
 DECLARE counter INT(11);
 
--- create a temporary table for the data
+-- Erstelle eine temporäre Tabelle für die Werte der unabhängigen Variablen.
 DROP TEMPORARY TABLE IF EXISTS datapoints;
 CREATE TEMPORARY TABLE datapoints (
   id INT(11),
@@ -103,11 +106,11 @@ CREATE TEMPORARY TABLE datapoints (
   PRIMARY KEY (id, variable)
 );
 
--- calculate min and max values for money
+-- Berechne Minimum und Maximum der unabhängigen Variable.
 SET min = (SELECT MIN(money) FROM sample);
 SET max = (SELECT MAX(money) FROM sample);
 
--- insert all linear transformed values for column 'money' into data
+-- Füge die linear transformierten Werte der unabhängigen Variablen in die Tabelle datapoints ein.
 SET @counter = 0;
 INSERT INTO datapoints
 SELECT
@@ -117,7 +120,7 @@ SELECT
 FROM sample
 LIMIT number_datapoints;
 
--- create temporary table for binary variable
+-- Erstelle eine temporäre Tabelle für die (binären) Werte der abhängigen Variablen.
 DROP TEMPORARY TABLE IF EXISTS binary_values;
 CREATE TEMPORARY TABLE binary_values (
   id INT(11),
@@ -125,7 +128,7 @@ CREATE TEMPORARY TABLE binary_values (
   PRIMARY KEY (id)
 );
 
--- insert all values for column 'premium' into binary_values
+-- Füge die Werte der abhängingen Variable ein.
 SET @counter = 0;
 INSERT INTO binary_values
 SELECT
@@ -134,7 +137,7 @@ SELECT
 FROM sample
 LIMIT number_datapoints;
 
--- create temporary table for parameters
+-- Erstelle eine temporäre Tabelle für die alten und neuen Parameterwerte.
 DROP TEMPORARY TABLE IF EXISTS parameters;
 CREATE TEMPORARY TABLE parameters (
   variable VARCHAR(32),
@@ -143,12 +146,12 @@ CREATE TEMPORARY TABLE parameters (
   PRIMARY KEY (variable)
 );
 
--- set initial parameters
+-- Füge die Initialwerte der Parameter ein.
 INSERT INTO parameters VALUES
   ('alpha', 0, 0),
   ('beta_money', 0, 0);
 
--- create temporary table for logits
+-- Erstelle eine temporäre Tabelle für die Werte der logistischen Funktion für alle Datenpunkte.
 DROP TEMPORARY TABLE IF EXISTS logits;
 CREATE TEMPORARY TABLE logits (
   id INT(11),
@@ -157,10 +160,10 @@ CREATE TEMPORARY TABLE logits (
   PRIMARY KEY (id)
 );
 
--- insert initial values into logit table
+-- Befülle die Tabelle für die Werte der logistischen Funktion.
 CALL calculate_logit();
 
--- create temporary table for gradient
+-- Erstelle eine teporäre Tabelle für den Gradienten.
 DROP TEMPORARY TABLE IF EXISTS gradient;
 CREATE TEMPORARY TABLE gradient (
   variable VARCHAR(32),
@@ -168,19 +171,16 @@ CREATE TEMPORARY TABLE gradient (
   PRIMARY KEY (variable)
 );
 
--- insert variables in gradient table
-INSERT INTO gradient VALUES
-  ('alpha', 0),
-  ('beta_money', 0);
-
--- loop
+-- Iteriere über die Anzahl der gewünschten Iterationen.
 SET counter = 0;
 WHILE counter < rounds AND step > 0.000000000000000000000000000001 DO
 
+  -- Berechne den Gradienten und die neuen Parameter mit der aktuellen Schrittweite.
   CALL calculate_gradient();
   CALL calculate_new_parameters(step);
   CALL calculate_logit();
 
+  -- Verringere die Schrittweite solange, bis die neuen Parameter ein besseres Ergebnis liefern als die alten.
   WHILE (
     SELECT
       SUM(LOG(bv.value * l.new + (1 - bv.value) * (1 - l.new))) >
@@ -195,6 +195,7 @@ WHILE counter < rounds AND step > 0.000000000000000000000000000001 DO
 
   END WHILE;
 
+  -- Ersetze die alten Werte durch die neuen Werte.
   UPDATE parameters
   SET parameters.old = parameters.new;
 
@@ -205,6 +206,7 @@ WHILE counter < rounds AND step > 0.000000000000000000000000000001 DO
 
 END WHILE;
 
+-- Transformiere die Parameter linear, um den originalen Daten zu entsprechen.
 UPDATE parameters
 SET old = old / (max - min)
 WHERE variable = 'beta_money';
@@ -215,8 +217,16 @@ UPDATE parameters
 SET old = old - transform * min
 WHERE variable = 'alpha';
 
+-- Gib eine Tabelle mit Parametername und zugehörigem Wert zurück.
 SELECT variable, old AS `value`
 FROM parameters;
+
+-- Lösche die temporären Tabellen wieder.
+DROP TEMPORARY TABLE IF EXISTS datapoints;
+DROP TEMPORARY TABLE IF EXISTS binary_values;
+DROP TEMPORARY TABLE IF EXISTS parameters;
+DROP TEMPORARY TABLE IF EXISTS logits;
+DROP TEMPORARY TABLE IF EXISTS gradient;
 
 END;;
 DELIMITER ;

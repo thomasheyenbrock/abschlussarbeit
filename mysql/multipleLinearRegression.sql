@@ -1,13 +1,13 @@
--- drop possibly existing procedures
+-- Lösche die bestehende Prozedur, falls vorhanden.
 DROP PROCEDURE IF EXISTS multiple_linear_regression;
 
 DELIMITER ;;
 
--- main procedure for regression analysis
+-- Erstelle die Prozedur für multiple lineare Regression.
 CREATE PROCEDURE multiple_linear_regression(IN number_datapoints INT(11))
 BEGIN
 
--- declare variables
+-- Deklariere die verwendeten Variablen.
 DECLARE m INT(11);
 DECLARE n INT(11);
 DECLARE counter_1 INT(11);
@@ -15,11 +15,11 @@ DECLARE counter_2 INT(11);
 DECLARE counter_3 INT(11);
 DECLARE pivot DECIMAL(40, 20);
 
--- set matrix dimensions
+-- Bestimme die Dimensionsn für die Matrix X.
 SET m = number_datapoints;
 SET n = 3;
 
--- drop temporary tables if existing
+-- Lösche vorhandene temporäre Tabellen.
 DROP TEMPORARY TABLE IF EXISTS matrix_X;
 DROP TEMPORARY TABLE IF EXISTS matrix_transposed;
 DROP TEMPORARY TABLE IF EXISTS matrix_product_1;
@@ -28,7 +28,7 @@ DROP TEMPORARY TABLE IF EXISTS matrix_product_2;
 DROP TEMPORARY TABLE IF EXISTS matrix_y;
 DROP TEMPORARY TABLE IF EXISTS matrix_result;
 
--- create temporary tables
+-- Erstelle temporäre Tabellen für die zu berechnenden Matrizen.
 CREATE TEMPORARY TABLE matrix_X (
   `row` INT(11),
   `column` INT(11),
@@ -65,7 +65,7 @@ CREATE TEMPORARY TABLE matrix_result (
   `value` DECIMAL(40, 20)
 );
 
--- insert constant values in matrix_X
+-- Füge Werte der unabhängigen Variablen in die Tabelle matrix_X ein.
 SET @id = 0;
 
 INSERT INTO matrix_X
@@ -76,7 +76,6 @@ SELECT
 FROM sample
 LIMIT number_datapoints;
 
--- insert values for purchases in matrix_X
 SET @id = 0;
 
 INSERT INTO matrix_X
@@ -87,7 +86,6 @@ SELECT
 FROM sample
 LIMIT number_datapoints;
 
--- insert values for age in matrix_X
 SET @id = 0;
 
 INSERT INTO matrix_X
@@ -98,7 +96,7 @@ SELECT
 FROM sample
 LIMIT number_datapoints;
 
--- insert values for money in matrix_y
+-- Füge Werte der abhängigen Variable in die Tabelle matrix_y ein.
 SET @id = 0;
 
 INSERT INTO matrix_y
@@ -109,7 +107,7 @@ SELECT
 FROM sample
 LIMIT number_datapoints;
 
--- calculate matrix_transposed
+-- Berechne matrix_transposed.
 INSERT INTO matrix_transposed
 SELECT
   `column` AS `row`,
@@ -117,7 +115,7 @@ SELECT
   `value` AS `value`
 FROM matrix_X;
 
--- calculate Matrix_Product1
+-- Berechne matrix_product_1. Iteriere dazu über alle Zeilen und Spalten der Ergebnismatrix.
 SET counter_1 = 1;
 
 WHILE counter_1 <= n DO
@@ -126,6 +124,7 @@ WHILE counter_1 <= n DO
 
   WHILE counter_2 <= n DO
 
+    -- Berechne den Wert des aktuellen Matrixelements.
     INSERT INTO matrix_product_1 VALUES (
       counter_1,
       counter_2,
@@ -146,7 +145,7 @@ WHILE counter_1 <= n DO
 
 END WHILE;
 
--- calculate matrix_inverse
+-- Berechne matrix_inverse. Verwende dazu den in der Arbeit referenzierten Algorithmus.
 INSERT INTO matrix_inverse
 SELECT *
 FROM matrix_product_1;
@@ -226,11 +225,12 @@ WHILE counter_1 < n DO
 
 END WHILE;
 
--- calculate matrix_product_2
+-- Berechne matrix_product_2. Iteriere dazu über alle Zeilen der Ergebnismatrix.
 SET counter_1 = 1;
 
 WHILE counter_1 <= n DO
 
+  -- Berechne den Wert des aktuellen Matrixelements.
   INSERT INTO matrix_product_2 VALUES (
     counter_1,
     1,
@@ -246,12 +246,12 @@ WHILE counter_1 <= n DO
 
 END WHILE;
 
--- calculate matrix_result
-
+-- Berechne matrix_result. Iteriere dazu über alle Zeilen der Ergebnismatrix.
 SET counter_1 = 1;
 
 WHILE counter_1 <= n DO
 
+  -- Berechne den Wert des aktuellen Matrixelements.
   INSERT INTO matrix_result VALUES (
     counter_1,
     1,
@@ -267,6 +267,7 @@ WHILE counter_1 <= n DO
 
 END WHILE;
 
+-- Gib eine Tabelle mit Parameternamen und zugehörigen Werten zurück.
 SELECT
   CASE row
     WHEN 1 THEN 'alpha'
@@ -275,6 +276,15 @@ SELECT
   END AS `variable`,
   value
 FROM matrix_result;
+
+-- Lösche die temporären Tabelle wieder.
+DROP TEMPORARY TABLE IF EXISTS matrix_X;
+DROP TEMPORARY TABLE IF EXISTS matrix_transposed;
+DROP TEMPORARY TABLE IF EXISTS matrix_product_1;
+DROP TEMPORARY TABLE IF EXISTS matrix_inverse;
+DROP TEMPORARY TABLE IF EXISTS matrix_product_2;
+DROP TEMPORARY TABLE IF EXISTS matrix_y;
+DROP TEMPORARY TABLE IF EXISTS matrix_result;
 
 END;;
 

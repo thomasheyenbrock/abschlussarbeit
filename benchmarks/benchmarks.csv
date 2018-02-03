@@ -2004,14 +2004,251 @@ tensorflow,multiple linear regression,10,166.82364702224731
 tensorflow,multiple linear regression,10,166.1889820098877
 tensorflow,multiple linear regression,10,172.17108702659607
 tensorflow,multiple linear regression,10,167.29964804649353
+tensorflow,multiple linear regression,10,172.8529839515686
+tensorflow,multiple linear regression,10,167.3297529220581
+tensorflow,multiple linear regression,10,167.4503881931305
+tensorflow,multiple linear regression,10,168.85484790802002
+tensorflow,multiple linear regression,10,168.01781797409058
+tensorflow,multiple linear regression,10,168.61159896850586
+tensorflow,multiple linear regression,10,167.8857400417328
+tensorflow,multiple linear regression,10,168.98947095870972
+tensorflow,multiple linear regression,10,168.48096108436584
+tensorflow,multiple linear regression,10,170.26852083206177
+tensorflow,multiple linear regression,10,166.3605659008026
+tensorflow,multiple linear regression,10,166.60842871665955
+tensorflow,multiple linear regression,10,166.87574863433838
+tensorflow,multiple linear regression,10,166.48321723937988
+tensorflow,multiple linear regression,10,166.89007830619812
+tensorflow,multiple linear regression,10,167.1244020462036
+tensorflow,multiple linear regression,10,166.5616409778595
+tensorflow,multiple linear regression,10,166.47440791130066
+tensorflow,multiple linear regression,10,166.86391806602478
+tensorflow,multiple linear regression,10,166.81678295135498
+tensorflow,multiple linear regression,10,166.49422693252563
+tensorflow,multiple linear regression,10,166.47753500938416
+tensorflow,multiple linear regression,10,166.5685212612152
+tensorflow,multiple linear regression,10,166.51266407966614
+tensorflow,multiple linear regression,10,166.8958830833435
+tensorflow,multiple linear regression,10,167.25152373313904
+tensorflow,multiple linear regression,10,166.73376274108887
+tensorflow,multiple linear regression,10,166.8409447669983
+tensorflow,multiple linear regression,10,166.43124508857727
+tensorflow,multiple linear regression,10,166.75096797943115
+tensorflow,multiple linear regression,10,166.82282185554504
+tensorflow,multiple linear regression,10,166.016597032547
+tensorflow,multiple linear regression,10,167.26412796974182
+tensorflow,multiple linear regression,10,166.4672131538391
+tensorflow,multiple linear regression,10,166.60680890083313
+tensorflow,multiple linear regression,10,166.58265686035156
+tensorflow,multiple linear regression,10,166.4137418270111
+tensorflow,multiple linear regression,10,166.6639540195465
+tensorflow,multiple linear regression,10,166.49365496635437
+tensorflow,multiple linear regression,10,166.52841424942017
+tensorflow,multiple linear regression,10,167.7766990661621
+tensorflow,multiple linear regression,10,166.45205307006836
+tensorflow,multiple linear regression,10,166.70466113090515
+tensorflow,multiple linear regression,10,166.65294408798218
+tensorflow,multiple linear regression,10,166.43492889404297
 tensorflow,multiple linear regression,100,168.22644186019897
+tensorflow,multiple linear regression,100,167.82703685760498
+tensorflow,multiple linear regression,100,168.56650590896606
+tensorflow,multiple linear regression,100,168.296630859375
+tensorflow,multiple linear regression,100,168.74528193473816
+tensorflow,multiple linear regression,100,167.14505171775818
+tensorflow,multiple linear regression,100,168.56658577919006
+tensorflow,multiple linear regression,100,169.3392298221588
+tensorflow,multiple linear regression,100,168.20330500602722
+tensorflow,multiple linear regression,100,168.82287788391113
+tensorflow,multiple linear regression,100,169.27195119857788
+tensorflow,multiple linear regression,100,169.12723803520203
+tensorflow,multiple linear regression,100,168.8149712085724
+tensorflow,multiple linear regression,100,169.3883922100067
+tensorflow,multiple linear regression,100,168.02672719955444
+tensorflow,multiple linear regression,100,168.7654252052307
+tensorflow,multiple linear regression,100,170.11978602409363
+tensorflow,multiple linear regression,100,167.75247192382812
+tensorflow,multiple linear regression,100,169.06674313545227
+tensorflow,multiple linear regression,100,168.56063199043274
+tensorflow,multiple linear regression,100,169.52053022384644
+tensorflow,multiple linear regression,100,169.2902548313141
+tensorflow,multiple linear regression,100,167.88027119636536
+tensorflow,multiple linear regression,100,168.52402710914612
+tensorflow,multiple linear regression,100,169.41038703918457
+tensorflow,multiple linear regression,100,168.80591011047363
+tensorflow,multiple linear regression,100,169.95437622070312
+tensorflow,multiple linear regression,100,168.4792628288269
+tensorflow,multiple linear regression,100,170.1661820411682
+tensorflow,multiple linear regression,100,168.06163001060486
+tensorflow,multiple linear regression,100,169.66546821594238
+tensorflow,multiple linear regression,100,168.0635859966278
+tensorflow,multiple linear regression,100,169.41691088676453
+tensorflow,multiple linear regression,100,168.6832320690155
+tensorflow,multiple linear regression,100,169.50792598724365
+tensorflow,multiple linear regression,100,168.92710518836975
+tensorflow,multiple linear regression,100,169.00331687927246
+tensorflow,multiple linear regression,100,168.5931499004364
+tensorflow,multiple linear regression,100,167.69847989082336
+tensorflow,multiple linear regression,100,168.9533441066742
+tensorflow,multiple linear regression,100,169.5556721687317
+tensorflow,multiple linear regression,100,169.58312392234802
+tensorflow,multiple linear regression,100,168.12189412117004
+tensorflow,multiple linear regression,100,170.20495796203613
+tensorflow,multiple linear regression,100,168.86764407157898
+tensorflow,multiple linear regression,100,169.7530586719513
+tensorflow,multiple linear regression,100,168.9044930934906
+tensorflow,multiple linear regression,100,168.18234205245972
+tensorflow,multiple linear regression,100,170.08980989456177
+tensorflow,multiple linear regression,100,169.771625995636
 tensorflow,multiple linear regression,1000,167.18672919273376
+tensorflow,multiple linear regression,1000,168.1593861579895
+tensorflow,multiple linear regression,1000,169.45951199531555
+tensorflow,multiple linear regression,1000,168.59850120544434
+tensorflow,multiple linear regression,1000,169.45584678649902
+tensorflow,multiple linear regression,1000,169.262601852417
+tensorflow,multiple linear regression,1000,168.88680911064148
+tensorflow,multiple linear regression,1000,169.14431190490723
+tensorflow,multiple linear regression,1000,168.9986391067505
+tensorflow,multiple linear regression,1000,167.4662470817566
+tensorflow,multiple linear regression,1000,169.66634392738342
+tensorflow,multiple linear regression,1000,169.8950080871582
+tensorflow,multiple linear regression,1000,168.44588899612427
+tensorflow,multiple linear regression,1000,168.021901845932
+tensorflow,multiple linear regression,1000,170.31964206695557
+tensorflow,multiple linear regression,1000,168.8189959526062
+tensorflow,multiple linear regression,1000,168.71243906021118
+tensorflow,multiple linear regression,1000,168.26043438911438
+tensorflow,multiple linear regression,1000,169.37309193611145
+tensorflow,multiple linear regression,1000,168.37265610694885
+tensorflow,multiple linear regression,1000,169.7327880859375
+tensorflow,multiple linear regression,1000,169.8491940498352
+tensorflow,multiple linear regression,1000,167.5379319190979
+tensorflow,multiple linear regression,1000,167.5397801399231
+tensorflow,multiple linear regression,1000,168.3043930530548
+tensorflow,multiple linear regression,1000,168.7794258594513
+tensorflow,multiple linear regression,1000,168.7243049144745
+tensorflow,multiple linear regression,1000,167.23582315444946
+tensorflow,multiple linear regression,1000,169.18542790412903
+tensorflow,multiple linear regression,1000,168.57118582725525
+tensorflow,multiple linear regression,1000,168.16188406944275
+tensorflow,multiple linear regression,1000,168.56468105316162
+tensorflow,multiple linear regression,1000,168.85023307800293
+tensorflow,multiple linear regression,1000,168.42486596107483
+tensorflow,multiple linear regression,1000,168.30387091636658
+tensorflow,multiple linear regression,1000,167.63844776153564
+tensorflow,multiple linear regression,1000,169.25020623207092
+tensorflow,multiple linear regression,1000,168.6399049758911
+tensorflow,multiple linear regression,1000,169.39421105384827
+tensorflow,multiple linear regression,1000,167.70782017707825
+tensorflow,multiple linear regression,1000,168.1047558784485
+tensorflow,multiple linear regression,1000,168.68108701705933
+tensorflow,multiple linear regression,1000,169.73099184036255
+tensorflow,multiple linear regression,1000,168.19688415527344
+tensorflow,multiple linear regression,1000,168.8924958705902
+tensorflow,multiple linear regression,1000,168.77883887290955
+tensorflow,multiple linear regression,1000,169.50809812545776
+tensorflow,multiple linear regression,1000,167.94102931022644
+tensorflow,multiple linear regression,1000,168.04163813591003
+tensorflow,multiple linear regression,1000,168.65727877616882
 tensorflow,multiple linear regression,10000,169.81768989562988
+tensorflow,multiple linear regression,10000,168.08758091926575
+tensorflow,multiple linear regression,10000,168.70982384681702
+tensorflow,multiple linear regression,10000,168.26791763305664
+tensorflow,multiple linear regression,10000,167.7051739692688
+tensorflow,multiple linear regression,10000,168.11554598808289
+tensorflow,multiple linear regression,10000,169.63311386108398
+tensorflow,multiple linear regression,10000,167.62246704101562
+tensorflow,multiple linear regression,10000,167.56303787231445
+tensorflow,multiple linear regression,10000,169.06758189201355
+tensorflow,multiple linear regression,10000,168.40547919273376
+tensorflow,multiple linear regression,10000,169.39356017112732
+tensorflow,multiple linear regression,10000,169.89454126358032
+tensorflow,multiple linear regression,10000,169.47920489311218
+tensorflow,multiple linear regression,10000,168.6940689086914
+tensorflow,multiple linear regression,10000,169.9784460067749
+tensorflow,multiple linear regression,10000,172.98744869232178
+tensorflow,multiple linear regression,10000,176.7352533340454
+tensorflow,multiple linear regression,10000,169.36694407463074
+tensorflow,multiple linear regression,10000,167.53094100952148
+tensorflow,multiple linear regression,10000,168.3395631313324
+tensorflow,multiple linear regression,10000,168.36968970298767
+tensorflow,multiple linear regression,10000,167.8160879611969
+tensorflow,multiple linear regression,10000,168.379075050354
+tensorflow,multiple linear regression,10000,168.76094484329224
+tensorflow,multiple linear regression,10000,169.45229697227478
+tensorflow,multiple linear regression,10000,168.05258512496948
+tensorflow,multiple linear regression,10000,168.46591687202454
+tensorflow,multiple linear regression,10000,168.72217106819153
+tensorflow,multiple linear regression,10000,169.3100869655609
+tensorflow,multiple linear regression,10000,168.40942192077637
+tensorflow,multiple linear regression,10000,167.7825789451599
+tensorflow,multiple linear regression,10000,169.07091212272644
+tensorflow,multiple linear regression,10000,167.22656393051147
+tensorflow,multiple linear regression,10000,168.93258810043335
+tensorflow,multiple linear regression,10000,168.2049479484558
+tensorflow,multiple linear regression,10000,167.87830710411072
+tensorflow,multiple linear regression,10000,168.7461838722229
+tensorflow,multiple linear regression,10000,168.6995828151703
+tensorflow,multiple linear regression,10000,168.22393798828125
+tensorflow,multiple linear regression,10000,167.67912006378174
+tensorflow,multiple linear regression,10000,167.35706114768982
+tensorflow,multiple linear regression,10000,168.79285883903503
+tensorflow,multiple linear regression,10000,169.6457278728485
+tensorflow,multiple linear regression,10000,169.43867802619934
+tensorflow,multiple linear regression,10000,167.5250928401947
+tensorflow,multiple linear regression,10000,168.25234389305115
+tensorflow,multiple linear regression,10000,168.72507214546204
+tensorflow,multiple linear regression,10000,168.89489006996155
+tensorflow,multiple linear regression,10000,168.85063815116882
 tensorflow,multiple linear regression,100000,166.9421100616455
 tensorflow,multiple linear regression,100000,167.47623586654663
 tensorflow,multiple linear regression,100000,167.0178689956665
 tensorflow,multiple linear regression,100000,167.38326573371887
 tensorflow,multiple linear regression,100000,167.1806378364563
+tensorflow,multiple linear regression,100000,168.38845014572144
+tensorflow,multiple linear regression,100000,166.90262579917908
+tensorflow,multiple linear regression,100000,168.31184482574463
+tensorflow,multiple linear regression,100000,168.47979307174683
+tensorflow,multiple linear regression,100000,168.23354411125183
+tensorflow,multiple linear regression,100000,168.94383001327515
+tensorflow,multiple linear regression,100000,167.665589094162
+tensorflow,multiple linear regression,100000,168.55707001686096
+tensorflow,multiple linear regression,100000,168.37095284461975
+tensorflow,multiple linear regression,100000,169.24341797828674
+tensorflow,multiple linear regression,100000,170.1111159324646
+tensorflow,multiple linear regression,100000,170.40987014770508
+tensorflow,multiple linear regression,100000,168.85254001617432
+tensorflow,multiple linear regression,100000,170.1108410358429
+tensorflow,multiple linear regression,100000,169.39311408996582
+tensorflow,multiple linear regression,100000,170.0066339969635
+tensorflow,multiple linear regression,100000,170.09026312828064
+tensorflow,multiple linear regression,100000,168.99747681617737
+tensorflow,multiple linear regression,100000,169.4829969406128
+tensorflow,multiple linear regression,100000,170.52380418777466
+tensorflow,multiple linear regression,100000,168.60483813285828
+tensorflow,multiple linear regression,100000,169.93685626983643
+tensorflow,multiple linear regression,100000,169.7000856399536
+tensorflow,multiple linear regression,100000,170.0717318058014
+tensorflow,multiple linear regression,100000,168.89350128173828
+tensorflow,multiple linear regression,100000,170.71312403678894
+tensorflow,multiple linear regression,100000,170.05521488189697
+tensorflow,multiple linear regression,100000,170.21248269081116
+tensorflow,multiple linear regression,100000,170.41178822517395
+tensorflow,multiple linear regression,100000,169.62275409698486
+tensorflow,multiple linear regression,100000,170.2800600528717
+tensorflow,multiple linear regression,100000,170.28201699256897
+tensorflow,multiple linear regression,100000,169.2671082019806
+tensorflow,multiple linear regression,100000,170.1829628944397
+tensorflow,multiple linear regression,100000,170.2301459312439
+tensorflow,multiple linear regression,100000,170.24626803398132
+tensorflow,multiple linear regression,100000,169.7602198123932
+tensorflow,multiple linear regression,100000,169.8104739189148
+tensorflow,multiple linear regression,100000,170.3454670906067
+tensorflow,multiple linear regression,100000,169.82075119018555
+tensorflow,multiple linear regression,100000,169.6484580039978
+tensorflow,multiple linear regression,100000,168.18400597572327
+tensorflow,multiple linear regression,100000,169.97861194610596
+tensorflow,multiple linear regression,100000,170.405170917511
+tensorflow,multiple linear regression,100000,168.9691379070282
 tensorflow,logistic regression,10,2.876955986022949
 tensorflow,logistic regression,10,3.1760921478271484
 tensorflow,logistic regression,10,3.0867021083831787
@@ -5089,5 +5326,46 @@ postgresql,logistic regression,1000,556.7784860134125
 postgresql,logistic regression,1000,533.9229228496552
 postgresql,logistic regression,1000,507.52117466926575
 postgresql,logistic regression,1000,526.6672661304474
+postgresql,logistic regression,1000,522.7085621356964
+postgresql,logistic regression,1000,525.9272527694702
+postgresql,logistic regression,1000,526.3950328826904
+postgresql,logistic regression,1000,509.56167483329773
+postgresql,logistic regression,1000,514.9081690311432
+postgresql,logistic regression,1000,522.4657199382782
+postgresql,logistic regression,1000,521.3666670322418
+postgresql,logistic regression,1000,521.5953321456909
+postgresql,logistic regression,1000,525.4319641590118
+postgresql,logistic regression,1000,518.8453199863434
+postgresql,logistic regression,1000,521.43035197258
+postgresql,logistic regression,1000,512.4230849742889
+postgresql,logistic regression,1000,520.147439956665
+postgresql,logistic regression,1000,519.3728699684143
+postgresql,logistic regression,1000,521.2497758865356
+postgresql,logistic regression,1000,522.3234760761261
+postgresql,logistic regression,1000,520.1373538970947
+postgresql,logistic regression,1000,521.9254579544067
+postgresql,logistic regression,1000,520.887855052948
+postgresql,logistic regression,1000,520.4837222099304
+postgresql,logistic regression,1000,520.7733268737793
+postgresql,logistic regression,1000,514.8965151309967
+postgresql,logistic regression,1000,510.3501789569855
+postgresql,logistic regression,1000,520.7976729869843
+postgresql,logistic regression,1000,519.2204988002777
+postgresql,logistic regression,1000,512.6571431159973
+postgresql,logistic regression,1000,510.83952498435974
+postgresql,logistic regression,1000,519.0260517597198
+postgresql,logistic regression,1000,520.7533521652222
+postgresql,logistic regression,1000,512.5931258201599
+postgresql,logistic regression,1000,521.3594110012054
+postgresql,logistic regression,1000,522.0560519695282
+postgresql,logistic regression,1000,522.2366752624512
 postgresql,logistic regression,10000,5100.542334079742
 postgresql,logistic regression,10000,5181.944494009018
+postgresql,logistic regression,10000,5152.03920674324
+postgresql,logistic regression,10000,5198.05765414238
+postgresql,logistic regression,10000,5183.440013170242
+postgresql,logistic regression,10000,5198.671824932098
+postgresql,logistic regression,10000,5202.782208919525
+postgresql,logistic regression,10000,5171.779067993164
+postgresql,logistic regression,10000,5217.508589029312
+postgresql,logistic regression,10000,5152.034322977066

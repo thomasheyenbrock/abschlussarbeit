@@ -123,7 +123,7 @@ def calculate_benchmarks():
     print("benchmarks for %s:\n" % regression_type)
 
     # Erzeuge ein neues dictionary, um eine Tabelle zu drucken.
-    table = {"header": [""], "r": ["r"], "tensorflow": ["tensorflow"], "mysql": ["mysql"], "postgresql": ["postresql"]}
+    table = {"header": [""], "r": ["r"], "tensorflow": ["tensorflow"], "mysql": ["mysql"], "postgresql": ["postgresql"]}
 
     # Iteriere über die im ersten dictionary enthalten dictionaries (Anzahl Datenpunkte).
     for number_datapoints, obj2 in obj1.items():

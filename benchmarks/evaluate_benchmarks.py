@@ -149,7 +149,7 @@ def calculate_benchmarks():
       "|" + "-" * 89 + "|",
       "|" + "  %s       |  %s  |  %s  |  %s  |  %s  |  %s  " % tuple(table["mysql"]) + "|",
       "|" + "-" * 89 + "|",
-      "|" + "  %s   |  %s  |  %s  |  %s  |  %s  |  %s  " % tuple(table["postgresql"]) + "|",
+      "|" + "  %s  |  %s  |  %s  |  %s  |  %s  |  %s  " % tuple(table["postgresql"]) + "|",
       "|" + "-" * 89 + "|"
     ]
 

@@ -132,8 +132,7 @@ TensorFlow ist eine Software-Bibliothek, die von Google für die Umsetzung von A
 
 TensorFlow bietet APIs für verschiedene Programmiersprachen an. Die Skripte, welche für dieser Arbeit erstellt wurden, sind in Python geschrieben. Wir verwenden TensorFlows Implementierung eines Gradientenabstiegsverfahrens, für welches man die Anzahl der Schritte und die Abstiegsgeschwindigkeit selbst wählen muss. Die Genauigkeit des Ergebnisses hängt also zusätzlich von einer angemessenen Auswahl dieser Werte ab.
 
-// TODO: fix typo Funktioneweise
-Die Python-Skripte umfassen nun zwischen 70 und 100 Codezeilen, daher findet man diese Skripte im Ganzen nur im Anhang \ref{appendix:B}. Die wichtigsten Ausschnitte aus dem Code sollen in den folgenden Teilkapiteln aber einen Einblick in die Funktioneweise des Codes geben.
+Die Python-Skripte umfassen nun zwischen 70 und 100 Codezeilen, daher findet man diese Skripte im Ganzen nur im Anhang \ref{appendix:B}. Die wichtigsten Ausschnitte aus dem Code sollen in den folgenden Teilkapiteln aber einen Einblick in die Funktionsweise des Codes geben.
 
 \subsection{Grundprinzip}
 \label{subsection:3:3:1}
@@ -210,7 +209,6 @@ Die restlichen Variablen werden wie bei einfacher linearer Regression definiert.
 \subsection{Logistische Regression}
 \label{subsection:3:3:4}
 
-// TODO: erwähne Lineartransformation
 Wir definieren unsere Tensoren exakt wie bei einfacher linearer Regression, da wie hier wieder mit je einer unabhängigen und einer abhängigen Variablen arbeiten. Die bisher verwendete Berechnung der $y$-Werte fügen wir nun zusätzlich in die logistische Funktion ein:
 
 \begin{minted}[linenos,breaklines,frame=single]{python}

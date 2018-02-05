@@ -80,7 +80,6 @@ RETURNS TABLE (
   value NUMERIC(65, 30)
 ) AS $$
 DECLARE
-  better BOOLEAN;
   counter INTEGER;
 BEGIN
 
@@ -161,7 +160,6 @@ WHILE counter < rounds AND step > 0.000000000000000000000000000001 LOOP
   PERFORM calculate_gradient();
   PERFORM calculate_new_parameters(step);
   PERFORM calculate_logit();
-  better := are_new_parameters_better();
 
   -- Verringere die Schrittweite solange, bis die neuen Parameter ein besseres Ergebnis liefern als die alten.
   WHILE NOT (
@@ -175,7 +173,6 @@ WHILE counter < rounds AND step > 0.000000000000000000000000000001 LOOP
     step := step / 2;
     PERFORM calculate_new_parameters(step);
     PERFORM calculate_logit();
-    better := are_new_parameters_better();
 
   END LOOP;
 

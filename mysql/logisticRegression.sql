@@ -2,7 +2,6 @@
 DROP PROCEDURE IF EXISTS calculate_gradient;
 DROP PROCEDURE IF EXISTS calculate_new_parameters;
 DROP PROCEDURE IF EXISTS calculate_logit;
-DROP PROCEDURE IF EXISTS are_new_parameters_better;
 DROP PROCEDURE IF EXISTS logistic_regression;
 
 DELIMITER ;;
@@ -68,21 +67,6 @@ BEGIN
 UPDATE parameters
 JOIN gradient ON gradient.variable = parameters.variable
 SET parameters.new = parameters.old + step * gradient.value;
-
-END;;
-
--- Erzeuge eine Prozedur, um herauszufinden, ob die neuen Parameterwerte besser sind als die alten.
-CREATE PROCEDURE `are_new_parameters_better`(OUT better INT(1))
-BEGIN
-
--- Berechne und vergleiche die Werte der Likelihoodfunktion für die alten und neuen Parameterwerte.
-SET better = (
-  SELECT
-    SUM(LOG(bv.value * l.new + (1 - bv.value) * (1 - l.new))) >
-    SUM(LOG(bv.value * l.old + (1 - bv.value) * (1 - l.old)))
-  FROM logits l
-  JOIN binary_values bv ON bv.id = l.id
-);
 
 END;;
 

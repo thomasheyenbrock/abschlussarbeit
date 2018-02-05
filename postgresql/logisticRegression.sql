@@ -73,25 +73,6 @@ RETURN;
 END;
 $$ LANGUAGE plpgsql;
 
--- Erzeuge (oder ersetze falls vorhanden) eine Prozedur, um herauszufinden, ob die neuen Parameterwerte besser sind als die alten.
-CREATE OR REPLACE FUNCTION are_new_parameters_better()
-RETURNS BOOLEAN AS $$
-DECLARE
-  better BOOLEAN;
-BEGIN
-
--- Berechne und vergleiche die Werte der Likelihoodfunktion für die alten und neuen Parameterwerte.
-SELECT
-  SUM(LOG(bv.value * l.new + (1 - bv.value) * (1 - l.new))) >
-  SUM(LOG(bv.value * l.old + (1 - bv.value) * (1 - l.old))) INTO better
-FROM logits l
-JOIN binary_values bv ON bv.id = l.id;
-
-RETURN better;
-
-END;
-$$ LANGUAGE plpgsql;
-
 -- Erstelle die Prozedur für logistische Regression.
 CREATE OR REPLACE FUNCTION logistic_regression(number_datapoints INTEGER, rounds INTEGER, step NUMERIC(65, 30))
 RETURNS TABLE (
@@ -183,7 +164,13 @@ WHILE counter < rounds AND step > 0.000000000000000000000000000001 LOOP
   better := are_new_parameters_better();
 
   -- Verringere die Schrittweite solange, bis die neuen Parameter ein besseres Ergebnis liefern als die alten.
-  WHILE NOT better AND step > 0.000000000000000000000000000001 LOOP
+  WHILE NOT (
+    SELECT
+      SUM(LOG(bv.value * l.new + (1 - bv.value) * (1 - l.new))) >
+      SUM(LOG(bv.value * l.old + (1 - bv.value) * (1 - l.old)))
+    FROM logits l
+    JOIN binary_values bv ON bv.id = l.id
+  ) AND step > 0.000000000000000000000000000001 LOOP
 
     step := step / 2;
     PERFORM calculate_new_parameters(step);

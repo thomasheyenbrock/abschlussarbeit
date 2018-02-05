@@ -193,6 +193,8 @@ def plot(benchmarks, regression_type, plot_title):
   plt.loglog(x, values["postgresql"], "g-", label="PostgreSQL")
   plt.title(plot_title)
   plt.legend()
+  plt.xlabel("Anzahl der Datenpunkte")
+  plt.ylabel("Laufzeit in Sekunden")
   plt.show()
 
 def main(argv):

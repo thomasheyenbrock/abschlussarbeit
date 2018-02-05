@@ -32,7 +32,7 @@ Mit diesen Mittelwerten berechnet man die Summen im Nenner und Zähler der Lösu
       [
         .$\gamma_{sum((purchases - mean\_purchases) \cdot (money - mean\_money)),~ sum(power(purchases - mean\_purchases, 2))}$
         [
-          .X
+          .$\times$
           $datapoints$
           $means$
         ]
@@ -62,7 +62,7 @@ Mit Hilfe von $beta$ kann man nun auch $alpha$ berechnen:
     [
       .$\pi_{"alpha",~ mean\_money - value \cdot mean\_purchases}$
       [
-        .X
+        .$\times$
         $means$
         $beta$
       ]
@@ -96,7 +96,7 @@ Die Matrixprodukte werden auch in MySQL mit Schleifen berechnet. Dabei wird ein 
 %     [
 %       .$\sigma_{matrix\_transposed.column = matrix\_X.row}$
 %       [
-%         .X
+%         .$\times$
 %         $matrix\_transposed$
 %         $matrix\_X$
 %       ]
@@ -107,7 +107,7 @@ Die Matrixprodukte werden auch in MySQL mit Schleifen berechnet. Dabei wird ein 
     [
       .$\sigma_{m1.row = counter\_1,~ m2.column = counter\_2,~ m1.column = m2.row}$
       [
-        .X
+        .$\times$
         [
           .$\rho_{m1}$
           $matrix\_transposed$

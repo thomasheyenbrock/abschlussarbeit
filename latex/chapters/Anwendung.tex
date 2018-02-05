@@ -215,6 +215,8 @@ Wir definieren unsere Tensoren exakt wie bei einfacher linearer Regression, da w
   y_calc = 1 / (1 + tf.exp(- tf.matmul(x, beta) - alpha))
 \end{minted}
 
+Bei der hier verwendeten Exponentialfunktion besteht die Gefahr, dass der Wert so nahe an null gerät, dass Python mit null weiterrechnet. Um dieses Problem auszuschließen, werden die Werte der unabhängigen Variable zuvor linear in das Interval $[0, 1]$ transformiert. Die berechneten Parameter werden auch entsprechend linear transformiert, um den ursprünglichen Daten zu entsprechen.
+
 Hier minimieren wir nicht mehr die Summe der Quadrate sondern maximieren die Likelihoodfunktion. TensorFlow bietet allerdings nur eine API für Minimierung, weshalb wir das Inverse der Likelihoodfunktion als Kostenfunktion verwenden. Zusätzlich wenden wir wieder den natürlichen Logarithmus auf die Funktion an. Die Kostenfunktion sieht also wie folgt aus:
 
 \begin{minted}[linenos,breaklines,frame=single]{python}

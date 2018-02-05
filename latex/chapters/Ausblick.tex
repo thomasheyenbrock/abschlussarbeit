@@ -199,7 +199,7 @@ Die Prozedur $calculate\_gradient$, die den Gradienten in die Relation $gradient
 \\\\
 Die Prozedur $calculate\_new\_parameters$ führt einen Update-Query durch. Hierfür zeichnen wir keinen Operatorenbaum.
 
-In der Prozedur $are\_new\_parameters\_better$ wird der gesuchte Wahrheitswert wie folgt berechnet:
+In der Hauptprozedur $logistic\_regression$ wird in jeder Iteration überprüft, ob die mit der aktuellen Schrittweite berechneten Parameter ein besseres Ergebnis liefern als die alten Parameter. Das geschieht mit folgender Abfrage:
 \\\\
 \noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
   \Tree[
@@ -227,4 +227,4 @@ In der Prozedur $are\_new\_parameters\_better$ wird der gesuchte Wahrheitswert w
   ]
 \end{minipage}}
 \\\\
-In der eigentlichen Prozedur $logistic\_regression$ werden nur die anderen Prozeduren aufgerufen und einfache Update-Abfragen gestellt.
+Ansonsten werden in $logistic\_regression$ nur die anderen Prozeduren aufgerufen und einfache Update-Abfragen gestellt.

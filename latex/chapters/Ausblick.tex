@@ -1,15 +1,16 @@
 \chapter{Erweiterungspotenzial in Datenbanksystemen}
+\label{chapter:5}
 
 In Kapitel \ref{section:3:4} wurde gezeigt, wie Regressionsanalyse in SQL durchgeführt werden kann. Die dazu implementierten Funktionen können als Erweiterungspotenzial für relationale Datenbanksysteme gesehen werden.
 
-In diesen Funktionen sind die zu verwendende Relation und deren Attribute aktuell noch fest implementiert. Um diese Funktionen also nutzbar zu machen, müsste man weitere Parameter einfügen, mit denem man Relation und Attribute zum Zeitpunkt der Ausführung bestimmen kann.
+In diesen Funktionen sind die zu verwendende Relation und deren Attribute aktuell noch fest implementiert. Um diese Funktionen in der Praxis nutzbar zu machen, müsste man weitere Parameter einfügen, mit denem man Relation und Attribute zum Zeitpunkt der Ausführung bestimmen kann.
 
-Wir wollen nun die hier implementierten Funktionen und insbesondere deren Abfragen mit Hilfe von Operatorenbäumen darstellen.
+Wir wollen nun die Abfragen der in Kapitel \ref{section:3:4} implementierten Funktionen mit Hilfe von Operatorenbäumen darstellen und beschreiben.
 
 \section{Einfache lineare Regression}
 \label{section:5:1}
 
-Die einfache lineare Regression besteht aus mehreren kleinen Teilabfragen. Zuerst berechnet man die Mittelwerte der beiden Attribute für die Regression. Das Ergebnis ist die Tabelle $means$:
+Die einfache lineare Regression besteht aus mehreren kleinen Teilabfragen. Zuerst berechnet man die Mittelwerte der beiden Attribute für die Regression. Das Ergebnis ist die Relation $means$:
 \\\\
 \noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
   \Tree[
@@ -21,7 +22,7 @@ Die einfache lineare Regression besteht aus mehreren kleinen Teilabfragen. Zuers
   ]
 \end{minipage}}
 \\\\
-Mit diesen Mittelwerten berechnet man die Summen im Nenner und Zähler der Lösungsformel für $\beta$ aus \ref{subsection:2:1:1}. Die Tabelle $sums$ ist das Ergebnis dieser Abfrage:
+Mit diesen Mittelwerten berechnet man die Summen im Nenner und Zähler der Lösungsformel für $\beta$ aus \ref{subsection:2:1:1}. Die Relation $sums$ ist das Ergebnis dieser Abfrage:
 \\\\
 \noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
   \Tree[
@@ -31,7 +32,7 @@ Mit diesen Mittelwerten berechnet man die Summen im Nenner und Zähler der Lösu
       [
         .$\gamma_{sum((purchases - mean\_purchases) \cdot (money - mean\_money)),~ sum(power(purchases - mean\_purchases, 2))}$
         [
-          .X
+          .$\times$
           $datapoints$
           $means$
         ]
@@ -61,7 +62,7 @@ Mit Hilfe von $beta$ kann man nun auch $alpha$ berechnen:
     [
       .$\pi_{"alpha",~ mean\_money - value \cdot mean\_purchases}$
       [
-        .X
+        .$\times$
         $means$
         $beta$
       ]
@@ -73,18 +74,18 @@ Mit Hilfe von $beta$ kann man nun auch $alpha$ berechnen:
 \section{Multiple lineare Regression}
 \label{section:5:2}
 
-Die hier gezeichneten Bäume entsprechen nicht der Implementierung in PostgreSQL. Dort verwenden wir Arrays und Schleifen zur Berechnung. In MySQL verwenden wir dagegen Tabellen und verarbeiten diese mit den angegebenen Bäumen.
+Die hier gezeichneten Bäume entsprechen der Implementierung in MySQL. Dort verwenden wir Relationen und verarbeiten diese mit den angegebenen Bäumen. In PostgreSQL verwenden wir dagegen Arrays und Schleifen zur Berechnung.
 
-Hier beginnen wir mit der Berechnung der transponierten Matrix von $X$. Die zugehörige Tabelle wird $matrix\_transposed$ genannt:
+Wir beginnen mit der Berechnung der transponierten Matrix von $X$. Die zugehörige Relation wird $matrix\_transposed$ genannt:
 \\\\
 \noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
   \Tree[
-    .$\rho_{row ~\leftarrow~ column, column ~\leftarrow~ row}$
+    .$\rho_{row ~\leftarrow~ column,~ column ~\leftarrow~ row}$
     $matrix\_X$
   ]
 \end{minipage}}
 \\\\
-Die Matrixprodukte werden auch in MySQL mit Schleifen berechnet. Dabei wird ein Element der zu berechnenden Matrix mit folgender Abfrage bestimmt. Dabei sind die Iteratoren $counter\_1$ und $counter\_2$ durch die Schleifen gegeben
+Die Matrixprodukte werden auch in MySQL mit Schleifen berechnet. Dabei wird ein Element der zu berechnenden Matrix mit folgender Abfrage bestimmt. Dabei sind die Iteratoren $counter\_1$ und $counter\_2$ durch die Schleifen gegeben.
 \\\\
 \noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
 % --------------------------------------------------------------
@@ -95,7 +96,7 @@ Die Matrixprodukte werden auch in MySQL mit Schleifen berechnet. Dabei wird ein 
 %     [
 %       .$\sigma_{matrix\_transposed.column = matrix\_X.row}$
 %       [
-%         .X
+%         .$\times$
 %         $matrix\_transposed$
 %         $matrix\_X$
 %       ]
@@ -106,7 +107,7 @@ Die Matrixprodukte werden auch in MySQL mit Schleifen berechnet. Dabei wird ein 
     [
       .$\sigma_{m1.row = counter\_1,~ m2.column = counter\_2,~ m1.column = m2.row}$
       [
-        .X
+        .$\times$
         [
           .$\rho_{m1}$
           $matrix\_transposed$
@@ -122,16 +123,16 @@ Die Matrixprodukte werden auch in MySQL mit Schleifen berechnet. Dabei wird ein 
 \\\\
 Die beiden Matrixprodukte zur Berechnung von $matrix\_product\_2$ und $matrix\_result$ besitzen denselben Operatorenbaum, nur dass die beiden Relationen $matrix\_transposed$ und $matrix\_y$ bzw. $matrix\_inverse$ und $matrix\_product\_2$ verwendet werden.
 
-Zur Berechnung der inversen Matrix für die Relation $matrix\_inverse$ wird in PostgreSQL und MySQL ein iterativer Algorithmus verwendet, der sich nicht als Operatorenbaum darstellen lässt.
+Zur Berechnung der inversen Matrix für die Relation $matrix\_inverse$ wird in PostgreSQL und MySQL ein iterativer Algorithmus verwendet, dessen Äquivalent wir hier auf Grund der Komplexität nicht als Operatorenbaum darstellen wollen.
 
 \section{Logistische Regression}
 \label{section:5:3}
 
-Die Prozedur für die logistische Regression ist schon in verschiedene Teilprozeduren aufgeteilt, die jeweils eine Abfrage durchführen. In $calculate\_logit$ wird die Relation $logits$ mit folgender Abfrage befüllt:
+Die Prozedur für die logistische Regression ist in verschiedene Teilprozeduren aufgeteilt, die jeweils eine Abfrage durchführen. In $calculate\_logit$ wird die Relation $logits$ mit folgender Abfrage befüllt:
 \\\\
 \noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
   \Tree[
-    .$\gamma_{d.id,~ 1 / (1 + exp(- SUM(d.value \cdot p.old) - p2.old)),~ 1 / (1 + exp(- SUM(d.value \cdot p.new) - p2.new))}$
+    .$\gamma_{d.id,~ 1 / (1 + exp(- sum(d.value \cdot p.old) - p2.old)),~ 1 / (1 + exp(- sum(d.value \cdot p.new) - p2.new))}$
     [
       .$\bowtie_{p2.variable = "alpha"}$
       [
@@ -153,7 +154,7 @@ Die Prozedur für die logistische Regression ist schon in verschiedene Teilproze
   ]
 \end{minipage}}
 \\\\
-Die Prozedur, die den Gradienten in die Relation $gradient$ schreibt, heißt $calculate\_gradient$ und führt diese Abfrage aus:
+Die Prozedur $calculate\_gradient$, die den Gradienten in die Relation $gradient$ schreibt, führt diese Abfrage aus:
 \\\\
 \noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
   \Tree[
@@ -196,9 +197,9 @@ Die Prozedur, die den Gradienten in die Relation $gradient$ schreibt, heißt $ca
   ]
 \end{minipage}}
 \\\\
-Die Prozedur $calculate\_new\_parameters$ führt einen Update-Query durch, hierfür zeichnen wir keinen Operatorenbaum.
+Die Prozedur $calculate\_new\_parameters$ führt einen Update-Query durch. Hierfür zeichnen wir keinen Operatorenbaum.
 
-In der Prozedur $are\_new\_parameters\_better$ wird der gesuchte Wahrheitswert wie folgt berechnet:
+In der Hauptprozedur $logistic\_regression$ wird in jeder Iteration überprüft, ob die mit der aktuellen Schrittweite berechneten Parameter ein besseres Ergebnis liefern als die alten Parameter. Das geschieht mit folgender Abfrage:
 \\\\
 \noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
   \Tree[
@@ -226,4 +227,4 @@ In der Prozedur $are\_new\_parameters\_better$ wird der gesuchte Wahrheitswert w
   ]
 \end{minipage}}
 \\\\
-In der eigentlichen Prozedur $logistic\_regression$ werden nur die anderen Prozeduren aufgerufen und einfache Update-Abfragen gestellt.
+Ansonsten werden in $logistic\_regression$ nur die anderen Prozeduren aufgerufen und einfache Update-Abfragen gestellt.

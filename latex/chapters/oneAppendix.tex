@@ -713,19 +713,19 @@
   BEGIN
 
   -- Deklariere die verwendeten Variablen.
-  DECLARE purchases_mean DECIMAL(40, 20);
-  DECLARE money_mean DECIMAL(40, 20);
-  DECLARE alpha DECIMAL(40, 20);
-  DECLARE beta DECIMAL(40, 20);
+  DECLARE purchases_mean DECIMAL(65, 30);
+  DECLARE money_mean DECIMAL(65, 30);
+  DECLARE alpha DECIMAL(65, 30);
+  DECLARE beta DECIMAL(65, 30);
 
-  -- Erstelle eine temporäre Tabelle für die zu verwendenden Datenpunkte.
+  -- Erstelle eine temporäre Relation für die zu verwendenden Datenpunkte.
   DROP TEMPORARY TABLE IF EXISTS datapoints;
   CREATE TEMPORARY TABLE datapoints (
     purchases INT(11),
     money INT(11)
   );
 
-  -- Füge die gewünschte Anzahl der Datenpunkte in die temporäre Tabelle ein.
+  -- Füge die gewünschte Anzahl der Datenpunkte in die temporäre Relation ein.
   INSERT INTO datapoints
   SELECT purchases, money
   FROM sample
@@ -754,12 +754,12 @@
   -- Berechne alpha.
   SET alpha = money_mean - (beta * purchases_mean);
 
-  -- Gib eine Tabelle mit Parametername und zugehörigem Wert zurück.
+  -- Gib eine Relation mit Parametername und zugehörigem Wert zurück.
   SELECT 'alpha' AS `variable`, alpha AS `value`
   UNION
   SELECT 'beta' AS `variable`, beta AS `value`;
 
-  -- Lösche die temporäre Tabelle mit den Datenpunkten wieder.
+  -- Lösche die temporäre Relation mit den Datenpunkten wieder.
   DROP TEMPORARY TABLE IF EXISTS datapoints;
 
   END;;
@@ -786,13 +786,13 @@
   DECLARE counter_1 INT(11);
   DECLARE counter_2 INT(11);
   DECLARE counter_3 INT(11);
-  DECLARE pivot DECIMAL(40, 20);
+  DECLARE pivot DECIMAL(65, 30);
 
   -- Bestimme die Dimensionsn für die Matrix X.
   SET m = number_datapoints;
   SET n = 3;
 
-  -- Lösche vorhandene temporäre Tabellen.
+  -- Lösche vorhandene temporäre Relationen.
   DROP TEMPORARY TABLE IF EXISTS matrix_X;
   DROP TEMPORARY TABLE IF EXISTS matrix_transposed;
   DROP TEMPORARY TABLE IF EXISTS matrix_product_1;
@@ -801,44 +801,44 @@
   DROP TEMPORARY TABLE IF EXISTS matrix_y;
   DROP TEMPORARY TABLE IF EXISTS matrix_result;
 
-  -- Erstelle temporäre Tabellen für die zu berechnenden Matrizen.
+  -- Erstelle temporäre Relationen für die zu berechnenden Matrizen.
   CREATE TEMPORARY TABLE matrix_X (
     `row` INT(11),
     `column` INT(11),
-    `value` DECIMAL(40, 20)
+    `value` DECIMAL(65, 30)
   );
   CREATE TEMPORARY TABLE matrix_transposed (
     `row` INT(11),
     `column` INT(11),
-    `value` DECIMAL(40, 20)
+    `value` DECIMAL(65, 30)
   );
   CREATE TEMPORARY TABLE matrix_product_1 (
     `row` INT(11),
     `column` INT(11),
-    `value` DECIMAL(40, 20)
+    `value` DECIMAL(65, 30)
   );
   CREATE TEMPORARY TABLE matrix_inverse (
     `row` INT(11),
     `column` INT(11),
-    `value` DECIMAL(40, 20)
+    `value` DECIMAL(65, 30)
   );
   CREATE TEMPORARY TABLE matrix_product_2 (
     `row` INT(11),
     `column` INT(11),
-    `value` DECIMAL(40, 20)
+    `value` DECIMAL(65, 30)
   );
   CREATE TEMPORARY TABLE matrix_y (
     `row` INT(11),
     `column` INT(11),
-    `value` DECIMAL(40, 20)
+    `value` DECIMAL(65, 30)
   );
   CREATE TEMPORARY TABLE matrix_result (
     `row` INT(11),
     `column` INT(11),
-    `value` DECIMAL(40, 20)
+    `value` DECIMAL(65, 30)
   );
 
-  -- Füge Werte der unabhängigen Variablen in die Tabelle matrix_X ein.
+  -- Füge Werte der unabhängigen Variablen in die Relation matrix_X ein.
   SET @id = 0;
 
   INSERT INTO matrix_X
@@ -869,7 +869,7 @@
   FROM sample
   LIMIT number_datapoints;
 
-  -- Füge Werte der abhängigen Variable in die Tabelle matrix_y ein.
+  -- Füge Werte der abhängigen Variable in die Relation matrix_y ein.
   SET @id = 0;
 
   INSERT INTO matrix_y
@@ -932,7 +932,7 @@
     DROP TEMPORARY TABLE IF EXISTS pivot_row;
     CREATE TEMPORARY TABLE pivot_row (
         `column` INT(11),
-        `value` DECIMAL(40, 20)
+        `value` DECIMAL(65, 30)
     );
 
     INSERT INTO pivot_row
@@ -1040,7 +1040,7 @@
 
   END WHILE;
 
-  -- Gib eine Tabelle mit Parameternamen und zugehörigen Werten zurück.
+  -- Gib eine Relation mit Parameternamen und zugehörigen Werten zurück.
   SELECT
     CASE row
       WHEN 1 THEN 'alpha'
@@ -1050,7 +1050,7 @@
     value
   FROM matrix_result;
 
-  -- Lösche die temporären Tabelle wieder.
+  -- Lösche die temporären Relationen wieder.
   DROP TEMPORARY TABLE IF EXISTS matrix_X;
   DROP TEMPORARY TABLE IF EXISTS matrix_transposed;
   DROP TEMPORARY TABLE IF EXISTS matrix_product_1;
@@ -1072,7 +1072,6 @@
   DROP PROCEDURE IF EXISTS calculate_gradient;
   DROP PROCEDURE IF EXISTS calculate_new_parameters;
   DROP PROCEDURE IF EXISTS calculate_logit;
-  DROP PROCEDURE IF EXISTS are_new_parameters_better;
   DROP PROCEDURE IF EXISTS logistic_regression;
 
   DELIMITER ;;
@@ -1141,21 +1140,6 @@
 
   END;;
 
-  -- Erzeuge eine Prozedur, um herauszufinden, ob die neuen Parameterwerte besser sind als die alten.
-  CREATE PROCEDURE `are_new_parameters_better`(OUT better INT(1))
-  BEGIN
-
-  -- Berechne und vergleiche die Werte der Likelihoodfunktion für die alten und neuen Parameterwerte.
-  SET better = (
-    SELECT
-      SUM(LOG(bv.value * l.new + (1 - bv.value) * (1 - l.new))) >
-      SUM(LOG(bv.value * l.old + (1 - bv.value) * (1 - l.old)))
-    FROM logits l
-    JOIN binary_values bv ON bv.id = l.id
-  );
-
-  END;;
-
   -- Erstelle die Prozedur für logistische Regression.
   CREATE PROCEDURE `logistic_regression`(IN number_datapoints INT(11), IN rounds INT(11), step DECIMAL(65, 30))
   BEGIN
@@ -1167,7 +1151,7 @@
   DECLARE better INT(1);
   DECLARE counter INT(11);
 
-  -- Erstelle eine temporäre Tabelle für die Werte der unabhängigen Variablen.
+  -- Erstelle eine temporäre Relation für die Werte der unabhängigen Variablen.
   DROP TEMPORARY TABLE IF EXISTS datapoints;
   CREATE TEMPORARY TABLE datapoints (
     id INT(11),
@@ -1180,7 +1164,7 @@
   SET min = (SELECT MIN(money) FROM sample);
   SET max = (SELECT MAX(money) FROM sample);
 
-  -- Füge die linear transformierten Werte der unabhängigen Variablen in die Tabelle datapoints ein.
+  -- Füge die linear transformierten Werte der unabhängigen Variablen in die Relation datapoints ein.
   SET @counter = 0;
   INSERT INTO datapoints
   SELECT
@@ -1190,7 +1174,7 @@
   FROM sample
   LIMIT number_datapoints;
 
-  -- Erstelle eine temporäre Tabelle für die (binären) Werte der abhängigen Variablen.
+  -- Erstelle eine temporäre Relation für die (binären) Werte der abhängigen Variablen.
   DROP TEMPORARY TABLE IF EXISTS binary_values;
   CREATE TEMPORARY TABLE binary_values (
     id INT(11),
@@ -1207,7 +1191,7 @@
   FROM sample
   LIMIT number_datapoints;
 
-  -- Erstelle eine temporäre Tabelle für die alten und neuen Parameterwerte.
+  -- Erstelle eine temporäre Relation für die alten und neuen Parameterwerte.
   DROP TEMPORARY TABLE IF EXISTS parameters;
   CREATE TEMPORARY TABLE parameters (
     variable VARCHAR(32),
@@ -1221,7 +1205,7 @@
     ('alpha', 0, 0),
     ('beta_money', 0, 0);
 
-  -- Erstelle eine temporäre Tabelle für die Werte der logistischen Funktion für alle Datenpunkte.
+  -- Erstelle eine temporäre Relation für die Werte der logistischen Funktion für alle Datenpunkte.
   DROP TEMPORARY TABLE IF EXISTS logits;
   CREATE TEMPORARY TABLE logits (
     id INT(11),
@@ -1230,10 +1214,10 @@
     PRIMARY KEY (id)
   );
 
-  -- Befülle die Tabelle für die Werte der logistischen Funktion.
+  -- Befülle die Relation für die Werte der logistischen Funktion.
   CALL calculate_logit();
 
-  -- Erstelle eine teporäre Tabelle für den Gradienten.
+  -- Erstelle eine teporäre Relation für den Gradienten.
   DROP TEMPORARY TABLE IF EXISTS gradient;
   CREATE TEMPORARY TABLE gradient (
     variable VARCHAR(32),
@@ -1287,9 +1271,16 @@
   SET old = old - transform * min
   WHERE variable = 'alpha';
 
-  -- Gib eine Tabelle mit Parametername und zugehörigem Wert zurück.
+  -- Gib eine Relation mit Parametername und zugehörigem Wert zurück.
   SELECT variable, old AS `value`
   FROM parameters;
+
+  -- Lösche die temporären Relationen wieder.
+  DROP TEMPORARY TABLE IF EXISTS datapoints;
+  DROP TEMPORARY TABLE IF EXISTS binary_values;
+  DROP TEMPORARY TABLE IF EXISTS parameters;
+  DROP TEMPORARY TABLE IF EXISTS logits;
+  DROP TEMPORARY TABLE IF EXISTS gradient;
 
   END;;
   DELIMITER ;
@@ -1310,14 +1301,14 @@
   ) AS $$
   BEGIN
 
-  -- Erstelle eine Tabelle für die zu verwendenden Datenpunkte.
+  -- Erstelle eine Relation für die zu verwendenden Datenpunkte.
   DROP TABLE IF EXISTS datapoints;
   CREATE TEMPORARY TABLE datapoints (
     purchases INTEGER,
     money INTEGER
   );
 
-  -- Füge die gewünschte Anzahl der Datenpunkte in die temporäre Tabelle ein.
+  -- Füge die gewünschte Anzahl der Datenpunkte in die temporäre Relation ein.
   INSERT INTO datapoints
   SELECT purchases, money
   FROM sample
@@ -1353,14 +1344,14 @@
         mean_money - beta.value * mean_purchases AS value
       FROM means, beta
     )
-  -- Gib eine Tabelle mit Parametername und zugehörigem Wert zurück.
+  -- Gib eine Relation mit Parametername und zugehörigem Wert zurück.
   SELECT *
   FROM alpha
   UNION
   SELECT *
   FROM beta;
 
-  -- Lösche die temporäre Tabelle mit den Datenpunkten wieder.
+  -- Lösche die temporäre Relation mit den Datenpunkten wieder.
   DROP TABLE IF EXISTS datapoints;
 
   END;
@@ -1371,191 +1362,191 @@
 \label{appendix:E:2}
 
 \begin{minted}[linenos,breaklines,frame=single]{sql}
-  -- Erstelle Funktion für die Berechnung der transponierten Matrix.
-  CREATE OR REPLACE FUNCTION matrix_transpose(a NUMERIC(40, 20)[][])
-  RETURNS NUMERIC(40, 20)[][] AS $$
-  DECLARE
-    rows_a INTEGER := array_length(a, 1);
-    columns_a INTEGER := array_length(a, 2);
-    i INTEGER;
-    j INTEGER;
-    c NUMERIC(40, 20)[][];
-    new_row NUMERIC(40, 20)[];
-  BEGIN
+-- Erstelle Funktion für die Berechnung der transponierten Matrix.
+CREATE OR REPLACE FUNCTION matrix_transpose(a NUMERIC(65, 30)[][])
+RETURNS NUMERIC(65, 30)[][] AS $$
+DECLARE
+  rows_a INTEGER := array_length(a, 1);
+  columns_a INTEGER := array_length(a, 2);
+  i INTEGER;
+  j INTEGER;
+  c NUMERIC(65, 30)[][];
+  new_row NUMERIC(65, 30)[];
+BEGIN
 
-  -- Iteriere über alle Zeilen und Spalten der ursprüglichen Matrix.
-  i := 1;
-  WHILE i <= columns_a LOOP
+-- Iteriere über alle Zeilen und Spalten der ursprüglichen Matrix.
+i := 1;
+WHILE i <= columns_a LOOP
 
-    j := 1;
-    WHILE j <= rows_a LOOP
-      -- Erzeuge ein Array mit der neuen Zeile der transponierten Matrix aus der Spalte der ursprünglichen Matrix.
-      new_row[j] := a[j][i];
-      j := j + 1;
+  j := 1;
+  WHILE j <= rows_a LOOP
+    -- Erzeuge ein Array mit der neuen Zeile der transponierten Matrix aus der Spalte der ursprünglichen Matrix.
+    new_row[j] := a[j][i];
+    j := j + 1;
+  END LOOP;
+
+  -- Füge die Zeile in die Ergebnismatrix ein.
+  c := array_cat(c, array[new_row]);
+  i := i + 1;
+END LOOP;
+
+RETURN c;
+
+END;
+$$ LANGUAGE plpgsql;
+
+-- Erstelle Funktion für die Berechnung des Produktes zweier Matrizen.
+CREATE OR REPLACE FUNCTION matrix_multiplication(a NUMERIC(65, 30)[][], b NUMERIC(65, 30)[][])
+RETURNS NUMERIC(65, 30)[][] AS $$
+DECLARE
+  rows_a INTEGER := array_length(a, 1);
+  columns_a INTEGER := array_length(a, 2);
+  columns_b INTEGER := array_length(b, 2);
+  new_row NUMERIC(65, 30)[];
+  c NUMERIC(65, 30)[][];
+  counter_1 INTEGER;
+  counter_2 INTEGER;
+  counter_3 INTEGER;
+BEGIN
+
+-- Iteriere über die Zeilen und Spalten der Ergebnismatrix.
+counter_1 := 1;
+WHILE counter_1 <= rows_a LOOP
+
+  counter_2 := 1;
+  WHILE counter_2 <= columns_b LOOP
+
+    -- Initiiere den Wert des aktuellen Elementes der Ergebnismatrix mit 0.
+    new_row[counter_2] := 0;
+
+    -- Iteriere über die Summanden zur Berechnung des aktuellen Matrixelements.
+    counter_3 := 1;
+    WHILE counter_3 <= columns_a LOOP
+      -- Addiere den aktuellen Summanden zum Wert des aktuellen Elementes.
+      new_row[counter_2] := new_row[counter_2] + a[counter_1][counter_3] * b[counter_3][counter_2];
+      counter_3 := counter_3 + 1;
     END LOOP;
 
-    -- Füge die Zeile in die Ergebnismatrix ein.
-    c := array_cat(c, array[new_row]);
+    counter_2 := counter_2 + 1;
+  END LOOP;
+
+  c := array_cat(c, array[new_row]);
+  counter_1 := counter_1 + 1;
+END LOOP;
+
+RETURN c;
+
+END;
+$$ LANGUAGE plpgsql;
+
+-- Erstelle Funktion für die Berechnung der inversen Matrix.
+CREATE OR REPLACE FUNCTION matrix_inversion(a NUMERIC(65, 30)[][])
+RETURNS NUMERIC(65, 30)[][] AS $$
+DECLARE
+  n INTEGER := array_length(a, 1);
+  p INTEGER := 0;
+  i INTEGER;
+  j INTEGER;
+  c NUMERIC(65, 30)[][] := a;
+  o NUMERIC(65, 30)[][];
+BEGIN
+
+-- Verwende den in der Arbeit referenzierten Algorithmus.
+WHILE p < n LOOP
+
+  p := p + 1;
+
+  o := c;
+
+  j := 1;
+  WHILE j <= n LOOP
+    IF j <> p THEN
+      c[p][j] := c[p][j] / c[p][p];
+    END IF;
+    j := j + 1;
+  END LOOP;
+
+  i := 1;
+  WHILE i <= n LOOP
+    IF i <> p THEN
+      c[i][p] := - c[i][p] / c[p][p];
+    END IF;
     i := i + 1;
   END LOOP;
 
-  RETURN c;
-
-  END;
-  $$ LANGUAGE plpgsql;
-
-  -- Erstelle Funktion für die Berechnung des Produktes zweier Matrizen.
-  CREATE OR REPLACE FUNCTION matrix_multiplication(a NUMERIC(40, 20)[][], b NUMERIC(40, 20)[][])
-  RETURNS NUMERIC(40, 20)[][] AS $$
-  DECLARE
-    rows_a INTEGER := array_length(a, 1);
-    columns_a INTEGER := array_length(a, 2);
-    columns_b INTEGER := array_length(b, 2);
-    new_row NUMERIC(40, 20)[];
-    c NUMERIC(40, 20)[][];
-    counter_1 INTEGER;
-    counter_2 INTEGER;
-    counter_3 INTEGER;
-  BEGIN
-
-  -- Iteriere über die Zeilen und Spalten der Ergebnismatrix.
-  counter_1 := 1;
-  WHILE counter_1 <= rows_a LOOP
-
-    counter_2 := 1;
-    WHILE counter_2 <= columns_b LOOP
-
-      -- Initiiere den Wert des aktuellen Elementes der Ergebnismatrix mit 0.
-      new_row[counter_2] := 0;
-
-      -- Iteriere über die Summanden zur Berechnung des aktuellen Matrixelements.
-      counter_3 := 1;
-      WHILE counter_3 <= columns_a LOOP
-        -- Addiere den aktuellen Summanden zum Wert des aktuellen Elementes.
-        new_row[counter_2] := new_row[counter_2] + a[counter_1][counter_3] * b[counter_3][counter_2];
-        counter_3 := counter_3 + 1;
+  i := 1;
+  WHILE i <= n LOOP
+    IF i <> p THEN
+      j := 1;
+      WHILE j <= n LOOP
+        IF j <> p THEN
+          c[i][j] := c[i][j] + o[p][j] * c[i][p];
+        END IF;
+        j := j + 1;
       END LOOP;
-
-      counter_2 := counter_2 + 1;
-    END LOOP;
-
-    c := array_cat(c, array[new_row]);
-    counter_1 := counter_1 + 1;
+    END IF;
+    i := i + 1;
   END LOOP;
 
-  RETURN c;
+  c[p][p] := 1 / c[p][p];
 
-  END;
-  $$ LANGUAGE plpgsql;
+END LOOP;
 
-  -- Erstelle Funktion für die Berechnung der inversen Matrix.
-  CREATE OR REPLACE FUNCTION matrix_inversion(a NUMERIC(40, 20)[][])
-  RETURNS NUMERIC(40, 20)[][] AS $$
-  DECLARE
-    n INTEGER := array_length(a, 1);
-    p INTEGER := 0;
-    i INTEGER;
-    j INTEGER;
-    c NUMERIC(40, 20)[][] := a;
-    o NUMERIC(40, 20)[][];
-  BEGIN
+RETURN c;
 
-  -- Verwende den in der Arbeit referenzierten Algorithmus.
-  WHILE p < n LOOP
+END;
+$$ LANGUAGE plpgsql;
 
-    p := p + 1;
-
-    o := c;
-
-    j := 1;
-    WHILE j <= n LOOP
-      IF j <> p THEN
-        c[p][j] := c[p][j] / c[p][p];
-      END IF;
-      j := j + 1;
-    END LOOP;
-
-    i := 1;
-    WHILE i <= n LOOP
-      IF i <> p THEN
-        c[i][p] := - c[i][p] / c[p][p];
-      END IF;
-      i := i + 1;
-    END LOOP;
-
-    i := 1;
-    WHILE i <= n LOOP
-      IF i <> p THEN
-        j := 1;
-        WHILE j <= n LOOP
-          IF j <> p THEN
-            c[i][j] := c[i][j] + o[p][j] * c[i][p];
-          END IF;
-          j := j + 1;
-        END LOOP;
-      END IF;
-      i := i + 1;
-    END LOOP;
-
-    c[p][p] := 1 / c[p][p];
-
-  END LOOP;
-
-  RETURN c;
-
-  END;
-  $$ LANGUAGE plpgsql;
-
-  -- Erstelle die Funktion für multiple lineare Regression.
-  CREATE OR REPLACE FUNCTION multiple_linear_regression(number_datapoints INTEGER)
-  RETURNS TABLE (
-    variable VARCHAR(50),
-    value NUMERIC(65, 30)
-  ) AS $$
-  DECLARE
-    -- Erzeuge die Matrix X mit der gewünschten Anzahl an Datenpunkten.
-    x INTEGER[][]:= (
-      SELECT ARRAY(
-        SELECT ARRAY[1, purchases, age]
-        FROM sample
-        LIMIT number_datapoints
-      )
-    );
-    -- Erzeuge die Matrix y mit der gewünschten Anzahl an Datenpunkten.
-    y INTEGER[]:= (
-      SELECT ARRAY(
-        SELECT ARRAY[money]
-        FROM sample
-        LIMIT number_datapoints
-      )
-    );
-    b NUMERIC[][];
-  BEGIN
-
-  -- Berechne die Lösungsformel unter Verwendung der zuvor definierten Funktionen.
-  b := matrix_multiplication(
-    matrix_inversion(
-      matrix_multiplication(
-        matrix_transpose(x),
-        x
-      )
-    ),
-    matrix_multiplication(
-      matrix_transpose(x),
-      y
+-- Erstelle die Funktion für multiple lineare Regression.
+CREATE OR REPLACE FUNCTION multiple_linear_regression(number_datapoints INTEGER)
+RETURNS TABLE (
+  variable VARCHAR(50),
+  value NUMERIC(65, 30)
+) AS $$
+DECLARE
+  -- Erzeuge die Matrix X mit der gewünschten Anzahl an Datenpunkten.
+  x INTEGER[][]:= (
+    SELECT ARRAY(
+      SELECT ARRAY[1, purchases, age]
+      FROM sample
+      LIMIT number_datapoints
     )
   );
+  -- Erzeuge die Matrix y mit der gewünschten Anzahl an Datenpunkten.
+  y INTEGER[]:= (
+    SELECT ARRAY(
+      SELECT ARRAY[money]
+      FROM sample
+      LIMIT number_datapoints
+    )
+  );
+  b NUMERIC(65, 30)[][];
+BEGIN
 
-  -- Gib eine Tabelle mit Parameternamen und zugehörigen Werten zurück.
-  RETURN QUERY
-  SELECT 'alpha'::VARCHAR(50) AS variable, b[1][1] AS value
-  UNION
-  SELECT 'beta_purchases'::VARCHAR(50) AS variable, b[2][1] AS value
-  UNION
-  SELECT 'beta_age'::VARCHAR(50) AS variable, b[3][1] AS value;
+-- Berechne die Lösungsformel unter Verwendung der zuvor definierten Funktionen.
+b := matrix_multiplication(
+  matrix_inversion(
+    matrix_multiplication(
+      matrix_transpose(x),
+      x
+    )
+  ),
+  matrix_multiplication(
+    matrix_transpose(x),
+    y
+  )
+);
 
-  END;
-  $$ LANGUAGE plpgsql;
+-- Gib eine Relation mit Parameternamen und zugehörigen Werten zurück.
+RETURN QUERY
+SELECT 'alpha'::VARCHAR(50) AS variable, b[1][1] AS value
+UNION
+SELECT 'beta_purchases'::VARCHAR(50) AS variable, b[2][1] AS value
+UNION
+SELECT 'beta_age'::VARCHAR(50) AS variable, b[3][1] AS value;
+
+END;
+$$ LANGUAGE plpgsql;
 \end{minted}
 
 \section{Logistische Regression}
@@ -1637,25 +1628,6 @@
   END;
   $$ LANGUAGE plpgsql;
 
-  -- Erzeuge (oder ersetze falls vorhanden) eine Prozedur, um herauszufinden, ob die neuen Parameterwerte besser sind als die alten.
-  CREATE OR REPLACE FUNCTION are_new_parameters_better()
-  RETURNS BOOLEAN AS $$
-  DECLARE
-    better BOOLEAN;
-  BEGIN
-
-  -- Berechne und vergleiche die Werte der Likelihoodfunktion für die alten und neuen Parameterwerte.
-  SELECT
-    SUM(LOG(bv.value * l.new + (1 - bv.value) * (1 - l.new))) >
-    SUM(LOG(bv.value * l.old + (1 - bv.value) * (1 - l.old))) INTO better
-  FROM logits l
-  JOIN binary_values bv ON bv.id = l.id;
-
-  RETURN better;
-
-  END;
-  $$ LANGUAGE plpgsql;
-
   -- Erstelle die Prozedur für logistische Regression.
   CREATE OR REPLACE FUNCTION logistic_regression(number_datapoints INTEGER, rounds INTEGER, step NUMERIC(65, 30))
   RETURNS TABLE (
@@ -1663,11 +1635,10 @@
     value NUMERIC(65, 30)
   ) AS $$
   DECLARE
-    better BOOLEAN;
     counter INTEGER;
   BEGIN
 
-  -- Erstelle eine Tabelle für die Werte der unabhängigen Variablen.
+  -- Erstelle eine Relation für die Werte der unabhängigen Variablen.
   DROP TABLE IF EXISTS datapoints;
   CREATE TEMPORARY TABLE datapoints (
     id INTEGER,
@@ -1675,22 +1646,22 @@
     value NUMERIC(65, 30)
   );
 
-  -- Füge die linear transformierten Werte der unabhängigen Variablen in die Tabelle datapoints ein.
+  -- Füge die linear transformierten Werte der unabhängigen Variablen in die Relation datapoints ein.
   INSERT INTO datapoints
   SELECT
     row_number() OVER () AS id,
     'beta_money' AS variable,
     (money - (
       SELECT MIN(money) FROM sample
-    ))::NUMERIC / ((
+    ))::NUMERIC(65, 30) / ((
       SELECT MAX(money) FROM sample
     ) - (
       SELECT MIN(money) FROM sample
-    ))::NUMERIC AS value
+    ))::NUMERIC(65, 30) AS value
   FROM sample
   LIMIT number_datapoints;
 
-  -- Erstelle eine Tabelle für die (binären) Werte der abhängigen Variablen.
+  -- Erstelle eine Relation für die (binären) Werte der abhängigen Variablen.
   DROP TABLE IF EXISTS binary_values;
   CREATE TEMPORARY TABLE binary_values (
     id INTEGER,
@@ -1705,7 +1676,7 @@
   FROM sample
   LIMIT number_datapoints;
 
-  -- Erstelle eine Tabelle für die alten und neuen Parameterwerte.
+  -- Erstelle eine Relation für die alten und neuen Parameterwerte.
   DROP TABLE IF EXISTS parameters;
   CREATE TEMPORARY TABLE parameters (
     variable VARCHAR(50),
@@ -1718,7 +1689,7 @@
     ('alpha', 0, 0),
     ('beta_money', 0, 0);
 
-  -- Erstelle eine Tabelle für die Werte der logistischen Funktion für alle Datenpunkte.
+  -- Erstelle eine Relation für die Werte der logistischen Funktion für alle Datenpunkte.
   DROP TABLE IF EXISTS logits;
   CREATE TEMPORARY TABLE logits (
     id INTEGER,
@@ -1726,14 +1697,14 @@
     new NUMERIC(65, 30)
   );
 
-  -- Befülle die Tabelle für die Werte der logistischen Funktion.
+  -- Befülle die Relation für die Werte der logistischen Funktion.
   PERFORM calculate_logit();
 
-  -- Erstelle eine Tabelle für den Gradienten.
+  -- Erstelle eine Relation für den Gradienten.
   DROP TABLE IF EXISTS gradient;
   CREATE TEMPORARY TABLE gradient (
     variable VARCHAR(50),
-    value DECIMAL(65, 30)
+    value NUMERIC(65, 30)
   );
 
   -- Iteriere über die Anzahl der gewünschten Iterationen.
@@ -1744,15 +1715,19 @@
     PERFORM calculate_gradient();
     PERFORM calculate_new_parameters(step);
     PERFORM calculate_logit();
-    better := are_new_parameters_better();
 
     -- Verringere die Schrittweite solange, bis die neuen Parameter ein besseres Ergebnis liefern als die alten.
-    WHILE NOT better AND step > 0.000000000000000000000000000001 LOOP
+    WHILE NOT (
+      SELECT
+        SUM(LOG(bv.value * l.new + (1 - bv.value) * (1 - l.new))) >
+        SUM(LOG(bv.value * l.old + (1 - bv.value) * (1 - l.old)))
+      FROM logits l
+      JOIN binary_values bv ON bv.id = l.id
+    ) AND step > 0.000000000000000000000000000001 LOOP
 
       step := step / 2;
       PERFORM calculate_new_parameters(step);
       PERFORM calculate_logit();
-      better := are_new_parameters_better();
 
     END LOOP;
 
@@ -1776,10 +1751,17 @@
   SET old = old - (SELECT old FROM parameters p2 WHERE p2.variable = 'beta_money') * (SELECT MIN(money) FROM sample)
   WHERE parameters.variable = 'alpha';
 
-  -- Gib eine Tabelle mit Parametername und zugehörigem Wert zurück.
+  -- Gib eine Relation mit Parametername und zugehörigem Wert zurück.
   RETURN QUERY
   SELECT parameters.variable::VARCHAR(50), old AS value
   FROM parameters;
+
+  -- Lösche die Relationen wieder.
+  DROP TABLE IF EXISTS datapoints;
+  DROP TABLE IF EXISTS binary_values;
+  DROP TABLE IF EXISTS parameters;
+  DROP TABLE IF EXISTS logits;
+  DROP TABLE IF EXISTS gradient;
 
   END;
   $$ LANGUAGE plpgsql;

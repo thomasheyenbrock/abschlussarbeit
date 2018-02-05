@@ -98,7 +98,7 @@ Bei logistischer Regression nutzen wir nun nicht mehr ein lineares Modell wie bi
 
 Man braucht wie auch bei linearer Regression ein Formel für das Modell. Diese bildet man analog wie bisher, indem mal die abhängige Variable mit den unabhängigen Variablen über eine Tilde verbindet. Im Fall unserer dritten Fragestellung wählt man also die Formel als "$premium \sim money$".
 
-Der gesamte R-Code für die logistische Regression ist wieder ähnlich zu dem Code aus \ref{subsection:3:2:1} und lautet wiefolgt:
+Der gesamte R-Code für die logistische Regression ist wieder ähnlich zu dem Code aus \ref{subsection:3:2:1} und lautet wie folgt:
 
 \begin{minted}[linenos,breaklines,frame=single]{r}
   data <- read.csv2("sample.csv", sep = ",", header = TRUE)
@@ -132,7 +132,7 @@ TensorFlow ist eine Software-Bibliothek, die von Google für die Umsetzung von A
 
 TensorFlow bietet APIs für verschiedene Programmiersprachen an. Die Skripte, welche für dieser Arbeit erstellt wurden, sind in Python geschrieben. Wir verwenden TensorFlows Implementierung eines Gradientenabstiegsverfahrens, für welches man die Anzahl der Schritte und die Abstiegsgeschwindigkeit selbst wählen muss. Die Genauigkeit des Ergebnisses hängt also zusätzlich von einer angemessenen Auswahl dieser Werte ab.
 
-Die Python-Skripte umfassen nun zwischen 70 und 100 Codezeilen, daher findet man diese Skripte im Ganzen nur im Anhang \ref{appendix:B}. Die wichtigsten Ausschnitte aus dem Code sollen in den folgenden Teilkapiteln aber einen Einblick in die Funktioneweise des Codes geben.
+Die Python-Skripte umfassen nun zwischen 70 und 100 Codezeilen, daher findet man diese Skripte im Ganzen nur im Anhang \ref{appendix:B}. Die wichtigsten Ausschnitte aus dem Code sollen in den folgenden Teilkapiteln aber einen Einblick in die Funktionsweise des Codes geben.
 
 \subsection{Grundprinzip}
 \label{subsection:3:3:1}
@@ -156,7 +156,7 @@ Um dann auch wirklich Berechnungen durchführen zu können, muss in TensorFlow e
 \subsection{Einfache lineare Regression}
 \label{subsection:3:3:2}
 
-Hier definieren wir unsere Platzhalter und Variablen wiefolgt:
+Hier definieren wir unsere Platzhalter und Variablen wie folgt:
 
 \begin{minted}[linenos,breaklines,frame=single]{python}
   x = tf.placeholder(tf.float32, [None, 1])
@@ -215,6 +215,8 @@ Wir definieren unsere Tensoren exakt wie bei einfacher linearer Regression, da w
   y_calc = 1 / (1 + tf.exp(- tf.matmul(x, beta) - alpha))
 \end{minted}
 
+Bei der hier verwendeten Exponentialfunktion besteht die Gefahr, dass der Wert so nahe an null gerät, dass Python mit null weiterrechnet. Um dieses Problem auszuschließen, werden die Werte der unabhängigen Variable zuvor linear in das Interval $[0, 1]$ transformiert. Die berechneten Parameter werden auch entsprechend linear transformiert, um den ursprünglichen Daten zu entsprechen.
+
 Hier minimieren wir nicht mehr die Summe der Quadrate sondern maximieren die Likelihoodfunktion. TensorFlow bietet allerdings nur eine API für Minimierung, weshalb wir das Inverse der Likelihoodfunktion als Kostenfunktion verwenden. Zusätzlich wenden wir wieder den natürlichen Logarithmus auf die Funktion an. Die Kostenfunktion sieht also wie folgt aus:
 
 \begin{minted}[linenos,breaklines,frame=single]{python}
@@ -241,7 +243,7 @@ Die "Structured Query Language" alias "SQL" ist eine Sprache zur Definition und 
 
 SQL als Programmiersprache ist Turing-vollständig. Es ist also mit standardisierten SQL-Methoden möglich, Regression direkt in der Datenbank zu betreiben. Die konkrete Umsetzung hängt von der Art der Regression und dem spezifischen Datenbanksystem ab. In diesem Kapitel soll das nun für zwei Open-Source-Datenbanksystemen demonstriert werden, nämlich MySQL und PostgreSQL. Der vollständige SQL-Code befindet sich wegen der Länge wieder komplett im Anhang. Die MySQL-Skripte sind unter \ref{appendix:C} zu finden, die Skripte für PostgreSQL liegen in \ref{appendix:D}.
 
-Im Gegensatz zu den beiden bisher vorgestellten Sprachen verfolgen wir hier kein einheitliches Grundprinzip, in dem sich alle Arten der Regression ähnlich sind. Die einzige Gemeinsamkeit ist, dass wir in allen SQL-Skripten Prozeduren bzw. Funktionen definieren, welche bei Aufruf die Regressionsanalyse durchführen. Wir nehmen dazu an, dass die Daten für die Regression in einer Tabelle namens $sample$ liegen.
+Im Gegensatz zu den beiden bisher vorgestellten Sprachen verfolgen wir hier kein einheitliches Grundprinzip, in dem sich alle Arten der Regression ähnlich sind. Die einzige Gemeinsamkeit ist, dass wir in allen SQL-Skripten Prozeduren bzw. Funktionen definieren, welche bei Aufruf die Regressionsanalyse durchführen. Wir nehmen dazu an, dass die Daten für die Regression in einer Relation namens $sample$ liegen.
 
 Bei einfacher linearer Regression berechnen wir die Parameter exakt über die Formeln aus Kapitel \ref{subsection:2:1:1}. Bei multipler Regression verwenden wir die Matrixformel aus Kapitel \ref{subsection:2:1:2}. Hier müssen wir zusätzlich Algorithmen zur Transponierung, Multiplikation und Invertierung von Matrizen implementieren. Für logistische Regression steht uns keine explitize Formel zur Verfügung, weshalb wir ein Gradientenverfahren zur Lösung des Optimierungsproblems implementieren.
 
@@ -258,8 +260,8 @@ Führen wir die Prozeduren im jeweiligen Datenbanksystem aus, erhalten wir folge
   \captionof{table}{Einfache lineare Regression in MySQL}
   \begin{tabular}{|c|c|}\hline
     \textbf{variable} & \textbf{value} \\ \hline
-    alpha & -150.47893856389208170000 \\ \hline
-    beta & 2519.79002342511470000000 \\ \hline
+    alpha & -150.478938563892081700000000000000 \\ \hline
+    beta & 2519.790023425114700000000000000000 \\ \hline
   \end{tabular}
 
   \captionof{table}{Einfache lineare Regression in PostgreSQL}
@@ -275,26 +277,31 @@ Führen wir die Prozeduren im jeweiligen Datenbanksystem aus, erhalten wir folge
 
 Wir wollen zur Lösung dieses Regressionsproblems die Matrix-Formel aus Kapitel \ref{subsection:2:1:2} anwenden. Dazu müssen Methoden für das Transponieren, Multiplizieren und Invertieren von Matrizen implementiert werden, da weder MySQL noch PostgreSQL über solche Funktionen verfügen. Wir müssen außerdem einen Weg finden, Matrizen im jeweiligen Datenbanksystem zu repräsentieren.
 
-Die Matrizenrepräsentierung lösen wir unterschiedlich in den beiden Datenbanksystemen. In MySQL definieren wir uns temporäre Tabellen, welche jeweils eine Matrix repräsentieren. Jede solche Tabelle besitzt dasselbe Schema, nämlich aus den Attributen $row$, $column$ und $value$. Die ersten beiden enthalten die Indizes des Matrixelements, letztere enthält den Wert des jeweiligen Elements.
+Die Matrizenrepräsentierung lösen wir unterschiedlich in den beiden Datenbanksystemen. In MySQL definieren wir uns temporäre Relationen, welche jeweils eine Matrix repräsentieren. Jede solche Relation besitzt dasselbe Schema und besteht aus den Attributen $row$, $column$ und $value$. Die ersten beiden enthalten die Indizes des Matrixelements, letztere enthält den Wert des jeweiligen Elements.
 
-Wir definieren insgesamt sieben solcher Tabellen:
-\begin{itemize}
-  \item $matrix\_X$: Entspricht der Matrix $X$ aus der Berechnungsformel.
-  \item $matrix\_y$: Entspricht der Matrix $y$ aus der Berechnungsformel.
-  \item $matrix\_transposed$: Entspricht der Matrix $X^T$.
-  \item $matrix\_product\_1$: Entspricht dem Matrixprodukt $X^T X$.
-  \item $matrix\_inverse$: Entspricht dem Inversen des obigen Matrixprodukts $(X^T X)^{-1}$.
-  \item $matrix\_product\_2$: Entspricht dem Matrixprodukt $X^T y$.
-  \item $matrix\_result$: Entspricht dem Endergebnis der Berechnungsformel $(X^T X)^{-1} X^T y$.
-\end{itemize}
+Wir definieren insgesamt sieben solcher Relationen:
+\begin{center}
+  \captionof{table}{Relationen für multiple lineare Regression in MySQL}
+  \begin{tabular}{|c|c|}\hline
+    \textbf{Schema} & \textbf{entspricht folgender Matrix} \\
+     &  (vergleiche Berechnungsformel) \\ \hline
+    $matrix\_X([row, column, value])$ & $X$ \\ \hline
+    $matrix\_y([row, column, value])$ & $y$ \\ \hline
+    $matrix\_transposed([row, column, value])$ & $X^T$ \\ \hline
+    $matrix\_product\_1([row, column, value])$ & $X^T X$ \\ \hline
+    $matrix\_inverse([row, column, value])$ & $(X^T X)^{-1}$ \\ \hline
+    $matrix\_product\_2([row, column, value])$ & $X^T y$ \\ \hline
+    $matrix\_results([row, column, value])$ & $(X^T X)^{-1} X^T y$ \\ \hline
+  \end{tabular}
+\end{center}
 
-Die ersten beiden dieser Tabellen werden einfach mit den vorhandenen Werten aus der Tabelle $sample$ befüllt. Die Tabelle $matrix\_transposed$ wird mit einem einfachen Query aus der Tabelle $matrix\_X$ berechnet, indem die Indizes für Zeile und Spalte vertauscht werden.
+Die ersten beiden dieser Relationen werden einfach mit den vorhandenen Werten aus der Relation $sample$ befüllt. Die Relation $matrix\_transposed$ wird mit einem einfachen Query aus der Relation $matrix\_X$ berechnet, indem die Indizes für Zeile und Spalte vertauscht werden.
 
-Die Tabellen $matrix\_product\_1$, $matrix\_product\_2$ und $matrix\_result$ sind Ergebnisse von Matrizenmultiplikationen. Diese Produkte werden mit zwei Schleifen berechnet, die über die Tupel und Attribute der Ergebnismatrix iterieren. Der jeweilige Wert zusammen mit dem Zeilen- und Spaltenindex der zu berechnenden Matrix wird über eine Abfrage eingefügt. Diese Abfrage nimmt das Kreuzprodukt beider Tabellen und betrachtet nur die aktuelle Zeile der ersten Tabelle und die aktuelle Spalte der zweiten Tabelle. Außerdem sollen die Zeilenindizes der ersten Tabelle gleich den Indizes der zweiten Tabelle sein. Der Wert für die zu berechnende Matrix ergibt sich als Summe über die Produkte der Werte der verbleibenden Tupel.
+Die Relation $matrix\_product\_1$, $matrix\_product\_2$ und $matrix\_result$ sind Ergebnisse von Matrizenmultiplikationen. Diese Produkte werden mit zwei Schleifen berechnet, die über die Tupel und Attribute der Ergebnismatrix iterieren. Der jeweilige Wert zusammen mit dem Zeilen- und Spaltenindex der zu berechnenden Matrix wird über eine Abfrage eingefügt. Diese Abfrage nimmt das Kreuzprodukt beider Relationen und betrachtet nur die aktuelle Zeile der ersten Relation und die aktuelle Spalte der zweiten Relation. Außerdem sollen die Zeilenindizes der ersten Relation gleich den Indizes der zweiten Relation sein. Der Wert für die zu berechnende Matrix ergibt sich als Summe über die Produkte der Werte der verbleibenden Tupel.
 
-Bei den Tabellen $matrix\_product\_2$ und $matrix\_result$ ist die Spaltenanzahl der zu berechnenden Tabelle gleich eins. Wegen der einen notwendigen Iteration braucht man hier sogar nur eine Schleife.
+Bei den Relationen $matrix\_product\_2$ und $matrix\_result$ ist die Spaltenanzahl der zu berechnenden Relation gleich eins. Wegen der einen notwendigen Iteration braucht man hier sogar nur eine Schleife.
 
-Für die Berechnung der inversen Matrix, also für die Tabelle $matrix\_inverse$, wird ein einfacher iterativer Algorithmus verwendet, welcher über alle Zeilen der zu invertierenden Matrix läuft. In jedem Schritt werden alle Elemente der Matrix nach einem bestimmten Vorgehen angepasst, sodass man am Ende das Inverse erhält. Details zu dem verwendeten Algorithmus findet man in \cite{matrix}.
+Für die Berechnung der inversen Matrix, also für die Relation $matrix\_inverse$, wird ein einfacher iterativer Algorithmus verwendet, welcher über alle Zeilen der zu invertierenden Matrix läuft. In jedem Schritt werden alle Elemente der Matrix nach einem bestimmten Vorgehen angepasst, sodass man am Ende das Inverse erhält. Details zu dem verwendeten Algorithmus findet man in \cite{matrix}.
 
 Die komplette Berechnung wurde in eine Prozedur verpackt. Führt man diese aus, erhält man das folgende Ergebnis:
 
@@ -302,20 +309,29 @@ Die komplette Berechnung wurde in eine Prozedur verpackt. Führt man diese aus, 
   \captionof{table}{Multiple lineare Regression in MySQL}
   \begin{tabular}{|c|c|}\hline
     \textbf{variable} & \textbf{value} \\ \hline
-    alpha & -766.73617378441900469987 \\ \hline
-    beta\_purchases & 2520.30174179130808582094 \\ \hline
-    beta\_age & 17.50372214336084692771 \\ \hline
+    alpha & -766.736173784421688472047506524797 \\ \hline
+    beta\_purchases & 2520.301741791306785710069856997055 \\ \hline
+    beta\_age & 17.503722143360901662105040790569 \\ \hline
   \end{tabular}
 \end{center}
 
-Betrachten wir nun die Implementierung in PostgreSQL. Gegenüber MySQL hat man hier den Vorteil, dass mehrdimensionale Felder als Datentyp existieren. Wir brauchen also keine temporären Tabellen für die Matrizen mehr, sondern speichern diese einfach als zweidimensionales Array.
+Betrachten wir nun die Implementierung in PostgreSQL. Gegenüber MySQL hat man hier den Vorteil, dass mehrdimensionale Felder als Datentyp existieren. Wir brauchen also keine temporären Relationen für die Matrizen mehr, sondern speichern diese einfach als zweidimensionales Array.
 
 Neben der eigentlichen Prozedur zum Ausführen der Regression definieren wir drei weitere Funktionen:
-\begin{itemize}
-  \item $matrix\_transpose$: Diese Funktion nimmt ein zweidimensionales Array von Typ $NUMERIC$ als Input und gibt die transponierte Matrix zurück. Die transponierte Matrix wird mit zwei Schleifen über die Zeilen und Spalten gebildet, welche die Zeilen- und Spaltenindizes vertauschen.
-  \item $matrix\_multiplication$: Diese Funktion nimmt zwei zweidimensionale Arrays vom Typ $NUMERIC$ als Input und gibt das Produkt der beiden Matrizen zurück. Hier werden drei Schleifen zur Berechnung verwendet. Die ersten beiden iterieren über die Zeilen und Spalten der Ausgabematrix. Die dritte iteriert über die Zeile bzw. Spalte, welche zur Berechnung der aktuellen Elements verwendet werden und addiert die Produkte der Elemente dieser Zeile und Spalte auf.
-  \item $matrix\_inversion$: Diese Funktion nimmt ein zweidimensionales Array vom Typ $NUMERIC$ als Input und gibt das Inverse dieser Matrix zurück. Dabei wird derselbe Algorithmus verwendet, der auch in MySQL implementiert wurde.
-\end{itemize}
+\begin{center}
+  \captionof{table}{Funktionen für multiple lineare Regression in PostgreSQL}
+  \begin{tabular}{|c|c|c|c|}\hline
+    \textbf{Name} & \textbf{Eingabe} & \textbf{Ausgabe} & \textbf{Beschreibung} \\ \hline
+    $matrix\_transpose$ & $a ~ numeric$ & $numeric$ & transponiert die \\
+     & $(65, 30)[~][~]$ & $(65, 30)[~][~]$ & Matrix $a$ \\ \hline
+    $matrix\_multiplication$ & $a ~ numeric$, & $numeric$ & multipliziert die \\
+     & $(65, 30)[~][~],$ & $(65, 30)[~][~]$ & Matrizen $a$ und $b$ \\
+     & $b ~ numeric$ & & \\
+     & $(65, 30)[~][~]$ & & \\ \hline
+    $matrix\_inversion$ & $a ~ numeric$ & $numeric$ & invertiert die \\
+     & $(65, 30)[~][~]$ & $(65, 30)[~][~]$ & Matrix $a$ \\ \hline
+  \end{tabular}
+\end{center}
 
 Mit diesen drei Funktionen lässt sich die Formel aus Kapitel \ref{subsection:2:1:2} mit drei Abfragen umsetzen. Dazu erzeugen wir zuerst zwei Matrizen $x$ und $y$ mit den unabhängigen und der abhängigen Variable als Elemente aus der $sample$-Relation. Im dritten Query nutzen wir die genannten Funktionen, um die Matrix mit den gesuchten Parametern zu berechnen.
 
@@ -325,9 +341,9 @@ Führt man die multiple lineare Regressionsanalyse in PostgreSQL durch, erhält 
   \captionof{table}{Multiple lineare Regression in PostgreSQL}
   \begin{tabular}{|c|c|}\hline
     \textbf{variable} & \textbf{value} \\ \hline
-    alpha & -766.73617378441900469987 \\ \hline
-    beta\_purchases & 2520.30174179130808582094 \\ \hline
-    beta\_age & 17.50372214336084692771 \\ \hline
+    alpha & -766.736173784421688472047506524797 \\ \hline
+    beta\_purchases & 2520.301741791306785710069856997055 \\ \hline
+    beta\_age & 17.503722143360901662105040790569 \\ \hline
   \end{tabular}
 \end{center}
 
@@ -338,32 +354,59 @@ Da wir dieselben Algorithmen und dieselbe Präzision für Kommazahlen in MySQL u
 
 Zur Lösung des logistischen Regressionsproblems möchten wir in SQL ein Gradientenverfahren implementieren. Wir verwenden denselben Algorithmus in MySQL und PostgreSQL, das heißt die Skripte unterscheiden sich lediglich in der datenbankspezifischen Syntax.
 
-Wir verwenden für das Verfahren mehrere Tabellen, in denen gewisse Informationen gespeichert und verarbeiten werden:
-\begin{itemize}
-  \item Die Relation $datapoints$ besteht aus drei Spalten $id$, $variable$ und $value$. Die $id$-Spalte enthält einen generierten Wert, der einen Datensatz aus der $sample$-Tabelle identifiziert. Die $variable$-Spalte enthält den Namen der gespeicherten unabhängigen Variable. In unserem Fall steht hier immer $beta\_money$, da wir nur eine unabhängige Variable betrachten. Gegebenenfalls können hier mehrere Variablen betrachtet werden. (Die Werte für einen Datenpunkt werden dann also auf mehrere Zeilen aufgeteilt.) Die Spalte $value$ enthält dann den Wert der entsprechenden Variable des jeweiligen Datensatzes.
-  \item Die Relation $binary\_values$ besteht aus zwei Spalten $id$ und $value$. Hier werden für jeden Datenpunkt die Werte der abhängigen binären Variable gespeichert, in unserem Fall also die Werte aus der Spalte $premium$.
-  \item Die Relation $parameters$ besteht aus drei Spalten $variable$, $old$ und $new$. Die erste Spalte enthält den Namen des Parameters, also $alpha$ oder $beta\_money$. Die Spalten $old$ und $new$ enthalten die Werte der Parameter vor bzw. nach dem aktuellen Iterationsschritt des Gradientenverfahrens. Wir benötigen beide Werte, um überprüfen zu können, ob die neuen Parameter ein besseres Ergebnis liefern als die alten.
-  \item Die Relation $logits$ besteht aus drei Spalten $id$, $old$ und $new$. Hier werden für jeden Datenpunkt die Werte der logistischen Funktion $\pi_i$ berechnet. Dabei werden einmal die alten und einmal die neuen Parameter zur Berechnung verwendet.
-  \item Die Relation $gradient$ besteht aus zwei Spalten $variable$ und $value$. Hier wird der Gradient bzw. die Werte der partiellen Ableitungen nach jedem Parameter gespeichert.
-\end{itemize}
+Wir verwenden für das Verfahren mehrere Relationen, in denen gewisse Informationen gespeichert und verarbeiten werden. Dabei weisen wir jedem Datenpunkt eine $id$ zu, um verschiedene Relationen sinnvoll verknüpfen zu können.
 
-Wir definieren außerdem einige Hilfsfunktionen:
-\begin{itemize}
-  \item $calculate\_logits$: Diese Funktion berechnet die Werte für die logistische Funktion für alle Datenpunkte und trägt diese in die Tabelle $logit$ ein. Dabei wird die Funktion für beide Parameterwerte ($old$ und $new$) aus der Tabelle $parameters$ berechnet.
-  \item $calculate\_gradient$: Diese Funktion berechnet den Gradienten auf Basis der alten Parameterwerte und der Werte der logistischen Funktion aus der Tabelle $logits$.
-  \item $calculate\_parameters$: Diese Funktion nimmt eine Schrittweite als Argument, berechnet daraus und aus den Werten der $gradient$-Tabelle die neuen Parameter und schreibt diese zurück in die Spalte $new$ der Tabelle $parameters$.
-  \item $are\_new\_parameters\_better$: Diese Funktion berechnet den Logarithmus der Likelihoodfunktion für die neuen und alten Parameter aus der Tabelle $parameters$ und gibt einen Wahrheitswert zurück. Die Rückgabe ist wahr, wenn die Likelihoodfunktion für die neuen Parameter einen größeren Wert annimmt als für die alten Parameter.
-\end{itemize}
+\begin{center}
+  \captionof{table}{Tabellen für logistische Regression}
+  \begin{tabular}{|c|c|}\hline
+    \textbf{Schema} & \textbf{Beschreibung} \\ \hline
+    $datapoints([id, variable, value])$ & Ein Tupel enthält den Wert einer \\
+    & bestimmten unabhängigen Variable für \\
+    & einen bestimmten Datenpunkt. \\ \hline
+    $binary\_values([id, value])$ & Ein Tupel enthält den Wert für \\
+    & die anhängige Variable eines \\
+    & bestimmten Datenpunktes. \\ \hline
+    $parameters([variable, old, new])$ & Ein Tupel enthält den alten \\
+    & und den neuen Wert des Parameters \\
+    & zu einer bestimmten Variablen. \\ \hline
+    $logits([id, old, new])$ & Ein Tupel enthält den Wert der \\
+    & logistischen Funktion berechnet mit \\
+    & den alten oder neuen Parameterwerten \\
+    & für einen bestimmten Datenpunkt. \\ \hline
+    $gradient([variable, value])$ & Ein Tupel enthält den Wert \\
+    & der partiellen Ableitung nach \\
+    & einer bestimmten Variable. \\ \hline
+  \end{tabular}
+\end{center}
 
-Wir führen wie schon bei TensorFlow zuerst eine Lineartransformation für die Werte aus $money$ durch und bilden diese linear auf das Interval $[0, 1]$ ab. Das dient erneut dazu, dass die Werte der logistischen Funktion nicht zu nahe an null geraten. Die transformierten Werte fügen wir in die $datapoints$-Tabelle ein. Auch die anderen Tabellen erzeugen wir und fügen initiale Werte ein.
+Wir definieren außerdem einige Hilfsfunktionen. Diese Funktionen besitzen keinen Rückgabewert. Stattdessen bearbeiten sie die oben genannten Tabellen.
+\begin{center}
+  \captionof{table}{Funktionen für logistische Regression}
+  \begin{tabular}{|c|c|c|c|}\hline
+    \textbf{Name} & \textbf{Eingabe} & \textbf{Beschreibung} \\ \hline
+    $calculate\_logits$ & & berechnet den Wert der \\
+    & & logistischen Funktion mit den \\
+    & & alten und neuen Parameter- \\
+    & & werten für jeden Datenpunkt \\ \hline
+    $calculate\_gradient$ & & berechnet den Wert der \\
+    & & partiellen Ableitungen \\
+    & & nach allen Variablen \\ \hline
+    $calculate\_new\_parameters$ & $step$ & berechnet die neuen \\
+    & $numeric(65, 30)$ & Parameterwerte aus dem \\
+    & & Gradienten und der \\
+    & & übergebenen Schrittweite \\ \hline
+  \end{tabular}
+\end{center}
+
+Wir führen wie schon bei TensorFlow zuerst eine Lineartransformation für die Werte aus $money$ durch und bilden diese linear auf das Interval $[0, 1]$ ab. Das dient erneut dazu, dass die Werte der logistischen Funktion nicht zu nahe an null geraten. Die transformierten Werte fügen wir in die $datapoints$-Relation ein. Auch die anderen Relationen erzeugen wir und fügen initiale Werte ein.
 
 Es folgt eine $while$-Schleife, die solange läuft, bis entweder die vorgegebene Anzahl an Schritten erreicht wurde, oder die Schrittweite zu klein für die gewählte Präzision der Kommazahlen wird. Wir berechnen zuerst den Gradienten, dann die neuen Parameter. Dann ist ein Aufruf von $calculate\_logits$ nötig, um die logistische Funktion für die neuen Parameter zu berechnen.
 
 Wir überprüfen, ob die neuen Parameter wirklich besser sind als die alten. Falls nicht, wird die Schrittweite halbiert, danach werden die Parameter und die Werte der logistischen Funktion erneut berechnet. Das wird solange wiederholt, bis die neuen Parameter besser sind oder die Schrittweite unter die Präzisionsgrenze fällt.
 
-Haben wir die neuen Parameter erfolgreich berechnet, werden die Werte der $old$-Spalten in den Tabellen $parameters$ und $logits$ mit den neuen Werten überschrieben und der Iterationsschritt ist beendet. Nachdem die Schleife beendet wurde, werden die Parameter wieder entsprechend linear transformiert, um den tatsächlichen Werten für $money$ zu entsprechen.
+Haben wir die neuen Parameter erfolgreich berechnet, werden die Werte der $old$-Spalten in den Relationen $parameters$ und $logits$ mit den neuen Werten überschrieben und der Iterationsschritt ist beendet. Nachdem die Schleife beendet wurde, werden die Parameter wieder entsprechend linear transformiert, um den tatsächlichen Werten für $money$ zu entsprechen.
 
-Wir entscheiden und für 1000 Iterationen und wählen eine Schrittweite von $0.00008$. Führt man die Prozeduren im jeweiligen Datenbanksystemen aus erhält man das folgende Ergebnis:
+Wir entscheiden und für 1000 Iterationen und wählen eine Schrittweite von $0.008$. Führt man die Prozeduren im jeweiligen Datenbanksystemen aus erhält man das folgende Ergebnis:
 
 \begin{center}
   \captionof{table}{Logistische Regression in MySQL}
@@ -376,7 +419,7 @@ Wir entscheiden und für 1000 Iterationen und wählen eine Schrittweite von $0.0
   \captionof{table}{Logistische Regression in PostgreSQL}
   \begin{tabular}{|c|c|}\hline
     \textbf{variable} & \textbf{value} \\ \hline
-    beta\_money & 0.000080298565326972737807097397 \\ \hline
-    alpha & -1.991090799730035106155287378451 \\ \hline
+    beta\_money & 0.000080298565326972737807102042 \\ \hline
+    alpha & -1.991090799730035106155294219916 \\ \hline
   \end{tabular}
 \end{center}

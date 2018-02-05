@@ -2,7 +2,6 @@
 DROP PROCEDURE IF EXISTS calculate_gradient;
 DROP PROCEDURE IF EXISTS calculate_new_parameters;
 DROP PROCEDURE IF EXISTS calculate_logit;
-DROP PROCEDURE IF EXISTS are_new_parameters_better;
 DROP PROCEDURE IF EXISTS logistic_regression;
 
 DELIMITER ;;
@@ -71,21 +70,6 @@ SET parameters.new = parameters.old + step * gradient.value;
 
 END;;
 
--- Erzeuge eine Prozedur, um herauszufinden, ob die neuen Parameterwerte besser sind als die alten.
-CREATE PROCEDURE `are_new_parameters_better`(OUT better INT(1))
-BEGIN
-
--- Berechne und vergleiche die Werte der Likelihoodfunktion für die alten und neuen Parameterwerte.
-SET better = (
-  SELECT
-    SUM(LOG(bv.value * l.new + (1 - bv.value) * (1 - l.new))) >
-    SUM(LOG(bv.value * l.old + (1 - bv.value) * (1 - l.old)))
-  FROM logits l
-  JOIN binary_values bv ON bv.id = l.id
-);
-
-END;;
-
 -- Erstelle die Prozedur für logistische Regression.
 CREATE PROCEDURE `logistic_regression`(IN number_datapoints INT(11), IN rounds INT(11), step DECIMAL(65, 30))
 BEGIN
@@ -97,7 +81,7 @@ DECLARE transform DECIMAL(65, 30);
 DECLARE better INT(1);
 DECLARE counter INT(11);
 
--- Erstelle eine temporäre Tabelle für die Werte der unabhängigen Variablen.
+-- Erstelle eine temporäre Relation für die Werte der unabhängigen Variablen.
 DROP TEMPORARY TABLE IF EXISTS datapoints;
 CREATE TEMPORARY TABLE datapoints (
   id INT(11),
@@ -110,7 +94,7 @@ CREATE TEMPORARY TABLE datapoints (
 SET min = (SELECT MIN(money) FROM sample);
 SET max = (SELECT MAX(money) FROM sample);
 
--- Füge die linear transformierten Werte der unabhängigen Variablen in die Tabelle datapoints ein.
+-- Füge die linear transformierten Werte der unabhängigen Variablen in die Relation datapoints ein.
 SET @counter = 0;
 INSERT INTO datapoints
 SELECT
@@ -120,7 +104,7 @@ SELECT
 FROM sample
 LIMIT number_datapoints;
 
--- Erstelle eine temporäre Tabelle für die (binären) Werte der abhängigen Variablen.
+-- Erstelle eine temporäre Relation für die (binären) Werte der abhängigen Variablen.
 DROP TEMPORARY TABLE IF EXISTS binary_values;
 CREATE TEMPORARY TABLE binary_values (
   id INT(11),
@@ -137,7 +121,7 @@ SELECT
 FROM sample
 LIMIT number_datapoints;
 
--- Erstelle eine temporäre Tabelle für die alten und neuen Parameterwerte.
+-- Erstelle eine temporäre Relation für die alten und neuen Parameterwerte.
 DROP TEMPORARY TABLE IF EXISTS parameters;
 CREATE TEMPORARY TABLE parameters (
   variable VARCHAR(32),
@@ -151,7 +135,7 @@ INSERT INTO parameters VALUES
   ('alpha', 0, 0),
   ('beta_money', 0, 0);
 
--- Erstelle eine temporäre Tabelle für die Werte der logistischen Funktion für alle Datenpunkte.
+-- Erstelle eine temporäre Relation für die Werte der logistischen Funktion für alle Datenpunkte.
 DROP TEMPORARY TABLE IF EXISTS logits;
 CREATE TEMPORARY TABLE logits (
   id INT(11),
@@ -160,10 +144,10 @@ CREATE TEMPORARY TABLE logits (
   PRIMARY KEY (id)
 );
 
--- Befülle die Tabelle für die Werte der logistischen Funktion.
+-- Befülle die Relation für die Werte der logistischen Funktion.
 CALL calculate_logit();
 
--- Erstelle eine teporäre Tabelle für den Gradienten.
+-- Erstelle eine teporäre Relation für den Gradienten.
 DROP TEMPORARY TABLE IF EXISTS gradient;
 CREATE TEMPORARY TABLE gradient (
   variable VARCHAR(32),
@@ -217,11 +201,11 @@ UPDATE parameters
 SET old = old - transform * min
 WHERE variable = 'alpha';
 
--- Gib eine Tabelle mit Parametername und zugehörigem Wert zurück.
+-- Gib eine Relation mit Parametername und zugehörigem Wert zurück.
 SELECT variable, old AS `value`
 FROM parameters;
 
--- Lösche die temporären Tabellen wieder.
+-- Lösche die temporären Relationen wieder.
 DROP TEMPORARY TABLE IF EXISTS datapoints;
 DROP TEMPORARY TABLE IF EXISTS binary_values;
 DROP TEMPORARY TABLE IF EXISTS parameters;

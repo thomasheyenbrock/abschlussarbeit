@@ -1,13 +1,13 @@
 -- Erstelle Funktion für die Berechnung der transponierten Matrix.
-CREATE OR REPLACE FUNCTION matrix_transpose(a NUMERIC(40, 20)[][])
-RETURNS NUMERIC(40, 20)[][] AS $$
+CREATE OR REPLACE FUNCTION matrix_transpose(a NUMERIC(65, 30)[][])
+RETURNS NUMERIC(65, 30)[][] AS $$
 DECLARE
   rows_a INTEGER := array_length(a, 1);
   columns_a INTEGER := array_length(a, 2);
   i INTEGER;
   j INTEGER;
-  c NUMERIC(40, 20)[][];
-  new_row NUMERIC(40, 20)[];
+  c NUMERIC(65, 30)[][];
+  new_row NUMERIC(65, 30)[];
 BEGIN
 
 -- Iteriere über alle Zeilen und Spalten der ursprüglichen Matrix.
@@ -32,14 +32,14 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Erstelle Funktion für die Berechnung des Produktes zweier Matrizen.
-CREATE OR REPLACE FUNCTION matrix_multiplication(a NUMERIC(40, 20)[][], b NUMERIC(40, 20)[][])
-RETURNS NUMERIC(40, 20)[][] AS $$
+CREATE OR REPLACE FUNCTION matrix_multiplication(a NUMERIC(65, 30)[][], b NUMERIC(65, 30)[][])
+RETURNS NUMERIC(65, 30)[][] AS $$
 DECLARE
   rows_a INTEGER := array_length(a, 1);
   columns_a INTEGER := array_length(a, 2);
   columns_b INTEGER := array_length(b, 2);
-  new_row NUMERIC(40, 20)[];
-  c NUMERIC(40, 20)[][];
+  new_row NUMERIC(65, 30)[];
+  c NUMERIC(65, 30)[][];
   counter_1 INTEGER;
   counter_2 INTEGER;
   counter_3 INTEGER;
@@ -76,15 +76,15 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Erstelle Funktion für die Berechnung der inversen Matrix.
-CREATE OR REPLACE FUNCTION matrix_inversion(a NUMERIC(40, 20)[][])
-RETURNS NUMERIC(40, 20)[][] AS $$
+CREATE OR REPLACE FUNCTION matrix_inversion(a NUMERIC(65, 30)[][])
+RETURNS NUMERIC(65, 30)[][] AS $$
 DECLARE
   n INTEGER := array_length(a, 1);
   p INTEGER := 0;
   i INTEGER;
   j INTEGER;
-  c NUMERIC(40, 20)[][] := a;
-  o NUMERIC(40, 20)[][];
+  c NUMERIC(65, 30)[][] := a;
+  o NUMERIC(65, 30)[][];
 BEGIN
 
 -- Verwende den in der Arbeit referenzierten Algorithmus.
@@ -156,7 +156,7 @@ DECLARE
       LIMIT number_datapoints
     )
   );
-  b NUMERIC[][];
+  b NUMERIC(65, 30)[][];
 BEGIN
 
 -- Berechne die Lösungsformel unter Verwendung der zuvor definierten Funktionen.
@@ -173,7 +173,7 @@ b := matrix_multiplication(
   )
 );
 
--- Gib eine Tabelle mit Parameternamen und zugehörigen Werten zurück.
+-- Gib eine Relation mit Parameternamen und zugehörigen Werten zurück.
 RETURN QUERY
 SELECT 'alpha'::VARCHAR(50) AS variable, b[1][1] AS value
 UNION

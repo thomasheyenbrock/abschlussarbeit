@@ -13,13 +13,13 @@ DECLARE n INT(11);
 DECLARE counter_1 INT(11);
 DECLARE counter_2 INT(11);
 DECLARE counter_3 INT(11);
-DECLARE pivot DECIMAL(40, 20);
+DECLARE pivot DECIMAL(65, 30);
 
 -- Bestimme die Dimensionsn für die Matrix X.
 SET m = number_datapoints;
 SET n = 3;
 
--- Lösche vorhandene temporäre Tabellen.
+-- Lösche vorhandene temporäre Relationen.
 DROP TEMPORARY TABLE IF EXISTS matrix_X;
 DROP TEMPORARY TABLE IF EXISTS matrix_transposed;
 DROP TEMPORARY TABLE IF EXISTS matrix_product_1;
@@ -28,44 +28,44 @@ DROP TEMPORARY TABLE IF EXISTS matrix_product_2;
 DROP TEMPORARY TABLE IF EXISTS matrix_y;
 DROP TEMPORARY TABLE IF EXISTS matrix_result;
 
--- Erstelle temporäre Tabellen für die zu berechnenden Matrizen.
+-- Erstelle temporäre Relationen für die zu berechnenden Matrizen.
 CREATE TEMPORARY TABLE matrix_X (
   `row` INT(11),
   `column` INT(11),
-  `value` DECIMAL(40, 20)
+  `value` DECIMAL(65, 30)
 );
 CREATE TEMPORARY TABLE matrix_transposed (
   `row` INT(11),
   `column` INT(11),
-  `value` DECIMAL(40, 20)
+  `value` DECIMAL(65, 30)
 );
 CREATE TEMPORARY TABLE matrix_product_1 (
   `row` INT(11),
   `column` INT(11),
-  `value` DECIMAL(40, 20)
+  `value` DECIMAL(65, 30)
 );
 CREATE TEMPORARY TABLE matrix_inverse (
   `row` INT(11),
   `column` INT(11),
-  `value` DECIMAL(40, 20)
+  `value` DECIMAL(65, 30)
 );
 CREATE TEMPORARY TABLE matrix_product_2 (
   `row` INT(11),
   `column` INT(11),
-  `value` DECIMAL(40, 20)
+  `value` DECIMAL(65, 30)
 );
 CREATE TEMPORARY TABLE matrix_y (
   `row` INT(11),
   `column` INT(11),
-  `value` DECIMAL(40, 20)
+  `value` DECIMAL(65, 30)
 );
 CREATE TEMPORARY TABLE matrix_result (
   `row` INT(11),
   `column` INT(11),
-  `value` DECIMAL(40, 20)
+  `value` DECIMAL(65, 30)
 );
 
--- Füge Werte der unabhängigen Variablen in die Tabelle matrix_X ein.
+-- Füge Werte der unabhängigen Variablen in die Relation matrix_X ein.
 SET @id = 0;
 
 INSERT INTO matrix_X
@@ -96,7 +96,7 @@ SELECT
 FROM sample
 LIMIT number_datapoints;
 
--- Füge Werte der abhängigen Variable in die Tabelle matrix_y ein.
+-- Füge Werte der abhängigen Variable in die Relation matrix_y ein.
 SET @id = 0;
 
 INSERT INTO matrix_y
@@ -159,7 +159,7 @@ WHILE counter_1 < n DO
   DROP TEMPORARY TABLE IF EXISTS pivot_row;
   CREATE TEMPORARY TABLE pivot_row (
       `column` INT(11),
-      `value` DECIMAL(40, 20)
+      `value` DECIMAL(65, 30)
   );
 
   INSERT INTO pivot_row
@@ -267,7 +267,7 @@ WHILE counter_1 <= n DO
 
 END WHILE;
 
--- Gib eine Tabelle mit Parameternamen und zugehörigen Werten zurück.
+-- Gib eine Relation mit Parameternamen und zugehörigen Werten zurück.
 SELECT
   CASE row
     WHEN 1 THEN 'alpha'
@@ -277,7 +277,7 @@ SELECT
   value
 FROM matrix_result;
 
--- Lösche die temporären Tabelle wieder.
+-- Lösche die temporären Relationen wieder.
 DROP TEMPORARY TABLE IF EXISTS matrix_X;
 DROP TEMPORARY TABLE IF EXISTS matrix_transposed;
 DROP TEMPORARY TABLE IF EXISTS matrix_product_1;

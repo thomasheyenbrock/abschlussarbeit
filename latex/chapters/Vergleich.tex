@@ -44,17 +44,17 @@ Die Skripte für multiple lineare Regression besitzen folgende Laufzeiten:
   \begin{tabular}{|c|c|c|c|c|c|}\hline
     & \textbf{10} & \textbf{100} & \textbf{1000} & \textbf{10000} & \textbf{100000} \\ \hline
     \textbf{r} & 0.38108478 & 0.37967851 & 0.38452695 & 0.39888490 & 0.54517789 \\ \hline
-    \textbf{tensorflow} & 167.676894 & 168.226441 & 167.186729 & 169.817689 & 167.200023 \\ \hline
+    \textbf{tensorflow} & 167.220486 & 168.885465 & 168.668689 & 168.821214 & 169.254182 \\ \hline
     \textbf{mysql} & 0.04174929 & 0.05248516 & 0.15990342 & 1.09634777 & 10.8214030 \\ \hline
     \textbf{postgresql} & 0.03053954 & 0.03336087 & 0.05904620 & 0.30572490 & 2.71992954 \\ \hline
   \end{tabular}
 \end{center}
 
-Das geplottete Ergebnis sieht wiefolgt aus:
+Das geplottete Ergebnis sieht wie folgt aus:
 
 \includegraphics[width=\textwidth]{multipleLinearRegressionBenchmark}
 
-Hier zeigt sich ein ähnliches Bild wie schon bei einfacher linearer Regression. Wieder liefern R und TensorFlow relativ konstante Laufzeiten, wobei die Laufzeit des TensorFlow-Skriptes wegen den $50.000$ durchgeführten Iterationen dieses Mal extrem langsam ist. Wieder sind die SQL-Skripte bei kleinen Datenmengen am schnellsten. Bei größeren Datenmengen werden sie allerdings von R geschlagen. Interessant ist außerdem, dass die PostgreSQL-Implementierung noch schneller als die Variante in MySQL. Die Arrays von PostgreSQL arbeiten also effizienter als die temporären Tabellen in MySQL.
+Hier zeigt sich ein ähnliches Bild wie schon bei einfacher linearer Regression. Wieder liefern R und TensorFlow relativ konstante Laufzeiten, wobei die Laufzeit des TensorFlow-Skriptes wegen den $50.000$ durchgeführten Iterationen dieses Mal extrem langsam ist. Wieder sind die SQL-Skripte bei kleinen Datenmengen am schnellsten. Bei größeren Datenmengen werden sie allerdings von R geschlagen. Interessant ist außerdem, dass die PostgreSQL-Implementierung noch schneller als die Variante in MySQL. Die Arrays von PostgreSQL arbeiten also effizienter als die temporären Relationen in MySQL.
 
 \subsection{Logistische Regression}
 \label{subsection:4:1:3}
@@ -67,8 +67,8 @@ Betrachten wir zuletzt noch die Laufzeiten für logistische Regression:
     & \textbf{10} & \textbf{100} & \textbf{1000} & \textbf{10000} & \textbf{100000} \\ \hline
     \textbf{r} & 0.40403676 & 0.39953323 & 0.40047518 & 0.43356463 & 0.91014730 \\ \hline
     \textbf{tensorflow} & 2.88191271 & 2.88278436 & 2.92470042 & 3.37794654 & 6.87024382 \\ \hline
-    \textbf{mysql} & 1.57908838 & 4.51631200 & 35.3472805 & 283.849979 & \\ \hline
-    \textbf{postgresql} & 3.73521209 & 48.8452754 & 526.125703 &5141.24341 & \\ \hline
+    \textbf{mysql} & 1.57908838 & 4.51631200 & 35.3472805 & 283.849979 & 2680.43056 \\ \hline
+    \textbf{postgresql} & 3.73521209 & 48.8452754 & 521.625671 & 5175.87997 &  \\ \hline
   \end{tabular}
 \end{center}
 
@@ -76,5 +76,4 @@ Die Visualisierung der Tabelle sieht so aus:
 
 \includegraphics[width=\textwidth]{logisticRegressionBenchmark}
 
-% TODO: MySQL für 100.000 einfügen
 Wieder erkennt man eine Ähnlichkeit zu den vorherigen Diagrammen. Die SQL-Implementierungen sind nun aber von Anfang an deutlich langsamer als die Skripte in R und TensorFlow. Die Laufzeit steigt außerdem sehr schnell weiter an. So wurden für $100.000$ Datenpunkte in PostgreSQL gar keine Benchmarks mehr berechnet, da die erwartete Laufzeit etwa $50.000$ Sekunden, also knapp 14 Stunden beträgt. Klarer Gewinner ist hier R, wo auch $100.000$ Datenpunkte in weniger als einer Sekunde verarbeitet werden können.

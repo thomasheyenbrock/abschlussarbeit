@@ -98,7 +98,7 @@ Bei logistischer Regression nutzen wir nun nicht mehr ein lineares Modell wie bi
 
 Man braucht wie auch bei linearer Regression ein Formel für das Modell. Diese bildet man analog wie bisher, indem mal die abhängige Variable mit den unabhängigen Variablen über eine Tilde verbindet. Im Fall unserer dritten Fragestellung wählt man also die Formel als "$premium \sim money$".
 
-Der gesamte R-Code für die logistische Regression ist wieder ähnlich zu dem Code aus \ref{subsection:3:2:1} und lautet wiefolgt:
+Der gesamte R-Code für die logistische Regression ist wieder ähnlich zu dem Code aus \ref{subsection:3:2:1} und lautet wie folgt:
 
 \begin{minted}[linenos,breaklines,frame=single]{r}
   data <- read.csv2("sample.csv", sep = ",", header = TRUE)
@@ -156,7 +156,7 @@ Um dann auch wirklich Berechnungen durchführen zu können, muss in TensorFlow e
 \subsection{Einfache lineare Regression}
 \label{subsection:3:3:2}
 
-Hier definieren wir unsere Platzhalter und Variablen wiefolgt:
+Hier definieren wir unsere Platzhalter und Variablen wie folgt:
 
 \begin{minted}[linenos,breaklines,frame=single]{python}
   x = tf.placeholder(tf.float32, [None, 1])

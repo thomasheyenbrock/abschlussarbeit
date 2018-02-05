@@ -16,7 +16,7 @@ Die anderen beiden Dateien enthalten die (identischen) Beispieldaten, mit denen 
 
 Die Skripte für R und TensorFlow lesen die csv-Datei bei Ausführung ein. Die SQL-Skripte laden die Daten aus der `sample`-Relation, die zuvor manuell erzeugt werden muss.
 
-Für MySQL kann die Relation wiefolgt über das Terminal erzeugt werden:
+Für MySQL kann die Relation wie folgt über das Terminal erzeugt werden:
 ```
 cat data/sample.sql | mysql -u <username> -p<password> <database-name>
 ```
@@ -33,7 +33,7 @@ Es stehen drei Sripte zur Verfügung:
 * [`multipleLinearRegression.R`](https://github.com/thomasheyenbrock/abschlussarbeit/blob/master/r/multipleLinearRegression.R)
 * [`logisticRegression.R`](https://github.com/thomasheyenbrock/abschlussarbeit/blob/master/r/logisticRegression.R)
 
-Eines dieser Skripte kann wiefolgt ausgeführt werden:
+Eines dieser Skripte kann wie folgt ausgeführt werden:
 ```
 Rscript r/simpleLinearRegression.R <anzahl-datenpunkte>
 ```
@@ -48,7 +48,7 @@ Es stehen drei Sripte zur Verfügung:
 * [`multipleLinearRegression.py`](https://github.com/thomasheyenbrock/abschlussarbeit/blob/master/tensorflow/multipleLinearRegression.py)
 * [`logisticRegression.py`](https://github.com/thomasheyenbrock/abschlussarbeit/blob/master/tensorflow/logisticRegression.py)
 
-Eines dieser Skripte kann wiefolgt ausgeführt werden:
+Eines dieser Skripte kann wie folgt ausgeführt werden:
 ```
 python3 tensorflow/simpleLinearRegression.py <anzahl-datenpunkte>
 ```
@@ -63,7 +63,7 @@ Es stehen jeweils drei Skripte zur Verfügung:
 * `multipleLinearRegression.sql`
 * `logisticRegression.sql`
 
-Jedes Skript erzeugt eine oder mehrer Prozeduren für den jeweiligen Typ von Regression. Man fügt ein solches Skript wiefolgt für MySQL aus:
+Jedes Skript erzeugt eine oder mehrer Prozeduren für den jeweiligen Typ von Regression. Man fügt ein solches Skript wie folgt für MySQL aus:
 ```
 cat mysql/simpleLinearRegression.sql | mysql -u <username> -p<password> <database-name>
 ```
@@ -78,7 +78,7 @@ Die erzeugten Prozeduren heißen:
 
 `number_datapoints` ist wieder der Parameter für die Anzahl der Datepunkte. Die Prozedur für logistische Regression arbeitet iterativ, deshalb muss man hier außerdem die Anzahl der Interation `rounds` und die Schrittweite pro Iteration `step` spezifizieren. Eine gute Wahl liegt in der Regel zwischen `100` und `1000` für die Iterationen und `0.001` bis `0.01` für die Schrittweite, je nach gewünschter Präzision.
 
-Eine MySQL-Prozedur führt man wiefolgt über das Terminal aus:
+Eine MySQL-Prozedur führt man wie folgt über das Terminal aus:
 ```
 echo "CALL simple_linear_regression(1000)" | mysql -u <username> -p<password> <database-name>
 ```

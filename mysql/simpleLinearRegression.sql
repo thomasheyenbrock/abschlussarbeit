@@ -8,10 +8,10 @@ CREATE PROCEDURE `simple_linear_regression`(IN number_datapoints INT(11))
 BEGIN
 
 -- Deklariere die verwendeten Variablen.
-DECLARE purchases_mean DECIMAL(40, 20);
-DECLARE money_mean DECIMAL(40, 20);
-DECLARE alpha DECIMAL(40, 20);
-DECLARE beta DECIMAL(40, 20);
+DECLARE purchases_mean DECIMAL(65, 30);
+DECLARE money_mean DECIMAL(65, 30);
+DECLARE alpha DECIMAL(65, 30);
+DECLARE beta DECIMAL(65, 30);
 
 -- Erstelle eine temporäre Relation für die zu verwendenden Datenpunkte.
 DROP TEMPORARY TABLE IF EXISTS datapoints;

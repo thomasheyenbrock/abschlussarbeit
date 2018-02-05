@@ -118,11 +118,11 @@ SELECT
   'beta_money' AS variable,
   (money - (
     SELECT MIN(money) FROM sample
-  ))::NUMERIC / ((
+  ))::NUMERIC(65, 30) / ((
     SELECT MAX(money) FROM sample
   ) - (
     SELECT MIN(money) FROM sample
-  ))::NUMERIC AS value
+  ))::NUMERIC(65, 30) AS value
 FROM sample
 LIMIT number_datapoints;
 
@@ -169,7 +169,7 @@ PERFORM calculate_logit();
 DROP TABLE IF EXISTS gradient;
 CREATE TEMPORARY TABLE gradient (
   variable VARCHAR(50),
-  value DECIMAL(65, 30)
+  value NUMERIC(65, 30)
 );
 
 -- Iteriere über die Anzahl der gewünschten Iterationen.

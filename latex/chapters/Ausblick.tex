@@ -10,7 +10,7 @@ Wir wollen nun die Abfragen der in Kapitel \ref{section:3:4} implementierten Fun
 \section{Einfache lineare Regression}
 \label{section:5:1}
 
-Die einfache lineare Regression besteht aus mehreren kleinen Teilabfragen. Zuerst berechnet man die Mittelwerte der beiden Attribute für die Regression. Das Ergebnis ist die Tabelle $means$:
+Die einfache lineare Regression besteht aus mehreren kleinen Teilabfragen. Zuerst berechnet man die Mittelwerte der beiden Attribute für die Regression. Das Ergebnis ist die Relation $means$:
 \\\\
 \noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
   \Tree[
@@ -22,7 +22,7 @@ Die einfache lineare Regression besteht aus mehreren kleinen Teilabfragen. Zuers
   ]
 \end{minipage}}
 \\\\
-Mit diesen Mittelwerten berechnet man die Summen im Nenner und Zähler der Lösungsformel für $\beta$ aus \ref{subsection:2:1:1}. Die Tabelle $sums$ ist das Ergebnis dieser Abfrage:
+Mit diesen Mittelwerten berechnet man die Summen im Nenner und Zähler der Lösungsformel für $\beta$ aus \ref{subsection:2:1:1}. Die Relation $sums$ ist das Ergebnis dieser Abfrage:
 \\\\
 \noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
   \Tree[
@@ -74,9 +74,9 @@ Mit Hilfe von $beta$ kann man nun auch $alpha$ berechnen:
 \section{Multiple lineare Regression}
 \label{section:5:2}
 
-Die hier gezeichneten Bäume entsprechen der Implementierung in MySQL. Dort verwenden wir Tabellen und verarbeiten diese mit den angegebenen Bäumen. In PostgreSQL verwenden wir dagegen Arrays und Schleifen zur Berechnung.
+Die hier gezeichneten Bäume entsprechen der Implementierung in MySQL. Dort verwenden wir Relationen und verarbeiten diese mit den angegebenen Bäumen. In PostgreSQL verwenden wir dagegen Arrays und Schleifen zur Berechnung.
 
-Wir beginnen mit der Berechnung der transponierten Matrix von $X$. Die zugehörige Tabelle wird $matrix\_transposed$ genannt:
+Wir beginnen mit der Berechnung der transponierten Matrix von $X$. Die zugehörige Relation wird $matrix\_transposed$ genannt:
 \\\\
 \noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
   \Tree[

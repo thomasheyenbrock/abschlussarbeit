@@ -13,14 +13,14 @@ DECLARE money_mean DECIMAL(40, 20);
 DECLARE alpha DECIMAL(40, 20);
 DECLARE beta DECIMAL(40, 20);
 
--- Erstelle eine temporäre Tabelle für die zu verwendenden Datenpunkte.
+-- Erstelle eine temporäre Relation für die zu verwendenden Datenpunkte.
 DROP TEMPORARY TABLE IF EXISTS datapoints;
 CREATE TEMPORARY TABLE datapoints (
   purchases INT(11),
   money INT(11)
 );
 
--- Füge die gewünschte Anzahl der Datenpunkte in die temporäre Tabelle ein.
+-- Füge die gewünschte Anzahl der Datenpunkte in die temporäre Relation ein.
 INSERT INTO datapoints
 SELECT purchases, money
 FROM sample
@@ -49,12 +49,12 @@ SET beta = beta / (
 -- Berechne alpha.
 SET alpha = money_mean - (beta * purchases_mean);
 
--- Gib eine Tabelle mit Parametername und zugehörigem Wert zurück.
+-- Gib eine Relation mit Parametername und zugehörigem Wert zurück.
 SELECT 'alpha' AS `variable`, alpha AS `value`
 UNION
 SELECT 'beta' AS `variable`, beta AS `value`;
 
--- Lösche die temporäre Tabelle mit den Datenpunkten wieder.
+-- Lösche die temporäre Relation mit den Datenpunkten wieder.
 DROP TEMPORARY TABLE IF EXISTS datapoints;
 
 END;;

@@ -241,7 +241,7 @@ Die "Structured Query Language" alias "SQL" ist eine Sprache zur Definition und 
 
 SQL als Programmiersprache ist Turing-vollständig. Es ist also mit standardisierten SQL-Methoden möglich, Regression direkt in der Datenbank zu betreiben. Die konkrete Umsetzung hängt von der Art der Regression und dem spezifischen Datenbanksystem ab. In diesem Kapitel soll das nun für zwei Open-Source-Datenbanksystemen demonstriert werden, nämlich MySQL und PostgreSQL. Der vollständige SQL-Code befindet sich wegen der Länge wieder komplett im Anhang. Die MySQL-Skripte sind unter \ref{appendix:C} zu finden, die Skripte für PostgreSQL liegen in \ref{appendix:D}.
 
-Im Gegensatz zu den beiden bisher vorgestellten Sprachen verfolgen wir hier kein einheitliches Grundprinzip, in dem sich alle Arten der Regression ähnlich sind. Die einzige Gemeinsamkeit ist, dass wir in allen SQL-Skripten Prozeduren bzw. Funktionen definieren, welche bei Aufruf die Regressionsanalyse durchführen. Wir nehmen dazu an, dass die Daten für die Regression in einer Tabelle namens $sample$ liegen.
+Im Gegensatz zu den beiden bisher vorgestellten Sprachen verfolgen wir hier kein einheitliches Grundprinzip, in dem sich alle Arten der Regression ähnlich sind. Die einzige Gemeinsamkeit ist, dass wir in allen SQL-Skripten Prozeduren bzw. Funktionen definieren, welche bei Aufruf die Regressionsanalyse durchführen. Wir nehmen dazu an, dass die Daten für die Regression in einer Relation namens $sample$ liegen.
 
 Bei einfacher linearer Regression berechnen wir die Parameter exakt über die Formeln aus Kapitel \ref{subsection:2:1:1}. Bei multipler Regression verwenden wir die Matrixformel aus Kapitel \ref{subsection:2:1:2}. Hier müssen wir zusätzlich Algorithmen zur Transponierung, Multiplikation und Invertierung von Matrizen implementieren. Für logistische Regression steht uns keine explitize Formel zur Verfügung, weshalb wir ein Gradientenverfahren zur Lösung des Optimierungsproblems implementieren.
 
@@ -275,9 +275,9 @@ Führen wir die Prozeduren im jeweiligen Datenbanksystem aus, erhalten wir folge
 
 Wir wollen zur Lösung dieses Regressionsproblems die Matrix-Formel aus Kapitel \ref{subsection:2:1:2} anwenden. Dazu müssen Methoden für das Transponieren, Multiplizieren und Invertieren von Matrizen implementiert werden, da weder MySQL noch PostgreSQL über solche Funktionen verfügen. Wir müssen außerdem einen Weg finden, Matrizen im jeweiligen Datenbanksystem zu repräsentieren.
 
-Die Matrizenrepräsentierung lösen wir unterschiedlich in den beiden Datenbanksystemen. In MySQL definieren wir uns temporäre Tabellen, welche jeweils eine Matrix repräsentieren. Jede solche Tabelle besitzt dasselbe Schema, nämlich aus den Attributen $row$, $column$ und $value$. Die ersten beiden enthalten die Indizes des Matrixelements, letztere enthält den Wert des jeweiligen Elements.
+Die Matrizenrepräsentierung lösen wir unterschiedlich in den beiden Datenbanksystemen. In MySQL definieren wir uns temporäre Relationen, welche jeweils eine Matrix repräsentieren. Jede solche Relation besitzt dasselbe Schema, nämlich aus den Attributen $row$, $column$ und $value$. Die ersten beiden enthalten die Indizes des Matrixelements, letztere enthält den Wert des jeweiligen Elements.
 
-Wir definieren insgesamt sieben solcher Tabellen:
+Wir definieren insgesamt sieben solcher Relationen:
 \begin{itemize}
   \item $matrix\_X$: Entspricht der Matrix $X$ aus der Berechnungsformel.
   \item $matrix\_y$: Entspricht der Matrix $y$ aus der Berechnungsformel.
@@ -288,13 +288,13 @@ Wir definieren insgesamt sieben solcher Tabellen:
   \item $matrix\_result$: Entspricht dem Endergebnis der Berechnungsformel $(X^T X)^{-1} X^T y$.
 \end{itemize}
 
-Die ersten beiden dieser Tabellen werden einfach mit den vorhandenen Werten aus der Tabelle $sample$ befüllt. Die Tabelle $matrix\_transposed$ wird mit einem einfachen Query aus der Tabelle $matrix\_X$ berechnet, indem die Indizes für Zeile und Spalte vertauscht werden.
+Die ersten beiden dieser Relationen werden einfach mit den vorhandenen Werten aus der Relation $sample$ befüllt. Die Relation $matrix\_transposed$ wird mit einem einfachen Query aus der Relation $matrix\_X$ berechnet, indem die Indizes für Zeile und Spalte vertauscht werden.
 
-Die Tabellen $matrix\_product\_1$, $matrix\_product\_2$ und $matrix\_result$ sind Ergebnisse von Matrizenmultiplikationen. Diese Produkte werden mit zwei Schleifen berechnet, die über die Tupel und Attribute der Ergebnismatrix iterieren. Der jeweilige Wert zusammen mit dem Zeilen- und Spaltenindex der zu berechnenden Matrix wird über eine Abfrage eingefügt. Diese Abfrage nimmt das Kreuzprodukt beider Tabellen und betrachtet nur die aktuelle Zeile der ersten Tabelle und die aktuelle Spalte der zweiten Tabelle. Außerdem sollen die Zeilenindizes der ersten Tabelle gleich den Indizes der zweiten Tabelle sein. Der Wert für die zu berechnende Matrix ergibt sich als Summe über die Produkte der Werte der verbleibenden Tupel.
+Die Relation $matrix\_product\_1$, $matrix\_product\_2$ und $matrix\_result$ sind Ergebnisse von Matrizenmultiplikationen. Diese Produkte werden mit zwei Schleifen berechnet, die über die Tupel und Attribute der Ergebnismatrix iterieren. Der jeweilige Wert zusammen mit dem Zeilen- und Spaltenindex der zu berechnenden Matrix wird über eine Abfrage eingefügt. Diese Abfrage nimmt das Kreuzprodukt beider Relationen und betrachtet nur die aktuelle Zeile der ersten Relation und die aktuelle Spalte der zweiten Relation. Außerdem sollen die Zeilenindizes der ersten Relation gleich den Indizes der zweiten Relation sein. Der Wert für die zu berechnende Matrix ergibt sich als Summe über die Produkte der Werte der verbleibenden Tupel.
 
-Bei den Tabellen $matrix\_product\_2$ und $matrix\_result$ ist die Spaltenanzahl der zu berechnenden Tabelle gleich eins. Wegen der einen notwendigen Iteration braucht man hier sogar nur eine Schleife.
+Bei den Relationen $matrix\_product\_2$ und $matrix\_result$ ist die Spaltenanzahl der zu berechnenden Relation gleich eins. Wegen der einen notwendigen Iteration braucht man hier sogar nur eine Schleife.
 
-Für die Berechnung der inversen Matrix, also für die Tabelle $matrix\_inverse$, wird ein einfacher iterativer Algorithmus verwendet, welcher über alle Zeilen der zu invertierenden Matrix läuft. In jedem Schritt werden alle Elemente der Matrix nach einem bestimmten Vorgehen angepasst, sodass man am Ende das Inverse erhält. Details zu dem verwendeten Algorithmus findet man in \cite{matrix}.
+Für die Berechnung der inversen Matrix, also für die Relation $matrix\_inverse$, wird ein einfacher iterativer Algorithmus verwendet, welcher über alle Zeilen der zu invertierenden Matrix läuft. In jedem Schritt werden alle Elemente der Matrix nach einem bestimmten Vorgehen angepasst, sodass man am Ende das Inverse erhält. Details zu dem verwendeten Algorithmus findet man in \cite{matrix}.
 
 Die komplette Berechnung wurde in eine Prozedur verpackt. Führt man diese aus, erhält man das folgende Ergebnis:
 
@@ -308,7 +308,7 @@ Die komplette Berechnung wurde in eine Prozedur verpackt. Führt man diese aus, 
   \end{tabular}
 \end{center}
 
-Betrachten wir nun die Implementierung in PostgreSQL. Gegenüber MySQL hat man hier den Vorteil, dass mehrdimensionale Felder als Datentyp existieren. Wir brauchen also keine temporären Tabellen für die Matrizen mehr, sondern speichern diese einfach als zweidimensionales Array.
+Betrachten wir nun die Implementierung in PostgreSQL. Gegenüber MySQL hat man hier den Vorteil, dass mehrdimensionale Felder als Datentyp existieren. Wir brauchen also keine temporären Relationen für die Matrizen mehr, sondern speichern diese einfach als zweidimensionales Array.
 
 Neben der eigentlichen Prozedur zum Ausführen der Regression definieren wir drei weitere Funktionen:
 \begin{itemize}
@@ -338,9 +338,9 @@ Da wir dieselben Algorithmen und dieselbe Präzision für Kommazahlen in MySQL u
 
 Zur Lösung des logistischen Regressionsproblems möchten wir in SQL ein Gradientenverfahren implementieren. Wir verwenden denselben Algorithmus in MySQL und PostgreSQL, das heißt die Skripte unterscheiden sich lediglich in der datenbankspezifischen Syntax.
 
-Wir verwenden für das Verfahren mehrere Tabellen, in denen gewisse Informationen gespeichert und verarbeiten werden:
+Wir verwenden für das Verfahren mehrere Relationen, in denen gewisse Informationen gespeichert und verarbeiten werden:
 \begin{itemize}
-  \item Die Relation $datapoints$ besteht aus drei Spalten $id$, $variable$ und $value$. Die $id$-Spalte enthält einen generierten Wert, der einen Datensatz aus der $sample$-Tabelle identifiziert. Die $variable$-Spalte enthält den Namen der gespeicherten unabhängigen Variable. In unserem Fall steht hier immer $beta\_money$, da wir nur eine unabhängige Variable betrachten. Gegebenenfalls können hier mehrere Variablen betrachtet werden. (Die Werte für einen Datenpunkt werden dann also auf mehrere Zeilen aufgeteilt.) Die Spalte $value$ enthält dann den Wert der entsprechenden Variable des jeweiligen Datensatzes.
+  \item Die Relation $datapoints$ besteht aus drei Spalten $id$, $variable$ und $value$. Die $id$-Spalte enthält einen generierten Wert, der einen Datensatz aus der $sample$-Relation identifiziert. Die $variable$-Spalte enthält den Namen der gespeicherten unabhängigen Variable. In unserem Fall steht hier immer $beta\_money$, da wir nur eine unabhängige Variable betrachten. Gegebenenfalls können hier mehrere Variablen betrachtet werden. (Die Werte für einen Datenpunkt werden dann also auf mehrere Zeilen aufgeteilt.) Die Spalte $value$ enthält dann den Wert der entsprechenden Variable des jeweiligen Datensatzes.
   \item Die Relation $binary\_values$ besteht aus zwei Spalten $id$ und $value$. Hier werden für jeden Datenpunkt die Werte der abhängigen binären Variable gespeichert, in unserem Fall also die Werte aus der Spalte $premium$.
   \item Die Relation $parameters$ besteht aus drei Spalten $variable$, $old$ und $new$. Die erste Spalte enthält den Namen des Parameters, also $alpha$ oder $beta\_money$. Die Spalten $old$ und $new$ enthalten die Werte der Parameter vor bzw. nach dem aktuellen Iterationsschritt des Gradientenverfahrens. Wir benötigen beide Werte, um überprüfen zu können, ob die neuen Parameter ein besseres Ergebnis liefern als die alten.
   \item Die Relation $logits$ besteht aus drei Spalten $id$, $old$ und $new$. Hier werden für jeden Datenpunkt die Werte der logistischen Funktion $\pi_i$ berechnet. Dabei werden einmal die alten und einmal die neuen Parameter zur Berechnung verwendet.
@@ -349,19 +349,19 @@ Wir verwenden für das Verfahren mehrere Tabellen, in denen gewisse Informatione
 
 Wir definieren außerdem einige Hilfsfunktionen:
 \begin{itemize}
-  \item $calculate\_logits$: Diese Funktion berechnet die Werte für die logistische Funktion für alle Datenpunkte und trägt diese in die Tabelle $logit$ ein. Dabei wird die Funktion für beide Parameterwerte ($old$ und $new$) aus der Tabelle $parameters$ berechnet.
-  \item $calculate\_gradient$: Diese Funktion berechnet den Gradienten auf Basis der alten Parameterwerte und der Werte der logistischen Funktion aus der Tabelle $logits$.
-  \item $calculate\_parameters$: Diese Funktion nimmt eine Schrittweite als Argument, berechnet daraus und aus den Werten der $gradient$-Tabelle die neuen Parameter und schreibt diese zurück in die Spalte $new$ der Tabelle $parameters$.
-  \item $are\_new\_parameters\_better$: Diese Funktion berechnet den Logarithmus der Likelihoodfunktion für die neuen und alten Parameter aus der Tabelle $parameters$ und gibt einen Wahrheitswert zurück. Die Rückgabe ist wahr, wenn die Likelihoodfunktion für die neuen Parameter einen größeren Wert annimmt als für die alten Parameter.
+  \item $calculate\_logits$: Diese Funktion berechnet die Werte für die logistische Funktion für alle Datenpunkte und trägt diese in die Relation $logit$ ein. Dabei wird die Funktion für beide Parameterwerte ($old$ und $new$) aus der Relation $parameters$ berechnet.
+  \item $calculate\_gradient$: Diese Funktion berechnet den Gradienten auf Basis der alten Parameterwerte und der Werte der logistischen Funktion aus der Relation $logits$.
+  \item $calculate\_parameters$: Diese Funktion nimmt eine Schrittweite als Argument, berechnet daraus und aus den Werten der $gradient$-Relation die neuen Parameter und schreibt diese zurück in die Spalte $new$ der Relation $parameters$.
+  \item $are\_new\_parameters\_better$: Diese Funktion berechnet den Logarithmus der Likelihoodfunktion für die neuen und alten Parameter aus der Relation $parameters$ und gibt einen Wahrheitswert zurück. Die Rückgabe ist wahr, wenn die Likelihoodfunktion für die neuen Parameter einen größeren Wert annimmt als für die alten Parameter.
 \end{itemize}
 
-Wir führen wie schon bei TensorFlow zuerst eine Lineartransformation für die Werte aus $money$ durch und bilden diese linear auf das Interval $[0, 1]$ ab. Das dient erneut dazu, dass die Werte der logistischen Funktion nicht zu nahe an null geraten. Die transformierten Werte fügen wir in die $datapoints$-Tabelle ein. Auch die anderen Tabellen erzeugen wir und fügen initiale Werte ein.
+Wir führen wie schon bei TensorFlow zuerst eine Lineartransformation für die Werte aus $money$ durch und bilden diese linear auf das Interval $[0, 1]$ ab. Das dient erneut dazu, dass die Werte der logistischen Funktion nicht zu nahe an null geraten. Die transformierten Werte fügen wir in die $datapoints$-Relation ein. Auch die anderen Relationen erzeugen wir und fügen initiale Werte ein.
 
 Es folgt eine $while$-Schleife, die solange läuft, bis entweder die vorgegebene Anzahl an Schritten erreicht wurde, oder die Schrittweite zu klein für die gewählte Präzision der Kommazahlen wird. Wir berechnen zuerst den Gradienten, dann die neuen Parameter. Dann ist ein Aufruf von $calculate\_logits$ nötig, um die logistische Funktion für die neuen Parameter zu berechnen.
 
 Wir überprüfen, ob die neuen Parameter wirklich besser sind als die alten. Falls nicht, wird die Schrittweite halbiert, danach werden die Parameter und die Werte der logistischen Funktion erneut berechnet. Das wird solange wiederholt, bis die neuen Parameter besser sind oder die Schrittweite unter die Präzisionsgrenze fällt.
 
-Haben wir die neuen Parameter erfolgreich berechnet, werden die Werte der $old$-Spalten in den Tabellen $parameters$ und $logits$ mit den neuen Werten überschrieben und der Iterationsschritt ist beendet. Nachdem die Schleife beendet wurde, werden die Parameter wieder entsprechend linear transformiert, um den tatsächlichen Werten für $money$ zu entsprechen.
+Haben wir die neuen Parameter erfolgreich berechnet, werden die Werte der $old$-Spalten in den Relationen $parameters$ und $logits$ mit den neuen Werten überschrieben und der Iterationsschritt ist beendet. Nachdem die Schleife beendet wurde, werden die Parameter wieder entsprechend linear transformiert, um den tatsächlichen Werten für $money$ zu entsprechen.
 
 Wir entscheiden und für 1000 Iterationen und wählen eine Schrittweite von $0.00008$. Führt man die Prozeduren im jeweiligen Datenbanksystemen aus erhält man das folgende Ergebnis:
 

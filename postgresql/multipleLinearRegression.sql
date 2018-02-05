@@ -173,7 +173,7 @@ b := matrix_multiplication(
   )
 );
 
--- Gib eine Tabelle mit Parameternamen und zugehörigen Werten zurück.
+-- Gib eine Relation mit Parameternamen und zugehörigen Werten zurück.
 RETURN QUERY
 SELECT 'alpha'::VARCHAR(50) AS variable, b[1][1] AS value
 UNION

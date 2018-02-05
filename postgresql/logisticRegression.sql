@@ -103,7 +103,7 @@ DECLARE
   counter INTEGER;
 BEGIN
 
--- Erstelle eine Tabelle für die Werte der unabhängigen Variablen.
+-- Erstelle eine Relation für die Werte der unabhängigen Variablen.
 DROP TABLE IF EXISTS datapoints;
 CREATE TEMPORARY TABLE datapoints (
   id INTEGER,
@@ -111,7 +111,7 @@ CREATE TEMPORARY TABLE datapoints (
   value NUMERIC(65, 30)
 );
 
--- Füge die linear transformierten Werte der unabhängigen Variablen in die Tabelle datapoints ein.
+-- Füge die linear transformierten Werte der unabhängigen Variablen in die Relation datapoints ein.
 INSERT INTO datapoints
 SELECT
   row_number() OVER () AS id,
@@ -126,7 +126,7 @@ SELECT
 FROM sample
 LIMIT number_datapoints;
 
--- Erstelle eine Tabelle für die (binären) Werte der abhängigen Variablen.
+-- Erstelle eine Relation für die (binären) Werte der abhängigen Variablen.
 DROP TABLE IF EXISTS binary_values;
 CREATE TEMPORARY TABLE binary_values (
   id INTEGER,
@@ -141,7 +141,7 @@ SELECT
 FROM sample
 LIMIT number_datapoints;
 
--- Erstelle eine Tabelle für die alten und neuen Parameterwerte.
+-- Erstelle eine Relation für die alten und neuen Parameterwerte.
 DROP TABLE IF EXISTS parameters;
 CREATE TEMPORARY TABLE parameters (
   variable VARCHAR(50),
@@ -154,7 +154,7 @@ INSERT INTO parameters VALUES
   ('alpha', 0, 0),
   ('beta_money', 0, 0);
 
--- Erstelle eine Tabelle für die Werte der logistischen Funktion für alle Datenpunkte.
+-- Erstelle eine Relation für die Werte der logistischen Funktion für alle Datenpunkte.
 DROP TABLE IF EXISTS logits;
 CREATE TEMPORARY TABLE logits (
   id INTEGER,
@@ -162,10 +162,10 @@ CREATE TEMPORARY TABLE logits (
   new NUMERIC(65, 30)
 );
 
--- Befülle die Tabelle für die Werte der logistischen Funktion.
+-- Befülle die Relation für die Werte der logistischen Funktion.
 PERFORM calculate_logit();
 
--- Erstelle eine Tabelle für den Gradienten.
+-- Erstelle eine Relation für den Gradienten.
 DROP TABLE IF EXISTS gradient;
 CREATE TEMPORARY TABLE gradient (
   variable VARCHAR(50),
@@ -212,12 +212,12 @@ UPDATE parameters
 SET old = old - (SELECT old FROM parameters p2 WHERE p2.variable = 'beta_money') * (SELECT MIN(money) FROM sample)
 WHERE parameters.variable = 'alpha';
 
--- Gib eine Tabelle mit Parametername und zugehörigem Wert zurück.
+-- Gib eine Relation mit Parametername und zugehörigem Wert zurück.
 RETURN QUERY
 SELECT parameters.variable::VARCHAR(50), old AS value
 FROM parameters;
 
--- Lösche die Tabellen wieder.
+-- Lösche die Relationen wieder.
 DROP TABLE IF EXISTS datapoints;
 DROP TABLE IF EXISTS binary_values;
 DROP TABLE IF EXISTS parameters;

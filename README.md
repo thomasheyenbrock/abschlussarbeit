@@ -12,11 +12,11 @@ Dieses Repository umfasst sowohl die eigentliche Arbeit (zu finden im Ordner [la
 
 Im Ordner [data](https://github.com/thomasheyenbrock/abschlussarbeit/tree/master/data) findet man drei Dateien. Die Datei [sample_data.py](https://github.com/thomasheyenbrock/abschlussarbeit/blob/master/data/sample_data.py) ist ein Python-Skript, mit der die anderen beiden Dateien erzeugt wurden.
 
-Die anderen beiden Dateien enthalten die (identischen) Beispieldaten, mit denen die restlichen Skripte arbeiten, einmal als csv-Datei und einmal als sql-Datei. Letztere enthält eine Abfrage, die den gesamten Datensatz in eine Tabelle `sample` einfügt.
+Die anderen beiden Dateien enthalten die (identischen) Beispieldaten, mit denen die restlichen Skripte arbeiten, einmal als csv-Datei und einmal als sql-Datei. Letztere enthält eine Abfrage, die den gesamten Datensatz in eine Relation `sample` einfügt.
 
-Die Skripte für R und TensorFlow lesen die csv-Datei bei Ausführung ein. Die SQL-Skripte laden die Daten aus der `sample`-Tabelle, die zuvor manuell erzeugt werden muss.
+Die Skripte für R und TensorFlow lesen die csv-Datei bei Ausführung ein. Die SQL-Skripte laden die Daten aus der `sample`-Relation, die zuvor manuell erzeugt werden muss.
 
-Für MySQL kann die Tabelle wiefolgt über das Terminal erzeugt werden:
+Für MySQL kann die Relation wiefolgt über das Terminal erzeugt werden:
 ```
 cat data/sample.sql | mysql -u <username> -p<password> <database-name>
 ```

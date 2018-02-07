@@ -17,31 +17,41 @@ def calculate_benchmarks():
         "r": {"count": 0, "time": 0},
         "tensorflow": {"count": 0, "time": 0},
         "mysql": {"count": 0, "time": 0},
-        "postgresql": {"count": 0, "time": 0}
+        "mysql-gradient-descent": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0},
+        "postgresql-gradient-descent": {"count": 0, "time": 0}
       },
       "100": {
         "r": {"count": 0, "time": 0},
         "tensorflow": {"count": 0, "time": 0},
         "mysql": {"count": 0, "time": 0},
-        "postgresql": {"count": 0, "time": 0}
+        "mysql-gradient-descent": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0},
+        "postgresql-gradient-descent": {"count": 0, "time": 0}
       },
       "1000": {
         "r": {"count": 0, "time": 0},
         "tensorflow": {"count": 0, "time": 0},
         "mysql": {"count": 0, "time": 0},
-        "postgresql": {"count": 0, "time": 0}
+        "mysql-gradient-descent": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0},
+        "postgresql-gradient-descent": {"count": 0, "time": 0}
       },
       "10000": {
         "r": {"count": 0, "time": 0},
         "tensorflow": {"count": 0, "time": 0},
         "mysql": {"count": 0, "time": 0},
-        "postgresql": {"count": 0, "time": 0}
+        "mysql-gradient-descent": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0},
+        "postgresql-gradient-descent": {"count": 0, "time": 0}
       },
       "100000": {
         "r": {"count": 0, "time": 0},
         "tensorflow": {"count": 0, "time": 0},
         "mysql": {"count": 0, "time": 0},
-        "postgresql": {"count": 0, "time": 0}
+        "mysql-gradient-descent": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0},
+        "postgresql-gradient-descent": {"count": 0, "time": 0}
       }
     },
     "multiple linear regression": {
@@ -49,31 +59,41 @@ def calculate_benchmarks():
         "r": {"count": 0, "time": 0},
         "tensorflow": {"count": 0, "time": 0},
         "mysql": {"count": 0, "time": 0},
-        "postgresql": {"count": 0, "time": 0}
+        "mysql-gradient-descent": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0},
+        "postgresql-gradient-descent": {"count": 0, "time": 0}
       },
       "100": {
         "r": {"count": 0, "time": 0},
         "tensorflow": {"count": 0, "time": 0},
         "mysql": {"count": 0, "time": 0},
-        "postgresql": {"count": 0, "time": 0}
+        "mysql-gradient-descent": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0},
+        "postgresql-gradient-descent": {"count": 0, "time": 0}
       },
       "1000": {
         "r": {"count": 0, "time": 0},
         "tensorflow": {"count": 0, "time": 0},
         "mysql": {"count": 0, "time": 0},
-        "postgresql": {"count": 0, "time": 0}
+        "mysql-gradient-descent": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0},
+        "postgresql-gradient-descent": {"count": 0, "time": 0}
       },
       "10000": {
         "r": {"count": 0, "time": 0},
         "tensorflow": {"count": 0, "time": 0},
         "mysql": {"count": 0, "time": 0},
-        "postgresql": {"count": 0, "time": 0}
+        "mysql-gradient-descent": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0},
+        "postgresql-gradient-descent": {"count": 0, "time": 0}
       },
       "100000": {
         "r": {"count": 0, "time": 0},
         "tensorflow": {"count": 0, "time": 0},
         "mysql": {"count": 0, "time": 0},
-        "postgresql": {"count": 0, "time": 0}
+        "mysql-gradient-descent": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0},
+        "postgresql-gradient-descent": {"count": 0, "time": 0}
       }
     },
     "logistic regression": {
@@ -81,31 +101,41 @@ def calculate_benchmarks():
         "r": {"count": 0, "time": 0},
         "tensorflow": {"count": 0, "time": 0},
         "mysql": {"count": 0, "time": 0},
-        "postgresql": {"count": 0, "time": 0}
+        "mysql-gradient-descent": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0},
+        "postgresql-gradient-descent": {"count": 0, "time": 0}
       },
       "100": {
         "r": {"count": 0, "time": 0},
         "tensorflow": {"count": 0, "time": 0},
         "mysql": {"count": 0, "time": 0},
-        "postgresql": {"count": 0, "time": 0}
+        "mysql-gradient-descent": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0},
+        "postgresql-gradient-descent": {"count": 0, "time": 0}
       },
       "1000": {
         "r": {"count": 0, "time": 0},
         "tensorflow": {"count": 0, "time": 0},
         "mysql": {"count": 0, "time": 0},
-        "postgresql": {"count": 0, "time": 0}
+        "mysql-gradient-descent": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0},
+        "postgresql-gradient-descent": {"count": 0, "time": 0}
       },
       "10000": {
         "r": {"count": 0, "time": 0},
         "tensorflow": {"count": 0, "time": 0},
         "mysql": {"count": 0, "time": 0},
-        "postgresql": {"count": 0, "time": 0}
+        "mysql-gradient-descent": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0},
+        "postgresql-gradient-descent": {"count": 0, "time": 0}
       },
       "100000": {
         "r": {"count": 0, "time": 0},
         "tensorflow": {"count": 0, "time": 0},
         "mysql": {"count": 0, "time": 0},
-        "postgresql": {"count": 0, "time": 0}
+        "mysql-gradient-descent": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0},
+        "postgresql-gradient-descent": {"count": 0, "time": 0}
       }
     }
   }
@@ -123,7 +153,15 @@ def calculate_benchmarks():
     print("benchmarks for %s:\n" % regression_type)
 
     # Erzeuge ein neues dictionary, um eine Tabelle zu drucken.
-    table = {"header": [""], "r": ["r"], "tensorflow": ["tensorflow"], "mysql": ["mysql"], "postgresql": ["postgresql"]}
+    table = {
+      "header": [""],
+      "r": ["r"],
+      "tensorflow": ["tensorflow"],
+      "mysql": ["mysql"],
+      "mysql-gradient-descent": ["mysql-gradient-descent"],
+      "postgresql": ["postgresql"],
+      "postgresql-gradient-descent": ["postgresql-gradient-descent"]
+    }
 
     # Iteriere über die im ersten dictionary enthalten dictionaries (Anzahl Datenpunkte).
     for number_datapoints, obj2 in obj1.items():
@@ -140,18 +178,24 @@ def calculate_benchmarks():
 
     # Erzeuge die zu druckende Tabelle zeilenweise.
     print_table = [
-      "|" + "-" * 89 + "|",
-      "|" + "  %s            |  %s          |  %s         |  %s        |  %s       |  %s      " % tuple(table["header"]) + "|",
-      "|" + "-" * 89 + "|",
-      "|" + "  %s           |  %s  |  %s  |  %s  |  %s  |  %s  " % tuple(table["r"]) + "|",
-      "|" + "-" * 89 + "|",
-      "|" + "  %s  |  %s  |  %s  |  %s  |  %s  |  %s  " % tuple(table["tensorflow"]) + "|",
-      "|" + "-" * 89 + "|",
-      "|" + "  %s       |  %s  |  %s  |  %s  |  %s  |  %s  " % tuple(table["mysql"]) + "|",
-      "|" + "-" * 89 + "|",
-      "|" + "  %s  |  %s  |  %s  |  %s  |  %s  |  %s  " % tuple(table["postgresql"]) + "|",
-      "|" + "-" * 89 + "|"
+      "|" + "-" * 111 + "|",
+      "|" + "  %s                                  |  %s          |  %s         |  %s        |  %s       |  %s      " % tuple(table["header"]) + "|",
+      "|" + "-" * 111 + "|",
+      "|" + "  %s                                 |  %s  |  %s  |  %s  |  %s  |  %s  " % tuple(table["r"]) + "|",
+      "|" + "-" * 111 + "|",
+      "|" + "  %s                        |  %s  |  %s  |  %s  |  %s  |  %s  " % tuple(table["tensorflow"]) + "|",
+      "|" + "-" * 111 + "|",
+      "|" + "  %s                             |  %s  |  %s  |  %s  |  %s  |  %s  " % tuple(table["mysql"]) + "|",
+      "|" + "-" * 111 + "|"
     ]
+    if not regression_type == "logistic regression":
+      print_table.append("|" + "  %s            |  %s  |  %s  |  %s  |  %s  |  %s  " % tuple(table["mysql-gradient-descent"]) + "|")
+      print_table.append("|" + "-" * 111 + "|")
+    print_table.append("|" + "  %s                        |  %s  |  %s  |  %s  |  %s  |  %s  " % tuple(table["postgresql"]) + "|")
+    print_table.append("|" + "-" * 111 + "|")
+    if not regression_type == "logistic regression":
+      print_table.append("|" + "  %s       |  %s  |  %s  |  %s  |  %s  |  %s  " % tuple(table["postgresql-gradient-descent"]) + "|")
+      print_table.append("|" + "-" * 111 + "|")
 
     # Drucke die Tabelle und eine Leerzeile danach.
     print(str.join("\n", print_table))
@@ -170,11 +214,20 @@ def plot(benchmarks, regression_type, plot_title):
     "r": [],
     "tensorflow": [],
     "mysql": [],
-    "postgresql": []
+    "mysql-gradient-descent": [],
+    "postgresql": [],
+    "postgresql-gradient-descent": []
   }
 
   # Durchlaufe alle Sprachen.
-  for language in ["r", "tensorflow", "mysql", "postgresql"]:
+  for language in [
+    "r",
+    "tensorflow",
+    "mysql",
+    "mysql-gradient-descent",
+    "postgresql",
+    "postgresql-gradient-descent"
+  ]:
     # Durchlaufe die Anzahl der Datenpunkte.
     for number_datapoints in x:
       # Füge die durchschnittliche Laufzeit in das Array ein (falls Laufzeiten vorhanden sind).
@@ -190,7 +243,11 @@ def plot(benchmarks, regression_type, plot_title):
   plt.loglog(x, values["r"], "r-", label="R")
   plt.loglog(x, values["tensorflow"], "y-", label="TensorFlow")
   plt.loglog(x, values["mysql"], "b-", label="MySQL")
+  if not regression_type == "logistic regression":
+    plt.loglog(x, values["mysql-gradient-descent"], "b-", label="MySQL (Gradientenverfahren)")
   plt.loglog(x, values["postgresql"], "g-", label="PostgreSQL")
+  if not regression_type == "logistic regression":
+    plt.loglog(x, values["postgresql-gradient-descent"], "g-", label="PostgreSQL (Gradientenverfahren)")
   plt.title(plot_title)
   plt.legend()
   plt.xlabel("Anzahl der Datenpunkte")

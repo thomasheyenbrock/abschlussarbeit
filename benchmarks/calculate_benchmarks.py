@@ -16,28 +16,28 @@ def print_progessbar(iterations, progress):
 # Erzeuge Funktion, die die Schrittweite für einfache lineare Regression mit Gradientenverfahren berechnet.
 def slr_get_step(number_datapoints):
   if number_datapoints <= 10:
-    return 0.00076
+    return "0.00076"
   elif number_datapoints <= 100:
-    return 0.000064
+    return "0.000064"
   elif number_datapoints <= 1000:
-    return 0.0000056
+    return "0.0000056"
   elif number_datapoints <= 10000:
-    return 0.00000054
+    return "0.00000054"
   else:
-    return 0.000000054
+    return "0.000000054"
 
 # Erzeuge Funktion, die die Schrittweite für multiple lineare Regression mit Gradientenverfahren berechnet.
 def mlr_get_step(number_datapoints):
   if number_datapoints <= 10:
-    return 0.000094
+    return "0.000094"
   elif number_datapoints <= 100:
-    return 0.0000078
+    return "0.0000078"
   elif number_datapoints <= 1000:
-    return 0.0000007
+    return "0.0000007"
   elif number_datapoints <= 10000:
-    return 0.000000071
+    return "0.000000071"
   else:
-    return 0.0000000071
+    return "0.0000000071"
 
 # Erzeuge Funktion, die eine bestimme Anzahl an Laufzeiten für eine bestimmte Anzahl an Datenpunkten für eine bestimme Art der Regression in einer bestimmten Sprache berechnet.
 def benchmark(type_regression, language, command, set_number_datapoints, file, iterations):
@@ -252,7 +252,7 @@ def main(argv):
     benchmark(
       "simple linear regression",
       "mysql-gradient-descent",
-      "echo \"CALL regression.simple_linear_regression_gradient_descent(%i, 2000, %f)\" | " + "mysql -u %s -p%s" % (
+      "echo \"CALL regression.simple_linear_regression_gradient_descent(%i, 2000, %s)\" | " + "mysql -u %s -p%s" % (
         json.loads(os.environ["MYSQL_CONFIG"])["user"],
         json.loads(os.environ["MYSQL_CONFIG"])["password"]
       ),
@@ -280,7 +280,7 @@ def main(argv):
     benchmark(
       "multiple linear regression",
       "mysql-gradient-descent",
-      "echo \"CALL regression.multiple_linear_regression_gradient_descent(%i, 50000, %f)\" | " + "mysql -u %s -p%s" % (
+      "echo \"CALL regression.multiple_linear_regression_gradient_descent(%i, 50000, %s)\" | " + "mysql -u %s -p%s" % (
         json.loads(os.environ["MYSQL_CONFIG"])["user"],
         json.loads(os.environ["MYSQL_CONFIG"])["password"]
       ),
@@ -314,12 +314,12 @@ def main(argv):
       iterations
     )
 
-  # Berechne einfache lineare Regression in PostgreSQL.
+  # Berechne einfache lineare Regression mit Gradientenverfahren in PostgreSQL.
   if run_postgresql_gradient and run_simple_linear_regression:
     benchmark(
       "simple linear regression",
       "postgresql-gradient-descent",
-      "echo \"SELECT simple_linear_regression_gradient_descent(%i, 2000, %f)\" | psql regression",
+      "echo \"SELECT simple_linear_regression_gradient_descent(%i, 2000, %s)\" | psql regression",
       set_number_datapoints,
       file,
       iterations
@@ -336,12 +336,12 @@ def main(argv):
       iterations
     )
 
-  # Berechne multiple lineare Regression in PostgreSQL.
+  # Berechne multiple lineare Regression mit Gradientenverfahren in PostgreSQL.
   if run_postgresql and run_multiple_linear_regression:
     benchmark(
       "multiple linear regression",
       "postgresql-gradient-descent",
-      "echo \"SELECT multiple_linear_regression_gradient_descent(%i, 50000, %f)\" | psql regression",
+      "echo \"SELECT multiple_linear_regression_gradient_descent(%i, 50000, %s)\" | psql regression",
       set_number_datapoints,
       file,
       iterations

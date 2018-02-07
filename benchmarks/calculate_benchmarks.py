@@ -337,7 +337,7 @@ def main(argv):
     )
 
   # Berechne multiple lineare Regression mit Gradientenverfahren in PostgreSQL.
-  if run_postgresql and run_multiple_linear_regression:
+  if run_postgresql_gradient and run_multiple_linear_regression:
     benchmark(
       "multiple linear regression",
       "postgresql-gradient-descent",

@@ -212,5 +212,3 @@ DROP TEMPORARY TABLE IF EXISTS gradient;
 
 END;;
 DELIMITER ;
-
-CALL multiple_linear_regression_gradient_descent(10, 10, 1);

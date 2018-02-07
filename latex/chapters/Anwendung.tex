@@ -245,7 +245,7 @@ SQL als Programmiersprache ist Turing-vollständig. Es ist also mit standardisie
 
 Im Gegensatz zu den beiden bisher vorgestellten Sprachen verfolgen wir hier kein einheitliches Grundprinzip, in dem sich alle Arten der Regression ähnlich sind. Die einzige Gemeinsamkeit ist, dass wir in allen SQL-Skripten Prozeduren bzw. Funktionen definieren, welche bei Aufruf die Regressionsanalyse durchführen. Wir nehmen dazu an, dass die Daten für die Regression in einer Relation namens $sample$ liegen.
 
-Bei einfacher linearer Regression berechnen wir die Parameter exakt über die Formeln aus Kapitel \ref{subsection:2:1:1}. Bei multipler Regression verwenden wir die Matrixformel aus Kapitel \ref{subsection:2:1:2}. Hier müssen wir zusätzlich Algorithmen zur Transponierung, Multiplikation und Invertierung von Matrizen implementieren. Für logistische Regression steht uns keine explitize Formel zur Verfügung, weshalb wir ein Gradientenverfahren zur Lösung des Optimierungsproblems implementieren.
+In den Katiteln zu einfacher linearer und multipler linearer Regression wird gezeigt, wie man die Parameter exakt über die Formeln aus Kapitel \ref{subsection:2:1:1} und \ref{subsection:2:1:2} berechnen kann. Für zweitere werden wir Algorithmen zur Transponierung, Multiplikation und Invertierung von Matrizen implementieren. In dem dritten Teilkapitel wird gezeigt, wie man ein Gradietenverfahren zur Lösung des Regressionsproblems in SQL implementiert. Damit kann man alle hier besprochenen Regressionsarten behandeln.
 
 \subsection{Einfache lineare Regression}
 \label{subsection:3:4:1}
@@ -349,21 +349,21 @@ Führt man die multiple lineare Regressionsanalyse in PostgreSQL durch, erhält 
 
 Da wir dieselben Algorithmen und dieselbe Präzision für Kommazahlen in MySQL und PostgreSQL verwendet haben, stimmen die beiden Ergebnisse sogar überein.
 
-\subsection{Logistische Regression}
+\subsection{Gradientenverfahren}
 \label{subsection:3:4:3}
 
-Zur Lösung des logistischen Regressionsproblems möchten wir in SQL ein Gradientenverfahren implementieren. Wir verwenden denselben Algorithmus in MySQL und PostgreSQL, das heißt die Skripte unterscheiden sich lediglich in der datenbankspezifischen Syntax.
+Um auch das logistischen Regressionsproblem zu lösen, möchten wir in SQL ein Gradientenverfahren implementieren. Diese Funktion kann aber genauso für lineare Regression verwendet werden. Wir verwenden denselben Algorithmus in MySQL und PostgreSQL, das heißt die Skripte unterscheiden sich lediglich in der datenbankspezifischen Syntax.
 
 Wir verwenden für das Verfahren mehrere Relationen, in denen gewisse Informationen gespeichert und verarbeiten werden. Dabei weisen wir jedem Datenpunkt eine $id$ zu, um verschiedene Relationen sinnvoll verknüpfen zu können.
 
 \begin{center}
-  \captionof{table}{Tabellen für logistische Regression}
+  \captionof{table}{Tabellen für das Gradientenverfahren}
   \begin{tabular}{|c|c|}\hline
     \textbf{Schema} & \textbf{Beschreibung} \\ \hline
     $datapoints([id, variable, value])$ & Ein Tupel enthält den Wert einer \\
     & bestimmten unabhängigen Variable für \\
     & einen bestimmten Datenpunkt. \\ \hline
-    $binary\_values([id, value])$ & Ein Tupel enthält den Wert für \\
+    $dependent\_values([id, value])$ & Ein Tupel enthält den Wert für \\
     & die anhängige Variable eines \\
     & bestimmten Datenpunktes. \\ \hline
     $parameters([variable, old, new])$ & Ein Tupel enthält den alten \\
@@ -381,13 +381,14 @@ Wir verwenden für das Verfahren mehrere Relationen, in denen gewisse Informatio
 
 Wir definieren außerdem einige Hilfsfunktionen. Diese Funktionen besitzen keinen Rückgabewert. Stattdessen bearbeiten sie die oben genannten Tabellen.
 \begin{center}
-  \captionof{table}{Funktionen für logistische Regression}
+  \captionof{table}{Funktionen für das Gradientenverfahren}
   \begin{tabular}{|c|c|c|c|}\hline
     \textbf{Name} & \textbf{Eingabe} & \textbf{Beschreibung} \\ \hline
-    $calculate\_logits$ & & berechnet den Wert der \\
-    & & logistischen Funktion mit den \\
-    & & alten und neuen Parameter- \\
-    & & werten für jeden Datenpunkt \\ \hline
+    $calculate\_linears$ / & & berechnet den Wert der \\
+    $calculate\_logits$ & & linearen bzw. logistischen \\
+    & & Funktion mit den alten \\
+    & & und neuen Parameterwerten \\
+    & & für jeden Datenpunkt \\ \hline
     $calculate\_gradient$ & & berechnet den Wert der \\
     & & partiellen Ableitungen \\
     & & nach allen Variablen \\ \hline
@@ -398,25 +399,65 @@ Wir definieren außerdem einige Hilfsfunktionen. Diese Funktionen besitzen keine
   \end{tabular}
 \end{center}
 
-Wir führen wie schon bei TensorFlow zuerst eine Lineartransformation für die Werte aus $money$ durch und bilden diese linear auf das Interval $[0, 1]$ ab. Das dient erneut dazu, dass die Werte der logistischen Funktion nicht zu nahe an null geraten. Die transformierten Werte fügen wir in die $datapoints$-Relation ein. Auch die anderen Relationen erzeugen wir und fügen initiale Werte ein.
+In den konkreten Implementierungen wird jede dieser Tabellen und Funktionen noch mit einem Prefix gemäß der jeweiligen Art der Regression versehen, um Namenskonflikte zu vermeiden.
 
-Es folgt eine $while$-Schleife, die solange läuft, bis entweder die vorgegebene Anzahl an Schritten erreicht wurde, oder die Schrittweite zu klein für die gewählte Präzision der Kommazahlen wird. Wir berechnen zuerst den Gradienten, dann die neuen Parameter. Dann ist ein Aufruf von $calculate\_logits$ nötig, um die logistische Funktion für die neuen Parameter zu berechnen.
+Bei logistischer Regression führen wir wie schon in TensorFlow zuerst eine Lineartransformation für die Werte aus $money$ durch und bilden diese linear auf das Interval $[0, 1]$ ab. Das dient erneut dazu, dass die Werte der logistischen Funktion nicht zu nahe an null geraten. Die transformierten Werte fügen wir in die $datapoints$-Relation ein. Auch die anderen Relationen erzeugen wir und fügen initiale Werte ein.
 
-Wir überprüfen, ob die neuen Parameter wirklich besser sind als die alten. Falls nicht, wird die Schrittweite halbiert, danach werden die Parameter und die Werte der logistischen Funktion erneut berechnet. Das wird solange wiederholt, bis die neuen Parameter besser sind oder die Schrittweite unter die Präzisionsgrenze fällt.
+Es folgt eine $while$-Schleife, die solange läuft, bis entweder die vorgegebene Anzahl an Schritten erreicht wurde, oder die Schrittweite zu klein für die gewählte Präzision der Kommazahlen wird. Wir berechnen zuerst den Gradienten, dann die neuen Parameter. Dann ist ein Aufruf von $calculate\_linears$ bzw. $calculate\_logits$ nötig, um die lineare bzw. logistische Funktion für die neuen Parameter zu berechnen.
 
-Haben wir die neuen Parameter erfolgreich berechnet, werden die Werte der $old$-Spalten in den Relationen $parameters$ und $logits$ mit den neuen Werten überschrieben und der Iterationsschritt ist beendet. Nachdem die Schleife beendet wurde, werden die Parameter wieder entsprechend linear transformiert, um den tatsächlichen Werten für $money$ zu entsprechen.
+Wir überprüfen, ob die neuen Parameter wirklich besser sind als die alten. Falls nicht, wird die Schrittweite halbiert, danach werden die Parameter und die Werte der linearen bzw. logistischen Funktion erneut berechnet. Das wird solange wiederholt, bis die neuen Parameter besser sind oder die Schrittweite unter die Präzisionsgrenze fällt.
 
-Wir entscheiden und für 1000 Iterationen und wählen eine Schrittweite von $0.008$. Führt man die Prozeduren im jeweiligen Datenbanksystemen aus erhält man das folgende Ergebnis:
+Haben wir die neuen Parameter erfolgreich berechnet, werden die Werte der $old$-Spalten in den Relationen $parameters$ und $logits$ mit den neuen Werten überschrieben und der Iterationsschritt ist beendet.
+
+Nachdem die Schleife beendet wurde, werden die Parameter bei logistischer Regression wieder entsprechend linear transformiert, um den tatsächlichen Werten für $money$ zu entsprechen.
+
+Bei einfacher linearer Regression entscheiden wir uns für $2000$ Iterationen und wählen eine Schrittweite von $0.0000056$. Führt man die Prozeduren im jeweiligen Datenbanksystemen aus erhält man das folgende Ergebnis:
 
 \begin{center}
-  \captionof{table}{Logistische Regression in MySQL}
+  \captionof{table}{Einfache lineare Regression mit Gradientenverfahren in MySQL}
+  \begin{tabular}{|c|c|}\hline
+    \textbf{variable} & \textbf{value} \\ \hline
+    alpha &  \\ \hline
+    beta\_purchases &  \\ \hline
+  \end{tabular}
+
+  \captionof{table}{Einfache lineare Regression mit Gradientenverfahren in PostgreSQL}
+  \begin{tabular}{|c|c|}\hline
+    \textbf{variable} & \textbf{value} \\ \hline
+    alpha &  \\ \hline
+    beta\_purchases &  \\ \hline
+  \end{tabular}
+\end{center}
+
+Das Gradientenverfahren wird ineffizienter mit steigender Anzahl der Dimensionen. Deshalb benötigt man bei multipler linearer Regression bereits $50000$ Iterationen, um ein gutes Ergebnis zu erhalten. Als Schrittweite wählen wir $0.0000007$. Man erhält das folgende Ergebnis:
+
+\begin{center}
+  \captionof{table}{Multiple lineare Regression mit Gradientenverfahren in MySQL}
+  \begin{tabular}{|c|c|}\hline
+    \textbf{variable} & \textbf{value} \\ \hline
+    alpha &  \\ \hline
+    beta\_purchases &  \\ \hline
+  \end{tabular}
+
+  \captionof{table}{Multiple lineare Regression mit Gradientenverfahren in PostgreSQL}
+  \begin{tabular}{|c|c|}\hline
+    \textbf{variable} & \textbf{value} \\ \hline
+    alpha &  \\ \hline
+    beta\_purchases &  \\ \hline
+  \end{tabular}
+\end{center}
+
+Bei logistischer Regression iterieren wir $1000$ Mal mit einer Schrittweite von $0.008$. Die Ergebnisse lauten wie folgt:
+
+\begin{center}
+  \captionof{table}{Logistische Regression mit Gradientenverfahren in MySQL}
   \begin{tabular}{|c|c|}\hline
     \textbf{variable} & \textbf{value} \\ \hline
     alpha & -1.991090115311453143480846099933 \\ \hline
     beta\_money & 0.000080298536993602280846099933 \\ \hline
   \end{tabular}
 
-  \captionof{table}{Logistische Regression in PostgreSQL}
+  \captionof{table}{Logistische Regression mit Gradientenverfahren in PostgreSQL}
   \begin{tabular}{|c|c|}\hline
     \textbf{variable} & \textbf{value} \\ \hline
     beta\_money & 0.000080298565326972737807102042 \\ \hline

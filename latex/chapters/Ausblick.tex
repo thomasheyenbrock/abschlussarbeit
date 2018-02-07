@@ -160,32 +160,32 @@ Die Prozedur $calculate\_gradient$, die den Gradienten in die Relation $gradient
   \Tree[
     .$\cup$
     [
-      .$\gamma_{"alpha",~ sum(bv.value - l.old)}$
+      .$\gamma_{"alpha",~ sum(dv.value - l.old)}$
       [
-        .$\bowtie_{bv.id = l.id}$
+        .$\bowtie_{dv.id = l.id}$
         [
           .$\rho_l$
           $logits$
         ]
         [
-          .$\rho_{bv}$
-          $binary\_values$
+          .$\rho_{dv}$
+          $dependent\_values$
         ]
       ]
     ]
     [
-      .$\gamma_{d.variable,~ sum(d.value \cdot (bv.value - l.old))}$
+      .$\gamma_{d.variable,~ sum(d.value \cdot (dv.value - l.old))}$
       [
         .$\bowtie_{d.id = l.id}$
         [
-          .$\bowtie_{bv.id = l.id}$
+          .$\bowtie_{dv.id = l.id}$
           [
             .$\rho_l$
             $logits$
           ]
           [
-            .$\rho_{bv}$
-            $binary\_values$
+            .$\rho_{dv}$
+            $dependent\_values$
           ]
         ]
         [
@@ -205,20 +205,20 @@ In der Hauptprozedur $logistic\_regression$ wird in jeder Iteration überprüft,
   \Tree[
     .$\pi_{old > new}$
     [
-      .$\rho_{new ~\leftarrow~ sum(log(bv.value \cdot l.new + (1 - bv.value) \cdot (1 - l.new)))}$
+      .$\rho_{new ~\leftarrow~ sum(log(dv.value \cdot l.new + (1 - dv.value) \cdot (1 - l.new)))}$
       [
-        .$\rho_{old ~\leftarrow~ sum(log(bv.value \cdot l.old + (1 - bv.value) \cdot (1 - l.old)))}$
+        .$\rho_{old ~\leftarrow~ sum(log(dv.value \cdot l.old + (1 - dv.value) \cdot (1 - l.old)))}$
         [
-          .$\gamma_{sum(log(bv.value \cdot l.new + (1 - bv.value) \cdot (1 - l.new))),~ sum(log(bv.value \cdot l.old + (1 - bv.value) \cdot (1 - l.old)))}$
+          .$\gamma_{sum(log(dv.value \cdot l.new + (1 - dv.value) \cdot (1 - l.new))),~ sum(log(dv.value \cdot l.old + (1 - dv.value) \cdot (1 - l.old)))}$
           [
-            .$\bowtie_{bv.id = l.id}$
+            .$\bowtie_{dv.id = l.id}$
             [
               .$\rho_l$
               $logits$
             ]
             [
-              .$\rho_{bv}$
-              $binary\_values$
+              .$\rho_{dv}$
+              $dependent\_values$
             ]
           ]
         ]

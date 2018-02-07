@@ -41,15 +41,15 @@ DELETE FROM slr_gradient;
 
 -- Berechne die partielle Ableitung nach alpha.
 INSERT INTO slr_gradient
-SELECT 'alpha' AS variable, - 2 * SUM(bv.value - l.old) AS value
+SELECT 'alpha' AS variable, - 2 * SUM(dv.value - l.old) AS value
 FROM slr_linears l
-JOIN slr_binary_values bv ON bv.id = l.id;
+JOIN slr_dependent_values dv ON dv.id = l.id;
 
 -- Berechne die partielle Ableitung nach allen beta-Parametern.
 INSERT INTO slr_gradient
-SELECT d.variable, - 2 * SUM(d.value * (bv.value - l.old)) AS value
+SELECT d.variable, - 2 * SUM(d.value * (dv.value - l.old)) AS value
 FROM slr_linears l
-JOIN slr_binary_values bv ON bv.id = l.id
+JOIN slr_dependent_values dv ON dv.id = l.id
 JOIN slr_datapoints d ON d.id = l.id
 GROUP BY d.variable;
 
@@ -101,14 +101,14 @@ FROM sample
 LIMIT number_datapoints;
 
 -- Erstelle eine Relation für die (binären) Werte der abhängigen Variablen.
-DROP TABLE IF EXISTS slr_binary_values;
-CREATE TEMPORARY TABLE slr_binary_values (
+DROP TABLE IF EXISTS slr_dependent_values;
+CREATE TEMPORARY TABLE slr_dependent_values (
   id INTEGER,
   value INTEGER
 );
 
 -- Füge die Werte der abhängingen Variable ein.
-INSERT INTO slr_binary_values
+INSERT INTO slr_dependent_values
 SELECT
   row_number() OVER () AS id,
   money AS value
@@ -158,10 +158,10 @@ WHILE counter < rounds AND step > 0.000000000000000000000000000001 LOOP
   -- Verringere die Schrittweite solange, bis die neuen Parameter ein besseres Ergebnis liefern als die alten.
   WHILE NOT (
     SELECT
-      SUM(POWER(bv.value - l.new, 2)) <
-      SUM(POWER(bv.value - l.old, 2))
+      SUM(POWER(dv.value - l.new, 2)) <
+      SUM(POWER(dv.value - l.old, 2))
     FROM slr_linears l
-    JOIN slr_binary_values bv ON bv.id = l.id
+    JOIN slr_dependent_values dv ON dv.id = l.id
   ) AND step > 0.000000000000000000000000000001 LOOP
 
     step := step / 2;
@@ -188,7 +188,7 @@ FROM slr_parameters;
 
 -- Lösche die Relationen wieder.
 DROP TABLE IF EXISTS slr_datapointss;
-DROP TABLE IF EXISTS slr_binary_values;
+DROP TABLE IF EXISTS slr_dependent_values;
 DROP TABLE IF EXISTS slr_parameters;
 DROP TABLE IF EXISTS slr_linears;
 DROP TABLE IF EXISTS slr_gradient;

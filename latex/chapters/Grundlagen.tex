@@ -153,16 +153,16 @@ Um dieses Regressionsproblem zu lösen, muss man also die Parameter $\hat\alpha,
 \begin{align*}
     L(\hat\alpha, \hat\beta_1, \dots, \hat\beta_n) = \max \left\{ L(\alpha, \beta_1, \dots, \beta_n) ~|~ \alpha \in \mathbb{R}, \beta_1 \in \mathbb{R}, \dots, \beta_n \in \mathbb{R} \right\}
 \end{align*}
-In diesem Fall kommt man nicht mehr an einer iterativen Lösung vorbei, da das lineare Gleichungssystem aus den partiellen Ableitungen nicht mehr exakt lösbar ist. Eine der einfachsten Methoden zur Lösung von Optimierungsproblemen ist das Gradientenverfahren, welches im kommenden Teilkapitel kurz eingeführt wird. Danach wird gezeigt, wie man das Gradientenverfahren für logistische Regression anwendet.
+In diesem Fall kommt man nicht mehr an einer iterativen Lösung vorbei, da das lineare Gleichungssystem aus den partiellen Ableitungen nicht mehr exakt lösbar ist. Eine der einfachsten Methoden zur Lösung von Optimierungsproblemen ist das Gradientenverfahren, welches im kommenden Kapitel kurz eingeführt wird. Dort wird auch gezeigt, wie man das Gradientenverfahren für lineare und logistische Regression anwendet.
 
-\subsection{Gradientenverfahren}
-\label{subsection:2:2:1}
+\section{Gradientenverfahren}
+\label{section:2:3}
 
-Das Gradientenverfahren ist ein iterativer Algorithmus zur Lösung von Optimierungsproblemen. Nachdem wir hier bei der logistischen Regression eine Funktion maximieren wollen führen wir das Gradientenverfahren dementsprechend als Maximierungsalgorithmus ein. Man kann dasselbe Verfahren aber auch zur Lösung von Minimierungsproblemen einsetzen. Gegeben sei also eine Funktion der folgenden Form, die maximiert werden soll:
+Das Gradientenverfahren ist ein iterativer Algorithmus zur Lösung von Optimierungsproblemen. Wir führen das Gradientenverfahren als Minimierungsalgorithmus ein. Man kann dasselbe Verfahren aber auch zur Lösung von Maximierungsproblemen einsetzen. Gegeben sei also eine Funktion der folgenden Form, die mininiert werden soll:
 \begin{align*}
     L: \mathbb{R}^{n+1} \rightarrow \mathbb{R},~~ (\alpha, \beta_1, \dots, \beta_n) \mapsto L(\alpha, \beta_1, \dots, \beta_n)
 \end{align*}
-Beim Gradientenverfahren beginnt man mit beliebigen Startwerten $\alpha^0$ und $\beta_k^0$ und einer Schrittweite $s \in \mathbb{R}^+$. Vom Startpunkt aus geht man nun in die Richtung des steilsten Anstieges der Funktion und erhält dadurch neue Werte $\alpha^1$ und $\beta_k^1$. Diese Richtung ist der Gradient der Funktion $L$.
+Beim Gradientenverfahren beginnt man mit beliebigen Startwerten $\alpha^0$ und $\beta_k^0$ und einer Schrittweite $s \in \mathbb{R}^+$. Vom Startpunkt aus geht man nun entgegengesetzt der Richtung des steilsten Anstieges der Funktion und erhält dadurch neue Werte $\alpha^1$ und $\beta_k^1$. Diese Richtung ist der negative Gradient der Funktion $L$.
 
 Der Gradient ist ein Vektor, der sich aus den partiellen Ableitungen von $L$ nach jeweils einer Variablen zusammensetzt und wird wie folgt notiert:
 \begin{align*}
@@ -185,13 +185,35 @@ Der Gradient von $L$ ist wieder eine Funktion, die Werte $\alpha$ und $\beta_k$ 
         \beta_1^i \\
         \vdots \\
         \beta_n^i
-    \end{pmatrix} + s \cdot \text{grad}(L) (\alpha^i, \beta_1^i, \dots, \beta_n^i)
+    \end{pmatrix} - s \cdot \text{grad}(L) (\alpha^i, \beta_1^i, \dots, \beta_n^i)
 \end{align*}
-Danach muss noch getestet werden, dass $L$ für die neuen Parameter auch wirklich einen größeren Wert annimmt also zuvor. Falls nicht, muss die Schrittweite $s$ verkleinert werden, zum Beispiel um einen festen, zuvor definierten Faktor.
+Im Fall eines Maximierungsproblems addiert man den Gradienten anstatt ihn zu subtrahieren.
+
+Danach muss noch getestet werden, dass $L$ für die neuen Parameter auch wirklich einen kleineren Wert annimmt also zuvor. Falls nicht, muss die Schrittweite $s$ verkleinert werden, zum Beispiel um einen festen, zuvor definierten Faktor.
 % TODO: Zitiere Schrittweitenstrategien usw aus geeignetem Buch.
 
+\subsection{Gradient bei linearer Regression}
+\label{subsection:2:3:1}
+
+Bei linearer Regression wollen wir die Summe der kleinsten Quadrate minimieren. Im Kapitel \ref{section:2:1} haben wir hierfür die Funktion $E$ definiert. Wir suchen also den Gradienten von $E$. Dazu leiten wir zuerst die Funktion $f$ aus dem genannten Kapitel partiell ab:
+
+\begin{align*}
+    \dfrac{\partial f}{\partial \alpha} = 1 ~~,~~~ \dfrac{\partial f}{\partial \beta_k} &= x_{i, k}
+\end{align*}
+
+Damit können wir die partiellen Ableitungen von $E$ berechnen:
+
+\begin{align*}
+    \dfrac{\partial E}{\partial \alpha} &= \sum_{i=1}^m 2 \cdot \big( y_i - f(x_{i, 1}, \dots, x_{i, n}) \big) \cdot - \dfrac{\partial f}{\partial \alpha} \\
+    &= -2 \cdot \sum_{i=1}^m \big( y_i - f(x_{i, 1}, \dots, x_{i, n}) \big) \\
+    \dfrac{\partial E}{\partial \beta_k} &= \sum_{i=1}^m 2 \cdot \big( y_i - f(x_{i, 1}, \dots, x_{i, n}) \big) \cdot - \dfrac{\partial f}{\partial \beta_k} \\
+    &= -2 \cdot \sum_{i=1}^m x_{i, k} \cdot \big( y_i - f(x_{i, 1}, \dots, x_{i, n}) \big)
+\end{align*}
+
+Das Ergebnis werden wir später nutzen, um den Gradienten in SQL zu berechnen.
+
 \subsection{Gradient bei logistischer Regression}
-\label{subsection:2:2:2}
+\label{subsection:2:3:2}
 
 Um das Gradientenverfahren bei logistischer Regression einsetzen zu können, muss der Gradient für den Logarithmus der Likelihoodfunktion bekannt sein. In diesem Kapitel berechnen wir also die partiellen Ableitungen nach allen Parametern.
 

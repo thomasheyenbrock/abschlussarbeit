@@ -46,15 +46,15 @@ DELETE FROM lr_gradient;
 
 -- Berechne die partielle Ableitung nach alpha.
 INSERT INTO lr_gradient
-SELECT 'alpha' AS `variable`, SUM(bv.value - l.old) AS `value`
+SELECT 'alpha' AS `variable`, SUM(dv.value - l.old) AS `value`
 FROM lr_logits l
-JOIN lr_binary_values bv ON bv.id = l.id;
+JOIN lr_dependent_values dv ON dv.id = l.id;
 
 -- Berechne die partielle Ableitung nach allen beta-Parametern.
 INSERT INTO lr_gradient
-SELECT d.variable, SUM(d.value * (bv.value - l.old)) AS `value`
+SELECT d.variable, SUM(d.value * (dv.value - l.old)) AS `value`
 FROM lr_logits l
-JOIN lr_binary_values bv ON bv.id = l.id
+JOIN lr_dependent_values dv ON dv.id = l.id
 JOIN lr_datapoints d ON d.id = l.id
 GROUP BY d.variable;
 
@@ -105,8 +105,8 @@ FROM sample
 LIMIT number_datapoints;
 
 -- Erstelle eine temporäre Relation für die (binären) Werte der abhängigen Variablen.
-DROP TEMPORARY TABLE IF EXISTS lr_binary_values;
-CREATE TEMPORARY TABLE lr_binary_values (
+DROP TEMPORARY TABLE IF EXISTS lr_dependent_values;
+CREATE TEMPORARY TABLE lr_dependent_values (
   id INT(11),
   value INT(1),
   PRIMARY KEY (id)
@@ -114,7 +114,7 @@ CREATE TEMPORARY TABLE lr_binary_values (
 
 -- Füge die Werte der abhängingen Variable ein.
 SET @counter = 0;
-INSERT INTO lr_binary_values
+INSERT INTO lr_dependent_values
 SELECT
   @counter := @counter + 1 AS `id`,
   premium AS `value`
@@ -167,10 +167,10 @@ WHILE counter < rounds AND step > 0.000000000000000000000000000001 DO
   -- Verringere die Schrittweite solange, bis die neuen Parameter ein besseres Ergebnis liefern als die alten.
   WHILE (
     SELECT
-      SUM(LOG(bv.value * l.new + (1 - bv.value) * (1 - l.new))) >
-      SUM(LOG(bv.value * l.old + (1 - bv.value) * (1 - l.old)))
+      SUM(LOG(dv.value * l.new + (1 - dv.value) * (1 - l.new))) >
+      SUM(LOG(dv.value * l.old + (1 - dv.value) * (1 - l.old)))
     FROM lr_logits l
-    JOIN lr_binary_values bv ON bv.id = l.id
+    JOIN lr_dependent_values dv ON dv.id = l.id
   ) = 0 AND step > 0.000000000000000000000000000001 DO
 
     SET step = step / 2;
@@ -207,7 +207,7 @@ FROM lr_parameters;
 
 -- Lösche die temporären Relationen wieder.
 DROP TEMPORARY TABLE IF EXISTS lr_datapoints;
-DROP TEMPORARY TABLE IF EXISTS lr_binary_values;
+DROP TEMPORARY TABLE IF EXISTS lr_dependent_values;
 DROP TEMPORARY TABLE IF EXISTS lr_parameters;
 DROP TEMPORARY TABLE IF EXISTS lr_logits;
 DROP TEMPORARY TABLE IF EXISTS lr_gradient;

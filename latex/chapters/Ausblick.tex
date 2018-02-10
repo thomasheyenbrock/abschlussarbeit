@@ -3,9 +3,9 @@
 
 In Kapitel \ref{section:3:4} wurde gezeigt, wie Regressionsanalyse in SQL durchgeführt werden kann. Die dazu implementierten Funktionen können als Erweiterungspotenzial für relationale Datenbanksysteme gesehen werden.
 
-In diesen Funktionen sind die zu verwendende Relation und deren Attribute aktuell noch fest implementiert. Um diese Funktionen in der Praxis nutzbar zu machen, müsste man weitere Parameter einfügen, mit denem man Relation und Attribute zum Zeitpunkt der Ausführung bestimmen kann.
+In diesen Funktionen sind die zu verwendende Relation und deren Attribute aktuell noch fest implementiert. Um diese Funktionen in der Praxis nutzbar zu machen, müsste man weitere Parameter einfügen, mit denen man Relation und Attribute zum Zeitpunkt der Ausführung bestimmen kann.
 
-Wir wollen nun die Abfragen der in Kapitel \ref{section:3:4} implementierten Funktionen mit Hilfe von Operatorenbäumen darstellen und beschreiben.
+Wir wollen nun die Abfragen der in Kapitel \ref{section:3:4} implementierten Funktionen mit Hilfe von Operatorbäumen darstellen und beschreiben.
 
 \section{Einfache lineare Regression}
 \label{section:5:1}
@@ -54,7 +54,7 @@ Damit berechnet man einen Wert für $beta$:
   ]
 \end{minipage}}
 \\\\
-Mit Hilfe von $beta$ kann man nun auch $alpha$ berechnen:
+Mit Hilfe der Relation $beta$ kann man nun auch $alpha$ berechnen:
 \\\\
 \noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
   \Tree[
@@ -74,7 +74,7 @@ Mit Hilfe von $beta$ kann man nun auch $alpha$ berechnen:
 \section{Multiple lineare Regression}
 \label{section:5:2}
 
-Die hier gezeichneten Bäume entsprechen der Implementierung in MySQL. Dort verwenden wir Relationen und verarbeiten diese mit den angegebenen Bäumen. In PostgreSQL verwenden wir dagegen Arrays und Schleifen zur Berechnung.
+Die hier gezeichneten Bäume entsprechen der Implementierung in MySQL. Dort verwenden wir Relationen und verarbeiten diese mit den Abfragen der hier dargestellten Bäume. In PostgreSQL verwenden wir dagegen Arrays und Schleifen zur Berechnung.
 
 Wir beginnen mit der Berechnung der transponierten Matrix von $X$. Die zugehörige Relation wird $matrix\_transposed$ genannt:
 \\\\
@@ -85,7 +85,7 @@ Wir beginnen mit der Berechnung der transponierten Matrix von $X$. Die zugehöri
   ]
 \end{minipage}}
 \\\\
-Die Matrixprodukte werden auch in MySQL mit Schleifen berechnet. Dabei wird ein Element der zu berechnenden Matrix mit folgender Abfrage bestimmt. Dabei sind die Iteratoren $counter\_1$ und $counter\_2$ durch die Schleifen gegeben.
+Die Matrixprodukte werden auch in MySQL mit Schleifen berechnet. Dabei wird ein Element der zu berechnenden Matrix mit folgender Abfrage bestimmt. Die Iteratoren $counter\_1$ und $counter\_2$ sind durch die Schleifen gegeben.
 \\\\
 \noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
 % --------------------------------------------------------------
@@ -121,9 +121,9 @@ Die Matrixprodukte werden auch in MySQL mit Schleifen berechnet. Dabei wird ein 
   ]
 \end{minipage}}
 \\\\
-Die beiden Matrixprodukte zur Berechnung von $matrix\_product\_2$ und $matrix\_result$ besitzen denselben Operatorenbaum, nur dass die beiden Relationen $matrix\_transposed$ und $matrix\_y$ bzw. $matrix\_inverse$ und $matrix\_product\_2$ verwendet werden.
+Die beiden Matrixprodukte zur Berechnung von $matrix\_product\_2$ und $matrix\_result$ besitzen denselben Operatorbaum, nur dass die beiden Relationen $matrix\_transposed$ und $matrix\_y$ bzw. $matrix\_inverse$ und $matrix\_product\_2$ verwendet werden.
 
-Zur Berechnung der inversen Matrix für die Relation $matrix\_inverse$ wird in PostgreSQL und MySQL ein iterativer Algorithmus verwendet, dessen Äquivalent wir hier auf Grund der Komplexität nicht als Operatorenbaum darstellen wollen.
+Zur Berechnung der inversen Matrix für die Relation $matrix\_inverse$ wird in PostgreSQL und MySQL ein iterativer Algorithmus verwendet, dessen Äquivalent wir hier auf Grund der Komplexität nicht als Operatorbaum darstellen wollen.
 
 \section{Logistische Regression}
 \label{section:5:3}
@@ -197,9 +197,9 @@ Die Prozedur $calculate\_gradient$, die den Gradienten in die Relation $gradient
   ]
 \end{minipage}}
 \\\\
-Die Prozedur $calculate\_new\_parameters$ führt einen Update-Query durch. Hierfür zeichnen wir keinen Operatorenbaum.
+Die Prozedur $calculate\_new\_parameters$ führt eine Update-Abfrage durch. Hierfür zeichnen wir keinen Operatorbaum.
 
-In der Hauptprozedur $logistic\_regression$ wird in jeder Iteration überprüft, ob die mit der aktuellen Schrittweite berechneten Parameter ein besseres Ergebnis liefern als die alten Parameter. Das geschieht mit folgender Abfrage:
+In der Hauptprozedur $logistic\_regression$ wird in jeder Iteration überprüft, ob die mit der aktuellen Schrittweite berechneten neuen Parameter ein besseres Ergebnis liefern als die alten Parameter. Das geschieht mit folgender Abfrage:
 \\\\
 \noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
   \Tree[

@@ -1,33 +1,29 @@
 \chapter{Grundlagen statistischer Methoden}
 \label{chapter:2}
 
-Bei der Regressionsanalyse geht es im Allgemeinen darum, das Verhalten einer Größe $Y$ in Abhängigkeit einer oder mehrerer anderer Größen $X_1, X_2, \dots, X_n$ zu modellieren. Die Größe $Y$ wird abhängig genannt, die Größen $X_i$ nennt man unabhängig. Für diese Arbeit wollen wir zunächst einige Annahmen treffen. Diese sollen immer gelten, falls nicht explizit etwas anderes festgelegt wird.
+Bei der Regressionsanalyse geht es im Allgemeinen darum, das Verhalten einer Größe $Y$ in Abhängigkeit einer oder mehrerer anderer Größen $X_1, X_2, \dots, X_n$ zu modellieren. Die Größe $Y$ wird abhängig genannt, die Größen $X_j$ nennt man unabhängig. Für diese Arbeit wollen wir zunächst einige Annahmen treffen. Diese sollen immer gelten, falls nicht explizit etwas anderes festgelegt wird.
 \begin{itemize}
-    \item Die genannten Größen sind Zufallsvariablen. Eine solche Zufallsvariable ist eine Funktion deren Werte die Ergebnisse eines Zufallsvorgangs darstellt.
+    \item Die genannten Größen sind Zufallsvariablen. Eine solche Zufallsvariable ist eine Funktion, deren Werte die Ergebnisse eines Zufallsvorgangs darstellt.
     \item Die Zufallsvariablen sind auf der Menge $M = \{1, \dots, m\}$ definiert und bilden in die reellen Zahlen ab:
     \begin{align*}
         Y: M \rightarrow \mathbb{R},~~ X_1: M \rightarrow \mathbb{R},~~ \dots,~~ X_n: M \rightarrow \mathbb{R}
     \end{align*}
-    Das bedeutet die Zufallsvariablen sind metrisch skaliert. Die $m$ Zahlen in der Menge $M$ entsprechen den $m$ Datenpunkten, die wir als Datenbasis für die Regressionsanalyse besitzen.
+    Die Zufallsvariablen sind also metrisch skaliert. Die $m$ Zahlen in der Menge $M$ entsprechen den $m$ Datenpunkten, die wir als Datenbasis für die Regressionsanalyse besitzen.
     \item Wir verwenden die folgenden Abkürzungen für die Werte der Zufallsvariablen:
     \begin{align*}
         y_i &:= Y(i) ~~~\text{für alle}~ i \in M,\\
         x_{i, j} &:= X_j(i) ~~~\text{für alle}~ i \in M ~~\text{und}~ 1 \leq j \leq n
     \end{align*}
-    \item Einen Datenpunkt aus unserer Datenbasis fassen wir als Vektor der Länge $(n + 1)$ auf. Damit lässt sich die Datenbasis schreiben als:
-    \begin{align*}
-        (y_1, x_{1,1}, \dots, x_{1,n}), \dots, (y_m, x_{m,1}, \dots, x_{m,n})
-    \end{align*}
 \end{itemize}
-Nun definieren wir ein Modell, mit dem der Zusammenhang zwischen der abhängigen und den unabhängigen Variablen dargestellt werden soll. Dazu verwenden wir eine Funktion $f$, welche für Werte von  $X_1$ bis $X_n$ einen geschätzten Wert für $Y$ liefert. Idealerweise existiert eine Funktion, die zum einen eine einfache Darstellung (z.B. durch eine arithmetische Formel) besitzt und zum anderen alle unabhängigen Werte der Datenmenge exakt prognostiziert. Das bedeutet:
+Nun definieren wir ein Modell, mit dem der Zusammenhang zwischen der abhängigen und den unabhängigen Variablen dargestellt werden soll. Dazu verwenden wir eine Funktion $f$, welche für Werte von  $X_1$ bis $X_n$ einen geschätzten Wert für $Y$ liefert. Idealerweise existiert eine Funktion, die zum einen eine einfache Darstellung (etwa durch eine arithmetische Formel) besitzt und zum anderen alle unabhängigen Werte der Datenmenge exakt prognostiziert. Das bedeutet:
 \begin{align*}
     y_i = f(x_{i, 1}, \dots, x_{i, n}) ~~~\text{für alle}~~ 1 \leq i \leq m
 \end{align*}
-Im Allgemeinen ist es nicht möglich eine solche Funktion zu finden. Man verwirft also die Anforderung der Exaktheit für alle Datenpunkte und versucht stattdessen eine einfache Funktion zu finden, die die Datenmenge möglichst gut approximiert. Wir definieren für jeden Datenpunkt den Fehler $e_i$, der sich durch die Modellfunktion $f$ ergibt:
+Im Allgemeinen ist es nicht möglich, eine solche Funktion zu finden. Man verwirft also die Anforderung der Exaktheit für alle Datenpunkte und versucht stattdessen eine einfache Funktion zu finden, die die Datenmenge möglichst gut approximiert. Wir definieren für jeden Datenpunkt den Fehler $e_i$, der sich durch die Ungenauigkeit der Modellfunktion $f$ ergibt:
 \begin{align*}
     e_i := y_i - f(x_{i, 1}, \dots, x_{i, n})
 \end{align*}
-Je näher ein Fehlerterm bei null liegt, desto besser ist die Annäherung. Um eine gute Approximation für die gesamte Datenmenge zu erhalten, sollten also alle diese Fehlerterme möglichst klein bleiben. Das Ziel der Regressionsanalyse ist nun die Bestimmung der Funktion $f$. Dazu nimmt man in der Regel an, dass $f$ eine bestimmte Form hat. Diese Annahme kann sich je nach der Problemstellung unterscheiden. Oft arbeitet man mit linearen Funktionen $f$, aber auch quadratische, exponentielle oder logistische Funktionen sind nicht unüblich.
+Je näher ein Fehlerterm bei null liegt, desto besser ist die Annäherung für den jeweiligen Datenpunkt. Um eine gute Approximation für die gesamte Datenmenge zu erhalten, sollten die Fehlerterme global betrachtet möglichst klein bleiben. Das Ziel der Regressionsanalyse ist nun die Bestimmung der Funktion $f$. Dazu nimmt man an, dass $f$ eine bestimmte Form hat. Diese Annahme kann sich je nach der Problemstellung unterscheiden. Oft arbeitet man mit linearen Funktionen $f$, aber auch quadratische, exponentielle oder logistische Funktionen sind nicht unüblich.
 
 \section{Lineare Regression}
 \label{section:2:1}
@@ -40,11 +36,11 @@ Dabei sind $\alpha$ und $\beta_k$ für $k = 1, \dots, n$ reelle Zahlen, die soge
 \begin{align*}
     E \left( \alpha, \beta_1, \dots, \beta_n \right) := \sum_{i=1}^m e_i^2 =  \sum_{i=1}^m \big( y_i - f(x_{i, 1}, \dots, x_{i, n}) \big)^2 = \sum_{i=1}^m \left( y_i - \alpha - \sum_{j=1}^n \beta_j \cdot x_{i, j} \right)^2
 \end{align*}
-Bei der linearen Regression suchen die Parameter $\hat\alpha$ und $\hat\beta_k$ für die gilt:
+Bei der linearen Regression sucht man die Parameter $\hat\alpha$ und $\hat\beta_k$ für die $E$ einen minimalen Wert annimmt:
 \begin{align*}
     E \left( \hat\alpha, \hat\beta_1, \dots, \hat\beta_n \right) = \min \big\{E(\alpha, \beta_1, \dots, \beta_n) ~\big|~ \alpha \in \mathbb{R}, \beta_1 \in \mathbb{R}, \dots, \beta_n \in \mathbb{R} \big\}
 \end{align*}
-Um dieses Minimierungsproblem zu lösen berechnen wir die partiellen Ableitungen von $E$ nach allen Parametern:
+Um dieses Minimierungsproblem zu lösen, berechnen wir die partiellen Ableitungen von $E$ nach allen Parametern:
 \begin{align*}
     \dfrac{\partial E}{\partial \alpha} &= \sum_{i=1}^m 2 \cdot \left( y_i - \alpha - \sum_{j=1}^n \beta_j \cdot x_{i, j} \right) \cdot (- 1) \\
     &= - 2 \cdot \sum_{i=1}^m \left( y_i - \alpha - \sum_{j=1}^n \beta_j \cdot x_{i, j} \right) \\
@@ -55,19 +51,19 @@ Durch Nullsetzen der partiellen Ableitungen erhält man ein lineares Gleichungss
 \begin{align*}
     \dfrac{\partial E}{\partial \alpha} = 0, ~~ \dfrac{\partial E}{\partial \beta_1} = 0, ~~ \dots, ~~ \dfrac{\partial E}{\partial \beta_n} = 0
 \end{align*}
-Die Lösung dieses Gleichungssystems (falls diese existiert) ist das gesuchte Minimum. Damit hat man also die gesuchten Parameter für die lineare Funktion $f$ gefunden.
+Die Lösung dieses Gleichungssystems (falls diese existiert) ist das gesuchte Minimum. Damit findet man die gesuchten Parameter für die lineare Funktion $f$.
 
 \subsection{Einfache lineare Regression}
 \label{subsection:2:1:1}
 
-Man spricht von einfacher linearer Regression, wenn man mit nur eine unabhängige Variable arbeitet. Anschaulich möchte mann hier die bestmögliche Schätzgerade durch eine gegebene Punktwolke legen.
+Man spricht von einfacher linearer Regression, wenn man mit nur eine unabhängige Variable arbeitet. Anschaulich möchte man hier die bestmögliche Schätzgerade durch eine gegebene Punktwolke legen.
 
-Wir nennen die unabhängige Variable in diesem Kapitel statt $X_1$ einfach nur $X$. Ebenso schreiben wir $\beta := \beta_1$ und $x_i := x_{i, 1}$. Dann können wir das lineare Gleichungssystem zum Auffinden des Minimums wie folgt explizit aufschreiben:
+Wir nennen die unabhängige Variable in diesem Kapitel statt $X_1$ einfach nur $X$. Ebenso schreiben wir $\beta := \beta_1$ und $x_i := x_{i, 1}$. Dann können wir das lineare Gleichungssystem zum Auffinden des Minimums wie folgt aufschreiben:
 \begin{align*}
     0 &= - 2 \cdot \sum_{i=1}^m (y_i - \alpha - \beta \cdot x_i)\\
     0 &= - 2 \cdot \sum_{i=1}^m x_i \cdot (y_i - \alpha - \beta \cdot x_i)
 \end{align*}
-Dieses Gleichungssystem kann explizit gelöst werden. Man erhält das folgende Ergebnis für $\hat\alpha$ und $\hat\beta$:
+Dieses Gleichungssystem kann explizit gelöst werden. Man erhält das folgende Ergebnis für die Lösung $\hat\alpha$ und $\hat\beta$:
 \begin{align*}
     \hat\beta &= \dfrac{\sum\limits_{i=1}^m (x_i - \bar x)(y_i - \bar y)}{\sum\limits_{i=1}^m (x_i - \bar x)^2}\\
     \hat\alpha &= \bar y - \hat\beta \bar x
@@ -76,14 +72,13 @@ Dabei bezeichnen $\bar x$ und $\bar y$ die Mittelwerte von $X$ respektive $Y$, a
 \begin{align*}
     \bar x = \dfrac{1}{m} \sum_{i=1}^m x_i ~~,~~~ \bar y &= \dfrac{1}{m} \sum_{i=1}^m y_i
 \end{align*}
+% TODO: zitieren
 Die Herleitung dieser Lösungen findet sich in [*zitiere ein Statistik-Buch*].
 
 \subsection{Multiple lineare Regression}
 \label{subsection:2:1:2}
 
-Bei multipler linearer Regression existieren mindestens zwei unabhängige Variablen. Hier ist es nicht mehr zweckmäßig eine explizite Lösung anzugeben. Nun sind alternative Methoden zur Berechnung der Parameter nötig.
-
-Neben einer Vielzahl von Algorithmen, die ein Optimierungsproblem iterativ lösen, gibt es auch die Möglichkeit die Parameter durch Matrizenmultiplikation zu berechnen. Definieren wir dazu die folgenden Matrizen und Vektoren:
+Bei multipler linearer Regression existieren mindestens zwei unabhängige Variablen. Anstatt wieder explizite Formeln für jeden einzelnen Parameter anzugeben, berechnen wir alle gesuchten Parameter gleichzeitig mit Hilfe von Matrizenrechnung. Definieren wir dazu die folgenden Matrizen und Vektoren:
 \begin{align*}
     X &= \begin{pmatrix}
         1 & x_{1, 1} & \dots & x_{1, n} \\
@@ -102,17 +97,19 @@ Neben einer Vielzahl von Algorithmen, die ein Optimierungsproblem iterativ löse
         \hat\beta_n
     \end{pmatrix} \in \mathbb{R}^{(n + 1) \times 1}
 \end{align*}
-Dabei ist $b$ der Vektor mit den gesuchten Parametern für die Minimierung der kleinsten Quadrate bzw. der Funktion $E$. Falls die Matrix $X^T X$ invertiertbar ist, gilt die folgende Formel für die Berechnung der gesuchten Parameter:
+Dabei ist $b$ der Vektor mit den gesuchten Parametern für die Minimierung der kleinsten Quadrate bzw. der Funktion $E$. Falls die Matrix $X^T X$ invertierbar ist, gilt die folgende Formel für die Berechnung der gesuchten Parameter:
 \begin{align*}
     b = (X^T X)^{-1} X^T y
 \end{align*}
+% TODO: zitat
+Mehr dazu findet man auch in [...].
 
 \section{Logistische Regression}
 \label{section:2:2}
 
-Die logistische Regression findet Anwendung im Falle, dass die abhängige Variable eine binäre Variable ist, also eine Variable, die nur zwei Werte annehmen kann. Oft handelt es sich um eine Eigenschaft oder einen Gegenstand, den man entweder besitzt oder nicht, wie zum Beispiel ein Premium-Abonnement für eine Web-Service oder der Besitz eines Auto. Auch das Geschlecht einer Person ist ein Beispiel für eine binäre Variable. Wir bezeichnen die beiden möglichen Werte einer solchen Variablen mit $0$ und $1$. Die Zuordnung vom Merkmal zur Zahl ist frei wählbar.
+Die logistische Regression findet Anwendung im Falle, dass die abhängige Variable eine binäre Variable ist, also eine Variable, die nur zwei Werte annehmen kann. Oft handelt es sich um eine Eigenschaft oder einen Gegenstand, den man entweder besitzt oder nicht, wie zum Beispiel das Geschlecht einer Person, ein Premium-Abonnement für eine Web-Service oder der Besitz eines Auto. Wir bezeichnen die beiden möglichen Werte einer solchen Variablen mit $0$ und $1$. Die Zuordnung vom Merkmal zur Zahl ist frei wählbar.
 
-Lineare Regression eignet sich nicht zur Modellierung einer binären Variablen, da eine lineare Funktion entweder konstant oder unbeschränkt ist, in zweiten Fall also insbesondere Werte größer als 1 und kleiner als 0 annimmt. Um diesem Problem abzuhelfen wählen wir zusätzlich zu der linearen Funktion eine weitere Funktion, die beliebige Zahlen auf das Interval $[0, 1]$ abbildet. Im Falle der logistischen Regression verwendet man die gleichnamige logistische Funktion:
+Lineare Regression eignet sich nicht zur Modellierung einer binären Variablen, da eine lineare Funktion entweder konstant oder unbeschränkt ist, in zweiten Fall also insbesondere Werte größer als 1 und kleiner als 0 annimmt. Um diesem Problem abzuhelfen, wählen wir zusätzlich zu der linearen Funktion eine weitere Funktion, die beliebige Zahlen auf das Interval $[0, 1]$ abbildet. Im Falle der logistischen Regression verwendet man die gleichnamige logistische Funktion:
 \begin{align*}
     l: \mathbb{R} \rightarrow (0, 1),~~ x \mapsto \dfrac{1}{1+e^{-x}}
 \end{align*}
@@ -130,17 +127,17 @@ Wir stellen hierbei fest, dass folgende Identität für die Funktionen $\pi_i$ g
     &= 1 - \dfrac{e^{c_i}}{1 + e^{c_i}} = 1 - \dfrac{1}{e^{-c_i} + 1} \\
     &= 1 - \pi_i(\alpha, \beta_1, \dots, \beta_n)
 \end{align*}
-Wir interpretieren $\pi_i$ als die Wahrscheinlichkeit dafür, dass die abhängige Variable eines Datensatzes mit unabhängigen Variablen $x_{i, 1}, \dots, x_{i, n}$ gleich $1$ ist, also:
+Wir interpretieren $\pi_i$ als die Wahrscheinlichkeit dafür, dass der Wert der abhängigen Variable eines Datensatzes mit Werten $x_{i, 1}, \dots, x_{i, n}$ der unabhängigen Variablen gleich $1$ ist, also:
 \begin{align*}
     \pi_i = P(Y_i = 1 | X_1 = x_{i, 1}, \dots, X_n = x_{i, n})
 \end{align*}
 Man möchte die Parameter $\alpha$ und $\beta_k$ nun so schätzen, dass die Wahrscheinlichkeit für das Auftreten der vorhandenen Datenbasis maximiert wird. Diese Wahrscheinlichkeit ist gegeben durch:
 \begin{align*}
-    L(\alpha, \beta_1, \dots, \beta_n) &= \prod_{i=1}^m P(Y_i = y_i | X_1 = x_{i, 1}, \dots, X_n = x_{i, n}) \\
-    &= \prod_{i=1}^m y_i \cdot \pi_i(\alpha, \beta_1, \dots, \beta_n) + (1 - y_i) \cdot (1 - \pi_i(\alpha, \beta_1, \dots, \beta_n)) \\
-    &= \prod_{i=1}^m y_i \cdot \pi_i(\alpha, \beta_1, \dots, \beta_n) + (1 - y_i) \cdot \pi_i(- \alpha, - \beta_1, \dots, - \beta_n))
+    L(\alpha, \beta_1, \dots, \beta_n) &= \prod_{i=1}^m P(Y_i = y_i ~|~ X_1 = x_{i, 1}, \dots, X_n = x_{i, n}) \\
+    &= \prod_{i=1}^m y_i \cdot \pi_i(\alpha, \beta_1, \dots, \beta_n) + (1 - y_i) \cdot \big(1 - \pi_i(\alpha, \beta_1, \dots, \beta_n) \big) \\
+    &= \prod_{i=1}^m y_i \cdot \pi_i(\alpha, \beta_1, \dots, \beta_n) + (1 - y_i) \cdot \pi_i(- \alpha, - \beta_1, \dots, - \beta_n)
 \end{align*}
-Da alle $y_i$ im Fall der logistischen Regression entweder gleich $0$ oder gleich $1$ sind, ist immer nur einer der beiden Summanden in jedem Faktor nicht null. Diese Fallunterscheidung kann man auch in das Vorzeichen der Parameter verschieben, da sich die beiden möglichen Faktoren nur darin unterscheiden. Dann erhält man:
+Da alle $y_i$ entweder gleich $0$ oder gleich $1$ sind, ist immer nur einer der beiden Summanden in obigem Produkt nicht null. Diese Fallunterscheidung kann man auch in das Vorzeichen der Parameter verschieben, da sich die beiden möglichen Faktoren nur darin unterscheiden. Es gilt also:
 \begin{align*}
     L(\alpha, \beta_1, \dots, \beta_n) = \prod_{i=1}^m \pi(&(2 \cdot y_i - 1) \cdot \alpha, \\
     &(2 \cdot y_i - 1) \cdot \beta_1, \\
@@ -149,7 +146,7 @@ Da alle $y_i$ im Fall der logistischen Regression entweder gleich $0$ oder gleic
 \end{align*}
 Das Verfahren der Maximierung dieser Wahrscheinlichkeit bezeichnet man auch als Maximum-Likelihood-Methode. Die Funktion $L$ nennt man Likelihoodfunktion. Oft maximiert man nicht $L$ direkt, sondern eher $L_{log} := \ln(L)$. Der Sinn ist, dass man das Produkt damit in eine Summe einzelner Logarithmen umwandeln kann, welche wiederum einfacher abzuleiten ist. Die Maximierung von $L$ ist äquivalent mit der von $L_{log}$, da der Logarithmus eine stetig wachsende Funktion ist. Die Werte von $L$ liegen stets zwischen $0$ und $1$, also ist $L_{log}$ wohldefiniert.
 
-Um dieses Regressionsproblem zu lösen, muss man also die Parameter $\hat\alpha, \hat\beta_1, \dots, \hat\beta_n$ finden, für die gilt:
+Um dieses Regressionsproblem zu lösen, muss man also die Parameter $\hat\alpha$ und $\hat\beta_k$ finden, für die gilt:
 \begin{align*}
     L(\hat\alpha, \hat\beta_1, \dots, \hat\beta_n) = \max \left\{ L(\alpha, \beta_1, \dots, \beta_n) ~|~ \alpha \in \mathbb{R}, \beta_1 \in \mathbb{R}, \dots, \beta_n \in \mathbb{R} \right\}
 \end{align*}
@@ -158,11 +155,11 @@ In diesem Fall kommt man nicht mehr an einer iterativen Lösung vorbei, da das l
 \subsection{Gradientenverfahren}
 \label{subsection:2:2:1}
 
-Das Gradientenverfahren ist ein iterativer Algorithmus zur Lösung von Optimierungsproblemen. Nachdem wir hier bei der logistischen Regression eine Funktion maximieren wollen führen wir das Gradientenverfahren dementsprechend als Maximierungsalgorithmus ein. Man kann dasselbe Verfahren aber auch zur Lösung von Minimierungsproblemen einsetzen. Gegeben sei also eine Funktion der folgenden Form, die maximiert werden soll:
+Das Gradientenverfahren ist ein iterativer Algorithmus zur Lösung von Optimierungsproblemen. Nachdem wir hier bei der logistischen Regression eine Funktion maximieren wollen, führen wir das Gradientenverfahren dementsprechend als Maximierungsalgorithmus ein. Man kann dasselbe Verfahren aber auch zur Lösung von Minimierungsproblemen einsetzen. Gegeben sei eine Funktion der folgenden Form, die maximiert werden soll:
 \begin{align*}
     L: \mathbb{R}^{n+1} \rightarrow \mathbb{R},~~ (\alpha, \beta_1, \dots, \beta_n) \mapsto L(\alpha, \beta_1, \dots, \beta_n)
 \end{align*}
-Beim Gradientenverfahren beginnt man mit beliebigen Startwerten $\alpha^0$ und $\beta_k^0$ und einer Schrittweite $s \in \mathbb{R}^+$. Vom Startpunkt aus geht man nun in die Richtung des steilsten Anstieges der Funktion und erhält dadurch neue Werte $\alpha^1$ und $\beta_k^1$. Diese Richtung ist der Gradient der Funktion $L$.
+Beim Gradientenverfahren beginnt man mit beliebigen Startwerten $\alpha^0$ und $\beta_k^0$ und einer Schrittweite $s \in \mathbb{R}^+$. Vom Startpunkt aus geht man nun etwas in die Richtung des steilsten Anstieges der Funktion und erhält dadurch neue Werte $\alpha^1$ und $\beta_k^1$. Diese Richtung ist der Gradient der Funktion $L$.
 
 Der Gradient ist ein Vektor, der sich aus den partiellen Ableitungen von $L$ nach jeweils einer Variablen zusammensetzt und wird wie folgt notiert:
 \begin{align*}
@@ -193,7 +190,7 @@ Danach muss noch getestet werden, dass $L$ für die neuen Parameter auch wirklic
 \subsection{Gradient bei logistischer Regression}
 \label{subsection:2:2:2}
 
-Um das Gradientenverfahren bei logistischer Regression einsetzen zu können, muss der Gradient für den Logarithmus der Likelihoodfunktion bekannt sein. In diesem Kapitel berechnen wir also die partiellen Ableitungen nach allen Parametern.
+Um das Gradientenverfahren bei logistischer Regression einsetzen zu können, muss der Gradient für den Logarithmus der Likelihoodfunktion bekannt sein. In diesem Kapitel berechnen wir die partiellen Ableitungen nach allen Parametern.
 
 Um $L_{log} = \ln(L)$ partiell ableiten zu können, berechnen wir zuerst die partiellen Ableitungen aller $\pi_i$. Für die partielle Ableitung nach $\alpha$ ergibt sich mit der Kettenregel folgende Funktion:
 \begin{align*}
@@ -201,14 +198,14 @@ Um $L_{log} = \ln(L)$ partiell ableiten zu können, berechnen wir zuerst die par
     &= \left( 1 + \exp \left(- \alpha - \sum_{j=1}^n \beta_j \cdot x_{i, j} \right) \right)^{-1} \cdot \left( 1 + \exp \left(\alpha + \sum_{j=1}^n \beta_j \cdot x_{i, j} \right) \right)^{-1} \\
     &= \pi_i(\alpha, \beta_1, \dots, \beta_n) \cdot \pi_i(- \alpha, - \beta_1, \dots, - \beta_n)
 \end{align*}
-Die partiellen Ableitungen einem der $\beta_k$ für $k = 1, \dots, n$ kann fast analog gebildet werden. Bei der Anwendung der Kettenregel auf die innerste lineare Funktion bleibt jedoch noch der konstante Faktor $x_{i, k}$ übrig.
+Die partiellen Ableitungen nach einem der $\beta_k$ für $k = 1, \dots, n$ kann fast analog gebildet werden. Bei der Anwendung der Kettenregel auf die innerste lineare Funktion bleibt jedoch noch der konstante Faktor $x_{i, k}$ übrig.
 \begin{align*}
     \dfrac{\partial \pi_i}{\partial \beta_k} = x_{i, k} \cdot \pi_i(\alpha, \beta_1, \dots, \beta_n) \cdot \pi_i(- \alpha, - \beta_1, \dots, - \beta_n)
 \end{align*}
-Bevor wir $L_{log}$ ableiten, definieren wir Hilfsvariablen $\tilde\alpha := (2 y_i - 1) \alpha$ und $\tilde\beta_i := (2 y_i - 1) \beta_i$ für $i = 1, \dots, n$. Damit erhält man:
+Bevor wir $L_{log}$ ableiten, definieren wir Hilfsvariablen $\tilde\alpha := (2 y_i - 1) \alpha$ und $\tilde\beta_k := (2 y_i - 1) \beta_k$ für $k = 1, \dots, n$. Damit erhält man:
 \begin{align*}
     L_{log}(\alpha, \beta_1, \dots, \beta_n) &= \ln(L(\alpha, \beta_1, \dots, \beta_n)) \\
-    &= \sum_{i=1}^m \ln \left(y_i \cdot \pi(\tilde\alpha, \tilde\beta_1, \dots, \tilde\beta_n) \right)
+    &= \sum_{i=1}^m \ln \left(y_i \cdot \pi_i(\tilde\alpha, \tilde\beta_1, \dots, \tilde\beta_n) \right)
 \end{align*}
 Leitet man nach $\alpha$ ab, so erhält man:
 \begin{align*}
@@ -237,4 +234,4 @@ Damit können wir die partiellen Ableitungen weiter vereinfachen:
     \dfrac{\partial L_{log}}{\partial \alpha} &= \sum_{i=1}^m y_i - \pi_i(\alpha, \beta_1, \dots, \beta_n) \\
     \dfrac{\partial L_{log}}{\partial \beta_k} &= \sum_{i=1}^m x_{i, k} \cdot \big(y_i - \pi_i(\alpha, \beta_1, \dots, \beta_n) \big)
 \end{align*}
-Diese Darstellung der partiellen Ableitungen verwenden wir später in SQL zur Berechnung des Gradienten. Der Term innerhalb der Summe wird für jedes Tupel der Relation der Datenpunkte berechnet, danach wird das resultierende Attribut mit einer Gruppierung summiert.
+Diese Darstellung der partiellen Ableitungen verwenden wir später in SQL zur Berechnung des Gradienten. Der Term innerhalb der Summe wird für jedes Tupel der Relation der Datenpunkte berechnet. Danach wird das resultierende Attribut mit einer Gruppierung summiert.

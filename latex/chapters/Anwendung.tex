@@ -6,11 +6,11 @@ In diesem Kapitel werden mehrere Programmiersprachen vorgestellt, die sich für 
 \section{Beispieldaten}
 \label{section:3:1}
 
-Wir arbeiten in dieser Arbeit mit Beispieldaten, welche mit einem Python-Skript erstellt wurden. Das Skript ist als Ganzes im Anhang \ref{appendix:A} zu finden. Die Daten liegen in Form einer csv-Datei vor, welche in so gut wie jeder Sprache einfach eingelesen werden kann.
+Wir arbeiten in dieser Arbeit mit Beispieldaten, welche mit einem Python-Skript erstellt wurden. Das Skript ist als Ganzes im Anhang \ref{appendix:A} zu finden. Die Daten liegen in Form einer csv-Datei vor, welche in so gut wie jeder Sprache einfach eingelesen werden kann. Außerdem wird der Datensatz auch als INSERT-Abfrage in eine sql-Datei geschrieben, mit der die Daten in einem Datenbanksystem in eine Relation geschrieben werden können.
 
 Wir betrachten hier fiktive Kunden eines Onlinehandels. Für jeden Kunden wissen wir sein Alter, die Anzahl seiner Käufe, die Summe des ausgegebenen Geldes und ob der Kunde eine Premium-Mitgliedschaft besitzt oder nicht. Der ausgegebene Betrag wird in Cent angegeben, um mit ganzen Zahlen rechnen zu können. Die Premium-Mitgliedschaft wird mit einer 1 symbolisiert, während eine 0 das Gegenteil bedeutet.
 
-Insgesamt wurden für diese Arbeit 100.000 solcher Datensätze erzeugt. Die Ergebnisse später dargestellten Ergebnisse wurden mit den ersten 1.000 Datenpunkten berechnet. In der folgenden Tabelle sind die ersten 10 dieser Datensätze dargestellt.
+Insgesamt wurden für diese Arbeit $100000$ solcher Datensätze erzeugt. Die später dargestellten Ergebnisse wurden mit den ersten $1000$ Datenpunkten berechnet. In der folgenden Tabelle sind die ersten 10 dieser Datensätze dargestellt.
 
 \begin{center}
   \captionof{table}{Auszug aus den Beispieldaten}
@@ -29,6 +29,8 @@ Insgesamt wurden für diese Arbeit 100.000 solcher Datensätze erzeugt. Die Erge
   \end{tabular}
 \end{center}
 
+\pagebreak
+
 Wir wählen außerdem drei Fragestellungen, welche wir mit den in Kapitel 2 vorgestellten Arten von Regressionen beantworten werden:
 \begin{enumerate}
   \item Als Erstes wollen wir wissen, ob das ausgegebene Geld mit der Anzahl der Käufe in linearem Zusammenhang steht. Diese Frage können wir mit einfacher linearer Regression beantworten. $money$ ist hierbei die abhängige Variable und $purchases$ ist die unabhängige Variable.
@@ -39,7 +41,7 @@ Wir wählen außerdem drei Fragestellungen, welche wir mit den in Kapitel 2 vorg
 \section{R-Projekt}
 \label{section:3:2}
 
-Das R-Projekt oder einfach nur R ist eine Sprache für statistische Berechnungen und graphische Darstellung. Damit ist R wie geschaffen für Regressionsanalyse. Die für diese Arbeit erstellten R-Skripte findet man im Anhang \ref{appendix:B}.
+Das R-Projekt oder einfach nur R ist eine Sprache für statistische Berechnungen und auch grafische Darstellung. Damit ist R wie geschaffen für Regressionsanalyse. Die für diese Arbeit erstellten R-Skripte sind im Anhang \ref{appendix:B}.
 
 \subsection{Grundprinzip}
 \label{subsection:3:2:1}
@@ -48,14 +50,13 @@ In R sind Datenstrukturen wie Vektoren, Matrizen und Listen als Datentypen vorha
 
 In R lassen sich außerdem sogenannte Modelle definieren, welche als Eingabe nur die zugehörigen Daten und eine Formel benötigen. Eine Formel ist ein Zeichenfolge der Form "$y \sim modell$" und symbolisiert den funktionalen Zusammenhang zwischen der abhängigen und den unabhängigen Variablen.
 
-Hat man ein Modell erstellt, so bietet R Funktionen, um die Parameter für das gegebene Modell mittels Regressionsanalyse zu berechnen. Wir werden im Folgenden von den Funktionen $lm$ (für "linear model") und $glm$ (für "generalized linear model") Gebrauch machen.
+Hat man ein Modell erstellt, so bietet R Funktionen, um die Parameter für das definierte Modell mittels Regressionsanalyse zu berechnen. Wir werden im Folgenden von den Funktionen $lm$ (für "linear model") und $glm$ (für "generalized linear model") Gebrauch machen. Die Implementierungen der beiden Funktionen wurden an die gleichnamigen Funktionen in der verwandten Programmiersprache S angelehnt. Mehr dazu findet man in \cite{statistical}.
 
 \subsection{Einfache lineare Regression}
 \label{subsection:3:2:2}
 
 Betrachten wir also die erste Frage aus dem vorherigen Teilkapitel. Die Formel lautet hier "$money \sim purchases$". Man liest also die Daten aus der csv-Datei, erstellt das Modell mit der genannten Formel und berechnet die Parameter mit der Funktion $lm$. Mit nur drei Zeilen Code lässt sich also die komplette Regressionsanalyse implementieren. Die $print$-Funktion dient zur Ausgabe des Ergebnisses.
 
-\pagebreak
 \begin{minted}[linenos,breaklines,frame=single]{r}
   data <- read.csv2("sample.csv", sep = ",", header = TRUE)
   modell <- as.formula("money ~ purchases")
@@ -99,7 +100,7 @@ Bei logistischer Regression nutzen wir nicht mehr wie bisher ein lineares Modell
 
 Man braucht wie bei linearer Regression eine Formel für das Modell. Diese bildet man analog wie bisher, indem mal die abhängige Variable mit den unabhängigen Variablen über eine Tilde verbindet. Im Fall der dritten Fragestellung wählt man die Formel als "$premium \sim money$".
 
-Der gesamte R-Code für die logistische Regression ist wieder ähnlich zu dem Code aus \ref{subsection:3:2:1} und lautet wie folgt:
+Der gesamte R-Code für die logistische Regression ist wieder ähnlich zu dem Code aus \ref{subsection:3:2:2} und lautet wie folgt:
 
 \begin{minted}[linenos,breaklines,frame=single]{r}
   data <- read.csv2("sample.csv", sep = ",", header = TRUE)
@@ -131,14 +132,14 @@ Für Kunden, die weniger als $100$ Euro ausgegeben haben ist die Wahrscheinlichk
 
 TensorFlow ist eine Softwarebibliothek, die von Google für die Umsetzung von Algorithmen für maschinelles Lernen entwickelt wurde. Das umfasst insbesondere auch die Möglichkeit zur iterativen Optimierung von Kostenfunktionen, was wir nun zur Regressionsanalyse nutzen wollen.
 
-TensorFlow bietet APIs für verschiedene Programmiersprachen an. Die Skripte, welche für diese Arbeit erstellt wurden, sind in Python geschrieben. Wir verwenden TensorFlows Implementierung eines Gradientenabstiegsverfahrens, für welches man die Anzahl der Schritte und die Abstiegsgeschwindigkeit selbst wählen muss. Die Genauigkeit des Ergebnisses hängt folglich von einer angemessenen Auswahl dieser Werte ab.
+TensorFlow bietet APIs für verschiedene Programmiersprachen an. Die Skripte, \linebreak welche für diese Arbeit erstellt wurden, sind in Python geschrieben. Wir verwenden \linebreak TensorFlows Implementierung eines Gradientenabstiegsverfahrens, für welches man die Anzahl der Schritte und die Abstiegsgeschwindigkeit selbst wählen muss. Die Genauigkeit des Ergebnisses hängt folglich von einer angemessenen Auswahl dieser Werte ab.
 
 Die Python-Skripte umfassen nun zwischen 70 und 100 Codezeilen, daher findet man diese Skripte als Ganzes nur im Anhang \ref{appendix:C}. Die wichtigsten Ausschnitte aus dem Code sollen in den folgenden Teilkapiteln aber einen Einblick in die Funktionsweise des Codes geben.
 
 \subsection{Grundprinzip}
 \label{subsection:3:3:1}
 
-TensorFlow arbeitet mit Tensoren als grundliegende Datenstruktur. Solche sind im Wesentlichen Matrizen mit festen Dimensionen. Tensoren können mit Hilfe verschiedenster Operatoren weiterverarbeitet werden.
+TensorFlow arbeitet mit Tensoren als grundliegende Datenstruktur. Solche sind im Wesent-lichen mehrdimensionale Matrizen mit festen Dimensionen. Tensoren können mit Hilfe verschiedenster Operatoren weiterverarbeitet werden.
 
 Es gibt drei Möglichkeiten, Tensoren zu definieren, nämlich als Konstante, als Variable oder als Platzhalter. Während Konstanten ihren Wert nach der Initialisierung nicht mehr ändern können, sind die Werte der beiden Letztgenannten veränderbar. Der Unterschied besteht darin, dass Variablen mit einem Startwert initiiert werden, Platzhalter besitzen dagegen anfangs keinen Wert. Wir werden Variablen nutzen, um die Parameter über die Iterationen zu speichern. Die Daten, mit denen wir das Modell trainieren werden, übergeben wir an Platzhalter.
 
@@ -166,13 +167,13 @@ Hier definieren wir unsere Platzhalter und Variablen wie folgt:
   beta = tf.Variable(tf.zeros([1, 1]))
 \end{minted}
 
-$x$ und $y$ sind die Platzhalter für die Beispieldatensätze für das später folgende Training. $alpha$ und $beta$ sind die Variablen für die Parameter, welche mit Werten null initiiert werden. Daraus berechnen wir über den linearen funktionalen Zusammenhang die geschätzten $y$ Werte:
+$x$ und $y$ sind die Platzhalter für die Datensätze für die später folgende Optimierung. $alpha$ und $beta$ sind die Variablen für die Parameter, welche mit Werten null initiiert werden. Daraus berechnen wir über den linearen funktionalen Zusammenhang die geschätzten $y$ Werte:
 
 \begin{minted}[linenos,breaklines,frame=single]{python}
   y_calc = tf.matmul(x, beta) + alpha
 \end{minted}
 
-Die Funktion $tf.matmul$ führt Matrizenmultiplikation durch. Nun definieren wir die Kostenfunktion als Mittelwert der Quadrate zwischen den wahren und geschätzten $y$-Werten:
+Die Funktion $tf.matmul$ führt Matrizenmultiplikation durch. $y\_calc$ entspricht $\pi_i$ aus dem Grundlagenkapitel \ref{section:2:2}. Nun definieren wir die Kostenfunktion als Mittelwert der Quadrate zwischen den wahren und geschätzten $y$-Werten:
 
 \begin{minted}[linenos,breaklines,frame=single]{python}
   cost = tf.reduce_mean(tf.square(y - y_calc))
@@ -240,7 +241,7 @@ Wir wählen eine Schrittweite von $0.0001$ und iterieren $1000$ Schritte, um das
 \section{SQL}
 \label{section:3:4}
 
-Die "Structured Query Language" alias "SQL" ist eine Sprache zur Definition und Verarbeitung von Datenstrukturen in Datenbanksystemen und wird in nahezu allen Implementierungen relationaler Datenbanken unterstützt. Oft liegen die Daten, welche man für Regressionsanalyse verwenden möchte in einer solchen Datenbank.
+Die "Structured Query Language" alias "SQL" ist eine Sprache zur Definition und Verarbeitung von Datenstrukturen in Datenbanksystemen und wird in nahezu allen Implementierungen relationaler Datenbanksysteme unterstützt. Oft liegen die Daten, welche man für Regressionsanalyse verwenden möchte in einem solchen Datenbanksystem.
 
 SQL als Programmiersprache ist turingvollständig. Es ist also mit standardisierten SQL-Methoden möglich, Regression direkt in der Datenbank zu betreiben. Die konkrete Umsetzung hängt von der Art der Regression und dem spezifischen Datenbanksystem ab. In diesem Kapitel soll das nun in zwei Open-Source-Datenbanksystemen demonstriert werden, nämlich MySQL und PostgreSQL. Der vollständige SQL-Code befindet sich wegen der Länge wieder komplett im Anhang. Die MySQL-Skripte sind unter \ref{appendix:D} zu finden, die Skripte für PostgreSQL liegen in \ref{appendix:E}.
 
@@ -361,13 +362,13 @@ Wir verwenden für das Verfahren mehrere Relationen, in denen gewisse Informatio
     & bestimmten unabhängigen Variable für \\
     & einen bestimmten Datenpunkt. \\ \hline
     $binary\_values([id, value])$ & Ein Tupel enthält den Wert für \\
-    & die anhängige Variable eines \\
+    & die abhängige Variable eines \\
     & bestimmten Datenpunktes. \\ \hline
     $parameters([variable, old, new])$ & Ein Tupel enthält den alten \\
     & und den neuen Wert des Parameters \\
     & einer bestimmten Variable. \\ \hline
     $logits([id, old, new])$ & Ein Tupel enthält den Wert der \\
-    & logistischen Funktion berechnet mit \\
+    & logistischen Funktion (also $\pi_i$) berechnet mit \\
     & den alten oder neuen Parameterwerten \\
     & für einen bestimmten Datenpunkt. \\ \hline
     $gradient([variable, value])$ & Ein Tupel enthält den Wert \\
@@ -382,8 +383,8 @@ Wir definieren außerdem einige Hilfsfunktionen. Diese Funktionen besitzen keine
   \begin{tabular}{|c|c|c|c|}\hline
     \textbf{Name} & \textbf{Eingabe} & \textbf{Beschreibung} \\ \hline
     $calculate\_logits$ & & berechnet den Wert der \\
-    & & logistischen Funktion mit den \\
-    & & alten und neuen Parameter- \\
+    & & logistischen Funktion bzw. $\pi_i$ mit \\
+    & & den alten und neuen Parameter- \\
     & & werten für jeden Datenpunkt \\ \hline
     $calculate\_gradient$ & & berechnet den Wert der \\
     & & partiellen Ableitungen \\
@@ -403,7 +404,7 @@ Wir überprüfen, ob die neuen Parameter wirklich besser sind als die alten. Fal
 
 Haben wir die neuen Parameter erfolgreich berechnet, werden die Werte der $old$-Attribute in den Relationen $parameters$ und $logits$ mit den neuen Werten überschrieben und der Iterationsschritt ist beendet. Nachdem die Schleife beendet wurde, werden die Parameter wieder entsprechend linear transformiert, um den tatsächlichen Werten für $money$ zu entsprechen.
 
-Wir entscheiden und für 1000 Iterationen und wählen eine Schrittweite von $0.008$. Führt man die Prozeduren im jeweiligen Datenbanksystem aus, erhält man das folgende Ergebnis:
+Wir entscheiden uns für 1000 Iterationen und wählen eine Schrittweite von $0.008$. Führt man die Prozeduren im jeweiligen Datenbanksystem aus, erhält man das folgende Ergebnis:
 
 \begin{center}
   \captionof{table}{Logistische Regression in MySQL}

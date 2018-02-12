@@ -1,120 +1,119 @@
-% TODO: Skripte ganz zum Schluss nochmal pasten
 \chapter{Python-Skript zum Generieren der Beispieldaten}
 \label{appendix:A}
 
 \begin{minted}[linenos,breaklines,frame=single]{python}
-  import sys
-  import random
-  import math
+import sys
+import random
+import math
 
-  # Erzeuge Funktion, die die Daten in eine csv-Datei schreibt.
-  def outputCsv(data):
-    # Erzeuge ein Array mit den zu schreibenden Zeilen und übergebe die Spaltennamen.
-    output = ["%s,%s,%s,%s" % (
+# Erzeuge Funktion, die die Daten in eine csv-Datei schreibt.
+def outputCsv(data):
+  # Erzeuge ein Array mit den zu schreibenden Zeilen und übergebe die Spaltennamen.
+  output = ["%s,%s,%s,%s" % (
+    "age",
+    "purchases",
+    "money",
+    "premium"
+  )]
+
+  # Iteriere über alle Datenpukte.
+  for datapoint in data:
+    # Hänge eine Zeile an das output-Array an.
+    output.append("%s,%s,%s,%a" % (
+      datapoint["age"],
+      datapoint["purchases"],
+      datapoint["money"],
+      datapoint["premium"]
+    ))
+
+  # Öffne eine csv-Datei.
+  f = open("sample.csv", "w")
+
+  # Schreibe das output-Array als mit Zeilenumbrüchen gejointen String in die Datei.
+  f.write("\n".join(output))
+
+  return
+
+# Erzeuge Funktion, die die Daten in eine sql-Datei schreibt.
+def outputSql(data):
+  # Erzeuge ein Array mit den zu schreibenden Zeilen.
+  # Füge SQL-Abfragen ein, die eine eventuell bestehende Tabelle löscht und neu erstellet.
+  # Beginne mit der INSERT-Abfrage.
+  output = [
+    "DROP TABLE IF EXISTS sample;",
+    "",
+    "CREATE TABLE sample (",
+    "  age INTEGER,",
+    "  purchases INTEGER,",
+    "  money INTEGER,",
+    "  premium INTEGER",
+    ");",
+    "",
+    "INSERT INTO sample (%s,%s,%s,%s) VALUES" % (
       "age",
       "purchases",
       "money",
       "premium"
-    )]
+    )
+  ]
 
-    # Iteriere über alle Datenpukte.
-    for datapoint in data:
-      # Hänge eine Zeile an das output-Array an.
-      output.append("%s,%s,%s,%a" % (
-        datapoint["age"],
-        datapoint["purchases"],
-        datapoint["money"],
-        datapoint["premium"]
-      ))
+  # Iteriere über alle Datenpunkte.
+  for datapoint in data:
+    # Füge eine Zeile an die INSERT-Abfrage an.
+    output.append("(%s,%s,%s,%s)," % (
+      datapoint["age"],
+      datapoint["purchases"],
+      datapoint["money"],
+      datapoint["premium"]
+    ))
 
-    # Öffne eine csv-Datei.
-    f = open("sample.csv", "w")
+  # Ersetze das letzte Komma durch ein Semikolon, um die INSERT-Abfrage zu beenden.
+  output[-1] = output[-1][:-1] + ";"
 
-    # Schreibe das output-Array als mit Zeilenumbrüchen gejointen String in die Datei.
-    f.write("\n".join(output))
+  # Öffne eine sql-Datei.
+  f = open("sample.sql", "w")
 
+  # Schreibe das output-Array als mit Zeilenumbrüchen gejointen String in die Datei.
+  f.write("\n".join(output))
+
+  return
+
+def main(argv):
+  # Beende die Ausführung, wenn die Anzahl der zu erzeugenden Datenpunkte nicht übergeben wurde.
+  if len(argv) < 2:
+    print("Please provide number of datapoints that shall be generated.")
     return
 
-  # Erzeuge Funktion, die die Daten in eine sql-Datei schreibt.
-  def outputSql(data):
-    # Erzeuge ein Array mit den zu schreibenden Zeilen.
-    # Füge SQL-Abfragen ein, die eine eventuell bestehende Tabelle löscht und neu erstellet.
-    # Beginne mit der INSERT-Abfrage.
-    output = [
-      "DROP TABLE IF EXISTS sample;",
-      "",
-      "CREATE TABLE sample (",
-      "  age INTEGER,",
-      "  purchases INTEGER,",
-      "  money INTEGER,",
-      "  premium INTEGER",
-      ");",
-      "",
-      "INSERT INTO sample (%s,%s,%s,%s) VALUES" % (
-        "age",
-        "purchases",
-        "money",
-        "premium"
-      )
-    ]
+  # Erzeuge ein leeres Array für die Daten.
+  data = []
 
-    # Iteriere über alle Datenpunkte.
-    for datapoint in data:
-      # Füge eine Zeile an die INSERT-Abfrage an.
-      output.append("(%s,%s,%s,%s)," % (
-        datapoint["age"],
-        datapoint["purchases"],
-        datapoint["money"],
-        datapoint["premium"]
-      ))
+  # Iteriere über die Anzahl der zu erzeugenden Datenpunkte.
+  for i in range(0, int(argv[1])):
+    # Bestimme pseudo-zufällige Werte für den Datenpunkt.
+    age = int(max(random.normalvariate(25, 10) + 10, 18))
+    purchases = int(max(random.normalvariate(10, 10), 1))
+    money = int(max(purchases * 25 + random.normalvariate(0, (math.log(purchases) + 1) * 12), 0.01) * 100)
+    if random.uniform(0, 1) > math.exp(0.2 * purchases - 2) / (1 + math.exp(0.2 * purchases - 2)):
+      premium = 0
+    else:
+      premium = 1
 
-    # Ersetze das letzte Komma durch ein Semikolon, um die INSERT-Abfrage zu beenden.
-    output[-1] = output[-1][:-1] + ";"
+    # Hänge den Datenpunkt an das Array an.
+    data.append({
+      "age": age,
+      "purchases": purchases,
+      "money": money,
+      "premium": premium
+    })
 
-    # Öffne eine sql-Datei.
-    f = open("sample.sql", "w")
+  # Schreibe die generierten Daten in eine .csv und eine .sql Datei.
+  outputCsv(data)
+  outputSql(data)
+  return
 
-    # Schreibe das output-Array als mit Zeilenumbrüchen gejointen String in die Datei.
-    f.write("\n".join(output))
-
-    return
-
-  def main(argv):
-    # Beende die Ausführung, wenn die Anzahl der zu erzeugenden Datenpunkte nicht übergeben wurde.
-    if len(argv) < 2:
-      print("Please provide number of datapoints that shall be generated.")
-      return
-
-    # Erzeuge ein leeres Array für die Daten.
-    data = []
-
-    # Iteriere über die Anzahl der zu erzeugenden Datenpunkte.
-    for i in range(0, int(argv[1])):
-      # Bestimme pseudo-zufällige Werte für den Datenpunkt.
-      age = int(max(random.normalvariate(25, 10) + 10, 18))
-      purchases = int(max(random.normalvariate(10, 10), 1))
-      money = int(max(purchases * 25 + random.normalvariate(0, (math.log(purchases) + 1) * 12), 0.01) * 100)
-      if random.uniform(0, 1) > math.exp(0.2 * purchases - 2) / (1 + math.exp(0.2 * purchases - 2)):
-        premium = 0
-      else:
-        premium = 1
-
-      # Hänge den Datenpunkt an das Array an.
-      data.append({
-        "age": age,
-        "purchases": purchases,
-        "money": money,
-        "premium": premium
-      })
-
-    # Schreibe die generierten Daten in eine .csv und eine .sql Datei.
-    outputCsv(data)
-    outputSql(data)
-    return
-
-  # Führe die main-Funktion aus.
-  if __name__ == "__main__":
-    main(sys.argv)
+# Führe die main-Funktion aus.
+if __name__ == "__main__":
+  main(sys.argv)
 \end{minted}
 
 \chapter{R-Skripte}
@@ -124,218 +123,218 @@
 \label{appendix:B:1}
 
 \begin{minted}[linenos,breaklines,frame=single]{r}
-  # Lese die übergebenen Argumente ein.
-  args = commandArgs(trailingOnly = TRUE)
+# Lese die übergebenen Argumente ein.
+args = commandArgs(trailingOnly = TRUE)
 
-  # Setzte default-Werte für die Anzahl der Datenpunkte und ob geplottet werden soll.
-  n <- 1000
-  plot <- TRUE
+# Setzte default-Werte für die Anzahl der Datenpunkte und ob geplottet werden soll.
+n <- 1000
+plot <- TRUE
 
-  # Ändere die default-Werte, falls entsprechende Argumente übergeben wurden.
-  if (length(args) == 1) {
-    if (substr(args[1], 1, 1) == "-") {
-      plot <- FALSE
-    } else {
-      n = strtoi(args[1])
-    }
-  }
-  if (length(args) == 2) {
-    if (substr(args[1], 1, 1) == "-") {
-      n = strtoi(args[2])
-    } else {
-      n = strtoi(args[1])
-    }
+# Ändere die default-Werte, falls entsprechende Argumente übergeben wurden.
+if (length(args) == 1) {
+  if (substr(args[1], 1, 1) == "-") {
     plot <- FALSE
+  } else {
+    n = strtoi(args[1])
   }
-
-  # Speichere die aktuelle Zeit zur Zeitmessung.
-  start_time <- Sys.time()
-
-  # Lies die Daten aus der csv-Datei ein.
-  data <- head(read.csv2("./data/sample.csv", sep = ",", header = TRUE), n)
-
-  # Definiere das Modell.
-  modell <- as.formula("money ~ purchases")
-
-  # Führe die Regression durch.
-  slr <- lm(modell, data = data)
-
-  # Speichere die aktuelle Zeit zur Zeitmessung.
-  end_time <- Sys.time()
-
-  # Drucke die Ergebnisse der Regressionsanalyse und die Laufzeit.
-  print(slr)
-  print(end_time - start_time)
-
-  # Erstelle einen Plot.
-  if (plot) {
-    # Bestimme die Grenzen für die unabhängige Variable.
-    xmin <- min(data$purchases)
-    xmax <- max(data$purchases)
-
-    # Bestimme die Grenzen für die abhängige Variable.
-    ymin <- min(data$money)
-    ymax <- max(data$money)
-
-    # Bestimme die Koeffizienten aus der Regressionsanalyse.
-    b0 <- coef(slr["coefficients"])[1]
-    b1 <- coef(slr["coefficients"])[2]
-
-    # Erzeuge Vektoren zum Plot der linearen Funktion.
-    xplot <- c(xmin - 1, xmax + 1)
-    yplot <- c(b0 + (xmin - 1) * b1, b0 + (xmax + 1) * b1)
-
-    # Erstelle den Plot.
-    plot(
-      c(xmin - 1, xmax + 1),
-      c(ymin - 1, ymax + 1),
-      type = "n",
-      xlab = "purchases",
-      ylab = "money",
-      main = "Einfache lineare Regression",
-      sub = paste("money = ", b0, "+", b1, "* purchases"),
-      col.sub = "darkgray"
-    )
-    # Füge die Datenpunkte ein.
-    lines(
-      data$purchases,
-      data$money,
-      type="p"
-    )
-    # Füge die Ausgleichsgerade ein.
-    lines(
-      xplot,
-      yplot,
-      col = "red",
-      lwd = 2
-    )
+}
+if (length(args) == 2) {
+  if (substr(args[1], 1, 1) == "-") {
+    n = strtoi(args[2])
+  } else {
+    n = strtoi(args[1])
   }
+  plot <- FALSE
+}
+
+# Speichere die aktuelle Zeit zur Zeitmessung.
+start_time <- Sys.time()
+
+# Lies die Daten aus der csv-Datei ein.
+data <- head(read.csv2("./data/sample.csv", sep = ",", header = TRUE), n)
+
+# Definiere das Modell.
+modell <- as.formula("money ~ purchases")
+
+# Führe die Regression durch.
+slr <- lm(modell, data = data)
+
+# Speichere die aktuelle Zeit zur Zeitmessung.
+end_time <- Sys.time()
+
+# Drucke die Ergebnisse der Regressionsanalyse und die Laufzeit.
+print(slr)
+print(end_time - start_time)
+
+# Erstelle einen Plot.
+if (plot) {
+  # Bestimme die Grenzen für die unabhängige Variable.
+  xmin <- min(data$purchases)
+  xmax <- max(data$purchases)
+
+  # Bestimme die Grenzen für die abhängige Variable.
+  ymin <- min(data$money)
+  ymax <- max(data$money)
+
+  # Bestimme die Koeffizienten aus der Regressionsanalyse.
+  b0 <- coef(slr["coefficients"])[1]
+  b1 <- coef(slr["coefficients"])[2]
+
+  # Erzeuge Vektoren zum Plot der linearen Funktion.
+  xplot <- c(xmin - 1, xmax + 1)
+  yplot <- c(b0 + (xmin - 1) * b1, b0 + (xmax + 1) * b1)
+
+  # Erstelle den Plot.
+  plot(
+    c(xmin - 1, xmax + 1),
+    c(ymin - 1, ymax + 1),
+    type = "n",
+    xlab = "purchases",
+    ylab = "money",
+    main = "Einfache lineare Regression",
+    sub = paste("money = ", b0, "+", b1, "* purchases"),
+    col.sub = "darkgray"
+  )
+  # Füge die Datenpunkte ein.
+  lines(
+    data$purchases,
+    data$money,
+    type="p"
+  )
+  # Füge die Ausgleichsgerade ein.
+  lines(
+    xplot,
+    yplot,
+    col = "red",
+    lwd = 2
+  )
+}
 \end{minted}
 
 \section{Multiple lineare Regression}
 \label{appendix:B:2}
 
 \begin{minted}[linenos,breaklines,frame=single]{r}
-  # Lese die übergebenen Argumente ein.
-  args = commandArgs(trailingOnly = TRUE)
+# Lese die übergebenen Argumente ein.
+args = commandArgs(trailingOnly = TRUE)
 
-  # Setzte default-Wert für die Anzahl der Datenpunkte.
-  n = 1000
+# Setzte default-Wert für die Anzahl der Datenpunkte.
+n = 1000
 
-  # Ändere den default-Wert, falls ein entsprechendes Argumente übergeben wurde.
-  if (length(args) > 0) {
-    n = strtoi(args[1])
-  }
+# Ändere den default-Wert, falls ein entsprechendes Argumente übergeben wurde.
+if (length(args) > 0) {
+  n = strtoi(args[1])
+}
 
-  # Speichere die aktuelle Zeit zur Zeitmessung.
-  start_time <- Sys.time()
+# Speichere die aktuelle Zeit zur Zeitmessung.
+start_time <- Sys.time()
 
-  # Lies die Daten aus der csv-Datei ein.
-  data <- head(read.csv2("./data/sample.csv", sep = ",", header = TRUE), n)
+# Lies die Daten aus der csv-Datei ein.
+data <- head(read.csv2("./data/sample.csv", sep = ",", header = TRUE), n)
 
-  # Definiere das Modell.
-  modell <- as.formula("money ~ purchases + age")
+# Definiere das Modell.
+modell <- as.formula("money ~ purchases + age")
 
-  # Führe die Regression durch.
-  mlr <- lm(modell, data = data)
+# Führe die Regression durch.
+mlr <- lm(modell, data = data)
 
-  # Speichere die aktuelle Zeit zur Zeitmessung.
-  end_time <- Sys.time()
+# Speichere die aktuelle Zeit zur Zeitmessung.
+end_time <- Sys.time()
 
-  # Drucke die Ergebnisse der Regressionsanalyse und die Laufzeit.
-  print(mlr)
-  print(end_time - start_time)
+# Drucke die Ergebnisse der Regressionsanalyse und die Laufzeit.
+print(mlr)
+print(end_time - start_time)
 \end{minted}
 
 \section{Logistische Regression}
 \label{appendix:B:3}
 
 \begin{minted}[linenos,breaklines,frame=single]{r}
-  # Lese die übergebenen Argumente ein.
-  args = commandArgs(trailingOnly = TRUE)
+# Lese die übergebenen Argumente ein.
+args = commandArgs(trailingOnly = TRUE)
 
-  # Setzte default-Werte für die Anzahl der Datenpunkte und ob geplottet werden soll.
-  n <- 1000
-  plot <- TRUE
+# Setzte default-Werte für die Anzahl der Datenpunkte und ob geplottet werden soll.
+n <- 1000
+plot <- TRUE
 
-  # Ändere die default-Werte, falls entsprechende Argumente übergeben wurden.
-  if (length(args) == 1) {
-    if (substr(args[1], 1, 1) == "-") {
-      plot <- FALSE
-    } else {
-      n = strtoi(args[1])
-    }
-  }
-  if (length(args) == 2) {
-    if (substr(args[1], 1, 1) == "-") {
-      n = strtoi(args[2])
-    } else {
-      n = strtoi(args[1])
-    }
+# Ändere die default-Werte, falls entsprechende Argumente übergeben wurden.
+if (length(args) == 1) {
+  if (substr(args[1], 1, 1) == "-") {
     plot <- FALSE
+  } else {
+    n = strtoi(args[1])
+  }
+}
+if (length(args) == 2) {
+  if (substr(args[1], 1, 1) == "-") {
+    n = strtoi(args[2])
+  } else {
+    n = strtoi(args[1])
+  }
+  plot <- FALSE
+}
+
+# Speichere die aktuelle Zeit zur Zeitmessung.
+start_time <- Sys.time()
+
+# Lies die Daten aus der csv-Datei ein.
+data <- head(read.csv2("./data/sample.csv", sep = ",", header = TRUE), n)
+
+# Definiere das Modell.
+modell <- as.formula("premium ~ money")
+
+# Führe die Regression durch.
+logit <- glm(modell, family = binomial, data = data)
+
+# Speichere die aktuelle Zeit zur Zeitmessung.
+end_time <- Sys.time()
+
+# Drucke die Ergebnisse der Regressionsanalyse und die Laufzeit.
+print(logit)
+print(end_time - start_time)
+
+# Erstelle einen Plot.
+if (plot) {
+  # Bestimme die Grenzen für die unabhängige Variable.
+  xmin <- min(data$money)
+  xmax <- max(data$money)
+
+  # Bestimme eine Funktion, die den Wert der logistischen Funktion berechnet.
+  logitFunction <- function(x){
+    # Verwende die Parameter aus der Regressionsanalyse.
+    b0 <- coef(logit["coefficients"])[1]
+    b1 <- coef(logit["coefficients"])[2]
+    c <- b0 + x * b1
+    return(exp(c) / (1 + exp(c)))
   }
 
-  # Speichere die aktuelle Zeit zur Zeitmessung.
-  start_time <- Sys.time()
+  # Erzeuge Vektoren zum Plot der logistischen Funktion.
+  xplot <- seq(xmin - 1, xmax + 1, 1000)
+  yplot <- logitFunction(xplot)
 
-  # Lies die Daten aus der csv-Datei ein.
-  data <- head(read.csv2("./data/sample.csv", sep = ",", header = TRUE), n)
-
-  # Definiere das Modell.
-  modell <- as.formula("premium ~ money")
-
-  # Führe die Regression durch.
-  logit <- glm(modell, family = binomial, data = data)
-
-  # Speichere die aktuelle Zeit zur Zeitmessung.
-  end_time <- Sys.time()
-
-  # Drucke die Ergebnisse der Regressionsanalyse und die Laufzeit.
-  print(logit)
-  print(end_time - start_time)
-
-  # Erstelle einen Plot.
-  if (plot) {
-    # Bestimme die Grenzen für die unabhängige Variable.
-    xmin <- min(data$money)
-    xmax <- max(data$money)
-
-    # Bestimme eine Funktion, die den Wert der logistischen Funktion berechnet.
-    logitFunction <- function(x){
-      # Verwende die Parameter aus der Regressionsanalyse.
-      b0 <- coef(logit["coefficients"])[1]
-      b1 <- coef(logit["coefficients"])[2]
-      c <- b0 + x * b1
-      return(exp(c) / (1 + exp(c)))
-    }
-
-    # Erzeuge Vektoren zum Plot der logistischen Funktion.
-    xplot <- seq(xmin - 1, xmax + 1, 1000)
-    yplot <- logitFunction(xplot)
-
-    # Erstelle den Plot.
-    plot(
-      c(xmin - 1, xmax + 1),
-      c(-0.2, 1.2),
-      type = "n",
-      xlab = "money",
-      ylab = "premium",
-      main = "Logistische Regression"
-    )
-    # Füge die Datenpunkte ein.
-    lines(
-      data$money,
-      data$premium,
-      type="p"
-    )
-    # Füge die logistische Funktion ein.
-    lines(
-      xplot,
-      yplot,
-      col = "red",
-      lwd = 2
-    )
-  }
+  # Erstelle den Plot.
+  plot(
+    c(xmin - 1, xmax + 1),
+    c(-0.2, 1.2),
+    type = "n",
+    xlab = "money",
+    ylab = "premium",
+    main = "Logistische Regression"
+  )
+  # Füge die Datenpunkte ein.
+  lines(
+    data$money,
+    data$premium,
+    type="p"
+  )
+  # Füge die logistische Funktion ein.
+  lines(
+    xplot,
+    yplot,
+    col = "red",
+    lwd = 2
+  )
+}
 \end{minted}
 
 \chapter{TensorFlow-Skripte}
@@ -345,355 +344,355 @@
 \label{appendix:C:1}
 
 \begin{minted}[linenos,breaklines,frame=single]{python}
-  import numpy as np
-  import tensorflow as tf
-  import os.path as p
-  import csv
-  import sys
-  import matplotlib.pyplot as plt
-  from time import time
+import numpy as np
+import tensorflow as tf
+import os.path as p
+import csv
+import sys
+import matplotlib.pyplot as plt
+from time import time
 
-  # Erstelle eine Funktion zum einlesen der Daten aus der csv-Daten.
-  def get_data(n_samples):
-    # Bestimme den Pfad der csv-Datei und öffne die Datei.
-    filename = p.abspath(p.join(p.dirname(p.realpath(__file__)), "..", "data", "sample.csv"))
-    csvfile = open(filename, newline="")
-    csvreader = csv.reader(csvfile, delimiter=",", quotechar="|")
+# Erstelle eine Funktion zum einlesen der Daten aus der csv-Daten.
+def get_data(n_samples):
+  # Bestimme den Pfad der csv-Datei und öffne die Datei.
+  filename = p.abspath(p.join(p.dirname(p.realpath(__file__)), "..", "data", "sample.csv"))
+  csvfile = open(filename, newline="")
+  csvreader = csv.reader(csvfile, delimiter=",", quotechar="|")
 
-    # Erstelle leere Arrays für die Daten.
-    x = []
-    x_plot = []
-    y = []
+  # Erstelle leere Arrays für die Daten.
+  x = []
+  x_plot = []
+  y = []
 
-    # Iteriere über die Zeilen der csv-Datei.
-    for row in csvreader:
-      # Überspringe die erste Zeile.
-      if not row[0] == "age":
-        # Füge die Daten der Zeile zum jeweiligen Array hinzu.
-        x.append([int(row[1])])
-        x_plot.append(int(row[1]))
-        y.append(int(row[2]))
+  # Iteriere über die Zeilen der csv-Datei.
+  for row in csvreader:
+    # Überspringe die erste Zeile.
+    if not row[0] == "age":
+      # Füge die Daten der Zeile zum jeweiligen Array hinzu.
+      x.append([int(row[1])])
+      x_plot.append(int(row[1]))
+      y.append(int(row[2]))
 
-    # Gib die Arrays bis zu der gewünschten Menge an Datenpunkten zurück.
-    return (np.array(x[:n_samples]), x_plot[:n_samples], np.transpose([y[:n_samples]]))
+  # Gib die Arrays bis zu der gewünschten Menge an Datenpunkten zurück.
+  return (np.array(x[:n_samples]), x_plot[:n_samples], np.transpose([y[:n_samples]]))
 
-  def main(argv):
-    # Bestimme default-Werte für die Anzahl der Datenpunkte und ob geplottet werden soll.
-    datapoint_size = 1000
-    plot = True
+def main(argv):
+  # Bestimme default-Werte für die Anzahl der Datenpunkte und ob geplottet werden soll.
+  datapoint_size = 1000
+  plot = True
 
-    # Ändere die default-Werte, wenn entsprechende Argumente übergeben wurden.
-    if len(argv) == 2:
-      if argv[1] == "-":
-        plot = False
-      else:
-        datapoint_size = int(argv[1])
-    elif len(argv) == 3:
+  # Ändere die default-Werte, wenn entsprechende Argumente übergeben wurden.
+  if len(argv) == 2:
+    if argv[1] == "-":
       plot = False
-      if argv[1] == "-":
-        datapoint_size = int(argv[2])
-      else:
-        datapoint_size = int(argv[1])
+    else:
+      datapoint_size = int(argv[1])
+  elif len(argv) == 3:
+    plot = False
+    if argv[1] == "-":
+      datapoint_size = int(argv[2])
+    else:
+      datapoint_size = int(argv[1])
 
-    # Bestimme die aktuelle Zeit zur Zeitmessung.
-    start_time = time()
+  # Bestimme die aktuelle Zeit zur Zeitmessung.
+  start_time = time()
 
-    # Bestimme die Anzahl der Iterationen und die Schrittweite (anhängig von der Anzahl der Datenpunkte.)
-    steps = 2000
-    if datapoint_size <= 10:
-      learn_rate = 0.0076
-    elif datapoint_size <= 100:
-      learn_rate = 0.0064
-    elif datapoint_size <= 1000:
-      learn_rate = 0.0056
-    elif datapoint_size <= 10000:
-      learn_rate = 0.0054
-    elif datapoint_size <= 100000:
-      learn_rate = 0.0054
+  # Bestimme die Anzahl der Iterationen und die Schrittweite (anhängig von der Anzahl der Datenpunkte.)
+  steps = 2000
+  if datapoint_size <= 10:
+    learn_rate = 0.0076
+  elif datapoint_size <= 100:
+    learn_rate = 0.0064
+  elif datapoint_size <= 1000:
+    learn_rate = 0.0056
+  elif datapoint_size <= 10000:
+    learn_rate = 0.0054
+  elif datapoint_size <= 100000:
+    learn_rate = 0.0054
 
-    # Deklariere die Platzhalter und Variablen.
-    x = tf.placeholder(tf.float32, [None, 1])
-    y = tf.placeholder(tf.float32, [None, 1])
-    alpha = tf.Variable(tf.zeros([1]))
-    beta = tf.Variable(tf.zeros([1, 1]))
-    y_calc = tf.matmul(x, beta) + alpha
+  # Deklariere die Platzhalter und Variablen.
+  x = tf.placeholder(tf.float32, [None, 1])
+  y = tf.placeholder(tf.float32, [None, 1])
+  alpha = tf.Variable(tf.zeros([1]))
+  beta = tf.Variable(tf.zeros([1, 1]))
+  y_calc = tf.matmul(x, beta) + alpha
 
-    # Definiere die Kostenfunktion und die Minimierungsoperation.
-    cost = tf.reduce_mean(tf.square(y - y_calc))
-    train_step = tf.train.GradientDescentOptimizer(learn_rate).minimize(cost)
+  # Definiere die Kostenfunktion und die Minimierungsoperation.
+  cost = tf.reduce_mean(tf.square(y - y_calc))
+  train_step = tf.train.GradientDescentOptimizer(learn_rate).minimize(cost)
 
-    # Importiere die Daten.
-    (all_xs, plot_xs, all_ys) = get_data(datapoint_size)
+  # Importiere die Daten.
+  (all_xs, plot_xs, all_ys) = get_data(datapoint_size)
 
-    # Starte eine Session in TensorFlow.
-    sess = tf.Session()
-    init = tf.global_variables_initializer()
-    sess.run(init)
+  # Starte eine Session in TensorFlow.
+  sess = tf.Session()
+  init = tf.global_variables_initializer()
+  sess.run(init)
 
-    # Iteriere und trainiere.
-    for i in range(steps):
-      feed = { x: all_xs, y: all_ys }
-      sess.run(train_step, feed_dict=feed)
+  # Iteriere und trainiere.
+  for i in range(steps):
+    feed = { x: all_xs, y: all_ys }
+    sess.run(train_step, feed_dict=feed)
 
-    # Bestimme die aktuellen Parameterwerte nach der Anzahl der Iterationen.
-    (curr_alpha, curr_beta, curr_cost) = sess.run([alpha, beta, cost], feed_dict=feed)
+  # Bestimme die aktuellen Parameterwerte nach der Anzahl der Iterationen.
+  (curr_alpha, curr_beta, curr_cost) = sess.run([alpha, beta, cost], feed_dict=feed)
 
-    # Bestimme die aktuelle Zeit zur Zeitmessung.
-    end_time = time()
+  # Bestimme die aktuelle Zeit zur Zeitmessung.
+  end_time = time()
 
-    # Drucke die Ergebnisse.
-    print("alpha:  %f" % curr_alpha)
-    print("beta:   %f" % curr_beta)
-    print("cost:   %f" % curr_cost)
-    print("")
-    print("time elapsed:  %f sec" % (end_time - start_time))
+  # Drucke die Ergebnisse.
+  print("alpha:  %f" % curr_alpha)
+  print("beta:   %f" % curr_beta)
+  print("cost:   %f" % curr_cost)
+  print("")
+  print("time elapsed:  %f sec" % (end_time - start_time))
 
-    # Erstelle einen Plot (falls gewünscht).
-    if plot:
-      plt.plot(plot_xs, all_ys, "ro", label="Original data")
-      plt.plot(plot_xs, curr_beta * all_xs + curr_alpha , label="Fitted line")
-      plt.legend()
-      plt.show()
+  # Erstelle einen Plot (falls gewünscht).
+  if plot:
+    plt.plot(plot_xs, all_ys, "ro", label="Original data")
+    plt.plot(plot_xs, curr_beta * all_xs + curr_alpha , label="Fitted line")
+    plt.legend()
+    plt.show()
 
-  # Führe die main-Funktion aus.
-  if __name__ == "__main__":
-    main(sys.argv)
+# Führe die main-Funktion aus.
+if __name__ == "__main__":
+  main(sys.argv)
 \end{minted}
 
 \section{Multiple lineare Regression}
 \label{appendix:C:2}
 
 \begin{minted}[linenos,breaklines,frame=single]{python}
-  import numpy as np
-  import tensorflow as tf
-  import os.path as p
-  import csv
-  import sys
-  from time import time
+import numpy as np
+import tensorflow as tf
+import os.path as p
+import csv
+import sys
+from time import time
 
-  # Erstelle eine Funktion zum einlesen der Daten aus der csv-Daten.
-  def get_data(n_samples):
-    # Bestimme den Pfad der csv-Datei und öffne die Datei.
-    filename = p.abspath(p.join(p.dirname(p.realpath(__file__)), "..", "data", "sample.csv"))
-    csvfile = open(filename, newline="")
-    csvreader = csv.reader(csvfile, delimiter=",", quotechar="|")
+# Erstelle eine Funktion zum einlesen der Daten aus der csv-Daten.
+def get_data(n_samples):
+  # Bestimme den Pfad der csv-Datei und öffne die Datei.
+  filename = p.abspath(p.join(p.dirname(p.realpath(__file__)), "..", "data", "sample.csv"))
+  csvfile = open(filename, newline="")
+  csvreader = csv.reader(csvfile, delimiter=",", quotechar="|")
 
-    # Erstelle leere Arrays für die Daten.
-    x = []
-    y = []
+  # Erstelle leere Arrays für die Daten.
+  x = []
+  y = []
 
-    # Iteriere über die Zeilen der csv-Datei.
-    for row in csvreader:
-      # Überspringe die erste Zeile.
-      if not row[0] == "age":
-        # Füge die Daten der Zeile zum jeweiligen Array hinzu.
-        x.append([int(row[1]), int(row[0])])
-        y.append(int(row[2]))
+  # Iteriere über die Zeilen der csv-Datei.
+  for row in csvreader:
+    # Überspringe die erste Zeile.
+    if not row[0] == "age":
+      # Füge die Daten der Zeile zum jeweiligen Array hinzu.
+      x.append([int(row[1]), int(row[0])])
+      y.append(int(row[2]))
 
-    # Gib die Arrays bis zu der gewünschten Menge an Datenpunkten zurück.
-    return (np.array(x[:n_samples]), np.transpose([y[:n_samples]]))
+  # Gib die Arrays bis zu der gewünschten Menge an Datenpunkten zurück.
+  return (np.array(x[:n_samples]), np.transpose([y[:n_samples]]))
 
-  def main(argv):
-    # Bestimme default-Wert für die Anzahl der Datenpunkte.
-    datapoint_size = 1000
+def main(argv):
+  # Bestimme default-Wert für die Anzahl der Datenpunkte.
+  datapoint_size = 1000
 
-    # Ändere den default-Wert, wenn ein entsprechendes Argument übergeben wurde.
-    if len(argv) == 2:
-      datapoint_size = int(argv[1])
+  # Ändere den default-Wert, wenn ein entsprechendes Argument übergeben wurde.
+  if len(argv) == 2:
+    datapoint_size = int(argv[1])
 
-    # Bestimme die aktuelle Zeit zur Zeitmessung.
-    start_time = time()
+  # Bestimme die aktuelle Zeit zur Zeitmessung.
+  start_time = time()
 
-    # Bestimme die Anzahl der Iterationen und die Schrittweite (anhängig von der Anzahl der Datenpunkte.)
-    steps = 50000
-    if datapoint_size <= 10:
-      learn_rate = 0.00093
-    elif datapoint_size <= 100:
-      learn_rate = 0.00078
-    elif datapoint_size <= 1000:
-      learn_rate = 0.0007
-    elif datapoint_size <= 10000:
-      learn_rate = 0.00071
-    elif datapoint_size <= 100000:
-      learn_rate = 0.00071
+  # Bestimme die Anzahl der Iterationen und die Schrittweite (anhängig von der Anzahl der Datenpunkte.)
+  steps = 50000
+  if datapoint_size <= 10:
+    learn_rate = 0.00093
+  elif datapoint_size <= 100:
+    learn_rate = 0.00078
+  elif datapoint_size <= 1000:
+    learn_rate = 0.0007
+  elif datapoint_size <= 10000:
+    learn_rate = 0.00071
+  elif datapoint_size <= 100000:
+    learn_rate = 0.00071
 
-    # Deklariere die Platzhalter und Variablen.
-    x = tf.placeholder(tf.float32, [None, 2])
-    y = tf.placeholder(tf.float32, [None, 1])
-    alpha = tf.Variable(tf.zeros([1]))
-    beta = tf.Variable(tf.zeros([2, 1]))
-    y_calc = tf.matmul(x, beta) + alpha
+  # Deklariere die Platzhalter und Variablen.
+  x = tf.placeholder(tf.float32, [None, 2])
+  y = tf.placeholder(tf.float32, [None, 1])
+  alpha = tf.Variable(tf.zeros([1]))
+  beta = tf.Variable(tf.zeros([2, 1]))
+  y_calc = tf.matmul(x, beta) + alpha
 
-    # Definiere die Kostenfunktion und die Minimierungsoperation.
-    cost = tf.reduce_mean(tf.square(y - y_calc))
-    train_step = tf.train.GradientDescentOptimizer(learn_rate).minimize(cost)
+  # Definiere die Kostenfunktion und die Minimierungsoperation.
+  cost = tf.reduce_mean(tf.square(y - y_calc))
+  train_step = tf.train.GradientDescentOptimizer(learn_rate).minimize(cost)
 
-    # Importiere die Daten.
-    (all_xs, all_ys) = get_data(datapoint_size)
+  # Importiere die Daten.
+  (all_xs, all_ys) = get_data(datapoint_size)
 
-    # Starte eine Session in TensorFlow.
-    sess = tf.Session()
-    init = tf.global_variables_initializer()
-    sess.run(init)
+  # Starte eine Session in TensorFlow.
+  sess = tf.Session()
+  init = tf.global_variables_initializer()
+  sess.run(init)
 
-    # Iteriere und trainiere.
-    for i in range(steps):
-      feed = { x: all_xs, y: all_ys }
-      sess.run(train_step, feed_dict=feed)
+  # Iteriere und trainiere.
+  for i in range(steps):
+    feed = { x: all_xs, y: all_ys }
+    sess.run(train_step, feed_dict=feed)
 
-    # Bestimme die aktuellen Parameterwerte nach der Anzahl der Iterationen.
-    (curr_alpha, curr_beta, curr_cost) = sess.run([alpha, beta, cost], feed_dict=feed)
+  # Bestimme die aktuellen Parameterwerte nach der Anzahl der Iterationen.
+  (curr_alpha, curr_beta, curr_cost) = sess.run([alpha, beta, cost], feed_dict=feed)
 
-    # Bestimme die aktuelle Zeit zur Zeitmessung.
-    end_time = time()
+  # Bestimme die aktuelle Zeit zur Zeitmessung.
+  end_time = time()
 
-    # Drucke die Ergebnisse.
-    print("alpha:           %f" % curr_alpha)
-    print("beta_purchases:  %f" % curr_beta[0])
-    print("beta_age:        %f" % curr_beta[1])
-    print("cost:            %f" % curr_cost)
-    print("")
-    print("time elapsed: %f sec" % (end_time - start_time))
+  # Drucke die Ergebnisse.
+  print("alpha:           %f" % curr_alpha)
+  print("beta_purchases:  %f" % curr_beta[0])
+  print("beta_age:        %f" % curr_beta[1])
+  print("cost:            %f" % curr_cost)
+  print("")
+  print("time elapsed: %f sec" % (end_time - start_time))
 
-  # Führe die main-Funktion aus.
-  if __name__ == "__main__":
-    main(sys.argv)
+# Führe die main-Funktion aus.
+if __name__ == "__main__":
+  main(sys.argv)
 \end{minted}
 
 \section{Logistische Regression}
 \label{appendix:C:3}
 
 \begin{minted}[linenos,breaklines,frame=single]{python}
-  import numpy as np
-  import tensorflow as tf
-  import os.path as p
-  import csv
-  import sys
-  import matplotlib.pyplot as plt
-  from time import time
+import numpy as np
+import tensorflow as tf
+import os.path as p
+import csv
+import sys
+import matplotlib.pyplot as plt
+from time import time
 
-  # Erstelle eine Funktion zum einlesen der Daten aus der csv-Daten.
-  def get_data(n_samples):
-    # Bestimme den Pfad der csv-Datei und öffne die Datei.
-    filename = p.abspath(p.join(p.dirname(p.realpath(__file__)), "..", "data", "sample.csv"))
-    csvfile = open(filename, newline="")
-    csvreader = csv.reader(csvfile, delimiter=",", quotechar="|")
+# Erstelle eine Funktion zum einlesen der Daten aus der csv-Daten.
+def get_data(n_samples):
+  # Bestimme den Pfad der csv-Datei und öffne die Datei.
+  filename = p.abspath(p.join(p.dirname(p.realpath(__file__)), "..", "data", "sample.csv"))
+  csvfile = open(filename, newline="")
+  csvreader = csv.reader(csvfile, delimiter=",", quotechar="|")
 
-    # Erstelle leere Arrays für die Daten.
-    x = []
-    x_plot = []
-    y = []
+  # Erstelle leere Arrays für die Daten.
+  x = []
+  x_plot = []
+  y = []
 
-    # Iteriere über die Zeilen der csv-Datei.
-    for row in csvreader:
-      # Überspringe die erste Zeile.
-      if not row[0] == "age":
-        # Füge die Daten der Zeile zum jeweiligen Array hinzu.
-        x.append([int(row[2])])
-        x_plot.append(int(row[2]))
-        y.append(int(row[3]))
+  # Iteriere über die Zeilen der csv-Datei.
+  for row in csvreader:
+    # Überspringe die erste Zeile.
+    if not row[0] == "age":
+      # Füge die Daten der Zeile zum jeweiligen Array hinzu.
+      x.append([int(row[2])])
+      x_plot.append(int(row[2]))
+      y.append(int(row[3]))
 
-    # Gib die Arrays bis zu der gewünschten Menge an Datenpunkten zurück.
-    return (np.array(x[:n_samples]), x_plot[:n_samples], np.transpose([y[:n_samples]]))
+  # Gib die Arrays bis zu der gewünschten Menge an Datenpunkten zurück.
+  return (np.array(x[:n_samples]), x_plot[:n_samples], np.transpose([y[:n_samples]]))
 
-  def main(argv):
-    # Bestimme default-Werte für die Anzahl der Datenpunkte und ob geplottet werden soll.
-    datapoint_size = 1000
-    plot = True
+def main(argv):
+  # Bestimme default-Werte für die Anzahl der Datenpunkte und ob geplottet werden soll.
+  datapoint_size = 1000
+  plot = True
 
-    # Ändere die default-Werte, wenn entsprechende Argumente übergeben wurden.
-    if len(argv) == 2:
-      if argv[1] == "-":
-        plot = False
-      else:
-        datapoint_size = int(argv[1])
-    elif len(argv) == 3:
+  # Ändere die default-Werte, wenn entsprechende Argumente übergeben wurden.
+  if len(argv) == 2:
+    if argv[1] == "-":
       plot = False
-      if argv[1] == "-":
-        datapoint_size = int(argv[2])
-      else:
-        datapoint_size = int(argv[1])
+    else:
+      datapoint_size = int(argv[1])
+  elif len(argv) == 3:
+    plot = False
+    if argv[1] == "-":
+      datapoint_size = int(argv[2])
+    else:
+      datapoint_size = int(argv[1])
 
-    # Bestimme die aktuelle Zeit zur Zeitmessung.
-    start_time = time()
+  # Bestimme die aktuelle Zeit zur Zeitmessung.
+  start_time = time()
 
-    # Bestimme die Anzahl der Iterationen und die Schrittweite (anhängig von der Anzahl der Datenpunkte.)
-    steps = 1000
-    if datapoint_size == 10:
-      learn_rate = 1
-    elif datapoint_size == 100:
-      learn_rate = 0.1
-    elif datapoint_size == 1000:
-      learn_rate = 0.01
-    elif datapoint_size == 10000:
-      learn_rate = 0.001
-    elif datapoint_size == 100000:
-      learn_rate = 0.0001
+  # Bestimme die Anzahl der Iterationen und die Schrittweite (anhängig von der Anzahl der Datenpunkte.)
+  steps = 1000
+  if datapoint_size == 10:
+    learn_rate = 1
+  elif datapoint_size == 100:
+    learn_rate = 0.1
+  elif datapoint_size == 1000:
+    learn_rate = 0.01
+  elif datapoint_size == 10000:
+    learn_rate = 0.001
+  elif datapoint_size == 100000:
+    learn_rate = 0.0001
 
-    # Deklariere die Platzhalter und Variablen.
-    x = tf.placeholder(tf.float32, [None, 1])
-    y = tf.placeholder(tf.float32, [None, 1])
-    alpha = tf.Variable(tf.zeros([1]))
-    beta = tf.Variable(tf.zeros([1, 1]))
-    y_calc = 1 / (1 + tf.exp(- tf.matmul(x, beta) - alpha))
+  # Deklariere die Platzhalter und Variablen.
+  x = tf.placeholder(tf.float32, [None, 1])
+  y = tf.placeholder(tf.float32, [None, 1])
+  alpha = tf.Variable(tf.zeros([1]))
+  beta = tf.Variable(tf.zeros([1, 1]))
+  y_calc = 1 / (1 + tf.exp(- tf.matmul(x, beta) - alpha))
 
-    # Definiere die Kostenfunktion und die Minimierungsoperation.
-    cost = - tf.reduce_sum(
-      tf.log(
-        y * y_calc +
-        (1 - y) * (1 - y_calc)
-      )
+  # Definiere die Kostenfunktion und die Minimierungsoperation.
+  cost = - tf.reduce_sum(
+    tf.log(
+      y * y_calc +
+      (1 - y) * (1 - y_calc)
     )
-    train_step = tf.train.GradientDescentOptimizer(learn_rate).minimize(cost)
+  )
+  train_step = tf.train.GradientDescentOptimizer(learn_rate).minimize(cost)
 
-    # Importiere die Daten.
-    (all_xs, plot_xs, all_ys) = get_data(datapoint_size)
+  # Importiere die Daten.
+  (all_xs, plot_xs, all_ys) = get_data(datapoint_size)
 
-    # Transformiere die unabhägige Variable linear ins Interval zwischen 0 und 1.
-    min_x = min(all_xs)
-    max_x = max(all_xs)
-    all_xs = (all_xs - min_x) / (max_x - min_x)
+  # Transformiere die unabhägige Variable linear ins Interval zwischen 0 und 1.
+  min_x = min(all_xs)
+  max_x = max(all_xs)
+  all_xs = (all_xs - min_x) / (max_x - min_x)
 
-    # Starte eine Session in TensorFlow.
-    sess = tf.Session()
-    init = tf.global_variables_initializer()
-    sess.run(init)
+  # Starte eine Session in TensorFlow.
+  sess = tf.Session()
+  init = tf.global_variables_initializer()
+  sess.run(init)
 
-    # Iteriere und trainiere.
-    for i in range(steps):
-      feed = { x: all_xs, y: all_ys }
-      sess.run(train_step, feed_dict=feed)
+  # Iteriere und trainiere.
+  for i in range(steps):
+    feed = { x: all_xs, y: all_ys }
+    sess.run(train_step, feed_dict=feed)
 
-    # Bestimme die aktuellen Parameterwerte nach der Anzahl der Iterationen.
-    (curr_alpha, curr_beta, curr_cost) = sess.run([alpha, beta, cost], feed_dict=feed)
+  # Bestimme die aktuellen Parameterwerte nach der Anzahl der Iterationen.
+  (curr_alpha, curr_beta, curr_cost) = sess.run([alpha, beta, cost], feed_dict=feed)
 
-    # Transformiere die Parameter linear, um den originalen Daten zu entsprechen.
-    curr_beta = curr_beta / (max_x - min_x)
-    curr_alpha = curr_alpha - curr_beta * min_x
+  # Transformiere die Parameter linear, um den originalen Daten zu entsprechen.
+  curr_beta = curr_beta / (max_x - min_x)
+  curr_alpha = curr_alpha - curr_beta * min_x
 
-    # Bestimme die aktuelle Zeit zur Zeitmessung.
-    end_time = time()
+  # Bestimme die aktuelle Zeit zur Zeitmessung.
+  end_time = time()
 
-    # Drucke die Ergebnisse.
-    print("alpha:  %f" % curr_alpha)
-    print("beta:   %f" % curr_beta)
-    print("cost:   %f" % curr_cost)
-    print("")
-    print("time elapsed: %f sec" % (end_time - start_time))
+  # Drucke die Ergebnisse.
+  print("alpha:  %f" % curr_alpha)
+  print("beta:   %f" % curr_beta)
+  print("cost:   %f" % curr_cost)
+  print("")
+  print("time elapsed: %f sec" % (end_time - start_time))
 
-    # Erstelle einen Plot (falls gewünscht).
-    if plot:
-      all_xs = all_xs * (max_x - min_x) + min_x
-      plot_ys = 1 / (1 + np.exp(- curr_beta * all_xs - curr_alpha))
-      plot_order = np.argsort(plot_xs)
-      plt.plot(plot_xs, all_ys, "ro", label="Original data")
-      plt.plot(np.array(plot_xs)[plot_order], np.array(plot_ys)[plot_order], label="Fitted line")
-      plt.legend()
-      plt.show()
+  # Erstelle einen Plot (falls gewünscht).
+  if plot:
+    all_xs = all_xs * (max_x - min_x) + min_x
+    plot_ys = 1 / (1 + np.exp(- curr_beta * all_xs - curr_alpha))
+    plot_order = np.argsort(plot_xs)
+    plt.plot(plot_xs, all_ys, "ro", label="Original data")
+    plt.plot(np.array(plot_xs)[plot_order], np.array(plot_ys)[plot_order], label="Fitted line")
+    plt.legend()
+    plt.show()
 
-  # Führe die main-Funktion aus.
-  if __name__ == "__main__":
-    main(sys.argv)
+# Führe die main-Funktion aus.
+if __name__ == "__main__":
+  main(sys.argv)
 \end{minted}
 
 \chapter{MySQL-Skripte}
@@ -703,587 +702,587 @@
 \label{appendix:D:1}
 
 \begin{minted}[linenos,breaklines,frame=single]{sql}
-  -- Lösche die bestehende Prozedur, falls vorhanden.
-  DROP PROCEDURE IF EXISTS simple_linear_regression;
+-- Lösche die bestehende Prozedur, falls vorhanden.
+DROP PROCEDURE IF EXISTS simple_linear_regression;
 
-  DELIMITER ;;
+DELIMITER ;;
 
-  -- Erstelle die Prozedur für einfache lineare Regression.
-  CREATE PROCEDURE `simple_linear_regression`(IN number_datapoints INT(11))
-  BEGIN
+-- Erstelle die Prozedur für einfache lineare Regression.
+CREATE PROCEDURE `simple_linear_regression`(IN number_datapoints INT(11))
+BEGIN
 
-  -- Deklariere die verwendeten Variablen.
-  DECLARE purchases_mean DECIMAL(65, 30);
-  DECLARE money_mean DECIMAL(65, 30);
-  DECLARE alpha DECIMAL(65, 30);
-  DECLARE beta DECIMAL(65, 30);
+-- Deklariere die verwendeten Variablen.
+DECLARE purchases_mean DECIMAL(65, 30);
+DECLARE money_mean DECIMAL(65, 30);
+DECLARE alpha DECIMAL(65, 30);
+DECLARE beta DECIMAL(65, 30);
 
-  -- Erstelle eine temporäre Relation für die zu verwendenden Datenpunkte.
-  DROP TEMPORARY TABLE IF EXISTS datapoints;
-  CREATE TEMPORARY TABLE datapoints (
-    purchases INT(11),
-    money INT(11)
-  );
+-- Erstelle eine temporäre Relation für die zu verwendenden Datenpunkte.
+DROP TEMPORARY TABLE IF EXISTS datapoints;
+CREATE TEMPORARY TABLE datapoints (
+  purchases INT(11),
+  money INT(11)
+);
 
-  -- Füge die gewünschte Anzahl der Datenpunkte in die temporäre Relation ein.
-  INSERT INTO datapoints
-  SELECT purchases, money
-  FROM sample
-  LIMIT number_datapoints;
+-- Füge die gewünschte Anzahl der Datenpunkte in die temporäre Relation ein.
+INSERT INTO datapoints
+SELECT purchases, money
+FROM sample
+LIMIT number_datapoints;
 
-  -- Berechne die Mittelwerte der abhängigen und unabhängigen Variable.
-  SET purchases_mean = (
-    SELECT AVG(purchases)
-    FROM datapoints
-  );
-  SET money_mean = (
-    SELECT AVG(money)
-    FROM datapoints
-  );
+-- Berechne die Mittelwerte der abhängigen und unabhängigen Variable.
+SET purchases_mean = (
+  SELECT AVG(purchases)
+  FROM datapoints
+);
+SET money_mean = (
+  SELECT AVG(money)
+  FROM datapoints
+);
 
-  -- Berechne beta.
-  SET beta = (
-    SELECT SUM((purchases - purchases_mean) * (money - money_mean))
-    FROM datapoints
-  );
-  SET beta = beta / (
-    SELECT SUM(POWER(purchases - purchases_mean, 2))
-    FROM datapoints
-  );
+-- Berechne beta.
+SET beta = (
+  SELECT SUM((purchases - purchases_mean) * (money - money_mean))
+  FROM datapoints
+);
+SET beta = beta / (
+  SELECT SUM(POWER(purchases - purchases_mean, 2))
+  FROM datapoints
+);
 
-  -- Berechne alpha.
-  SET alpha = money_mean - (beta * purchases_mean);
+-- Berechne alpha.
+SET alpha = money_mean - (beta * purchases_mean);
 
-  -- Gib eine Relation mit Parametername und zugehörigem Wert zurück.
-  SELECT 'alpha' AS `variable`, alpha AS `value`
-  UNION
-  SELECT 'beta' AS `variable`, beta AS `value`;
+-- Gib eine Relation mit Parametername und zugehörigem Wert zurück.
+SELECT 'alpha' AS `variable`, alpha AS `value`
+UNION
+SELECT 'beta' AS `variable`, beta AS `value`;
 
-  -- Lösche die temporäre Relation mit den Datenpunkten wieder.
-  DROP TEMPORARY TABLE IF EXISTS datapoints;
+-- Lösche die temporäre Relation mit den Datenpunkten wieder.
+DROP TEMPORARY TABLE IF EXISTS datapoints;
 
-  END;;
+END;;
 
-  DELIMITER ;
+DELIMITER ;
 \end{minted}
 
 \section{Multiple lineare Regression}
 \label{appendix:D:2}
 
 \begin{minted}[linenos,breaklines,frame=single]{sql}
-  -- Lösche die bestehende Prozedur, falls vorhanden.
-  DROP PROCEDURE IF EXISTS multiple_linear_regression;
+-- Lösche die bestehende Prozedur, falls vorhanden.
+DROP PROCEDURE IF EXISTS multiple_linear_regression;
 
-  DELIMITER ;;
+DELIMITER ;;
 
-  -- Erstelle die Prozedur für multiple lineare Regression.
-  CREATE PROCEDURE multiple_linear_regression(IN number_datapoints INT(11))
-  BEGIN
+-- Erstelle die Prozedur für multiple lineare Regression.
+CREATE PROCEDURE multiple_linear_regression(IN number_datapoints INT(11))
+BEGIN
 
-  -- Deklariere die verwendeten Variablen.
-  DECLARE m INT(11);
-  DECLARE n INT(11);
-  DECLARE counter_1 INT(11);
-  DECLARE counter_2 INT(11);
-  DECLARE counter_3 INT(11);
-  DECLARE pivot DECIMAL(65, 30);
+-- Deklariere die verwendeten Variablen.
+DECLARE m INT(11);
+DECLARE n INT(11);
+DECLARE counter_1 INT(11);
+DECLARE counter_2 INT(11);
+DECLARE counter_3 INT(11);
+DECLARE pivot DECIMAL(65, 30);
 
-  -- Bestimme die Dimensionsn für die Matrix X.
-  SET m = number_datapoints;
-  SET n = 3;
+-- Bestimme die Dimensionsn für die Matrix X.
+SET m = number_datapoints;
+SET n = 3;
 
-  -- Lösche vorhandene temporäre Relationen.
-  DROP TEMPORARY TABLE IF EXISTS matrix_X;
-  DROP TEMPORARY TABLE IF EXISTS matrix_transposed;
-  DROP TEMPORARY TABLE IF EXISTS matrix_product_1;
-  DROP TEMPORARY TABLE IF EXISTS matrix_inverse;
-  DROP TEMPORARY TABLE IF EXISTS matrix_product_2;
-  DROP TEMPORARY TABLE IF EXISTS matrix_y;
-  DROP TEMPORARY TABLE IF EXISTS matrix_result;
+-- Lösche vorhandene temporäre Relationen.
+DROP TEMPORARY TABLE IF EXISTS matrix_X;
+DROP TEMPORARY TABLE IF EXISTS matrix_transposed;
+DROP TEMPORARY TABLE IF EXISTS matrix_product_1;
+DROP TEMPORARY TABLE IF EXISTS matrix_inverse;
+DROP TEMPORARY TABLE IF EXISTS matrix_product_2;
+DROP TEMPORARY TABLE IF EXISTS matrix_y;
+DROP TEMPORARY TABLE IF EXISTS matrix_result;
 
-  -- Erstelle temporäre Relationen für die zu berechnenden Matrizen.
-  CREATE TEMPORARY TABLE matrix_X (
-    `row` INT(11),
-    `column` INT(11),
-    `value` DECIMAL(65, 30)
-  );
-  CREATE TEMPORARY TABLE matrix_transposed (
-    `row` INT(11),
-    `column` INT(11),
-    `value` DECIMAL(65, 30)
-  );
-  CREATE TEMPORARY TABLE matrix_product_1 (
-    `row` INT(11),
-    `column` INT(11),
-    `value` DECIMAL(65, 30)
-  );
-  CREATE TEMPORARY TABLE matrix_inverse (
-    `row` INT(11),
-    `column` INT(11),
-    `value` DECIMAL(65, 30)
-  );
-  CREATE TEMPORARY TABLE matrix_product_2 (
-    `row` INT(11),
-    `column` INT(11),
-    `value` DECIMAL(65, 30)
-  );
-  CREATE TEMPORARY TABLE matrix_y (
-    `row` INT(11),
-    `column` INT(11),
-    `value` DECIMAL(65, 30)
-  );
-  CREATE TEMPORARY TABLE matrix_result (
-    `row` INT(11),
-    `column` INT(11),
-    `value` DECIMAL(65, 30)
-  );
+-- Erstelle temporäre Relationen für die zu berechnenden Matrizen.
+CREATE TEMPORARY TABLE matrix_X (
+  `row` INT(11),
+  `column` INT(11),
+  `value` DECIMAL(65, 30)
+);
+CREATE TEMPORARY TABLE matrix_transposed (
+  `row` INT(11),
+  `column` INT(11),
+  `value` DECIMAL(65, 30)
+);
+CREATE TEMPORARY TABLE matrix_product_1 (
+  `row` INT(11),
+  `column` INT(11),
+  `value` DECIMAL(65, 30)
+);
+CREATE TEMPORARY TABLE matrix_inverse (
+  `row` INT(11),
+  `column` INT(11),
+  `value` DECIMAL(65, 30)
+);
+CREATE TEMPORARY TABLE matrix_product_2 (
+  `row` INT(11),
+  `column` INT(11),
+  `value` DECIMAL(65, 30)
+);
+CREATE TEMPORARY TABLE matrix_y (
+  `row` INT(11),
+  `column` INT(11),
+  `value` DECIMAL(65, 30)
+);
+CREATE TEMPORARY TABLE matrix_result (
+  `row` INT(11),
+  `column` INT(11),
+  `value` DECIMAL(65, 30)
+);
 
-  -- Füge Werte der unabhängigen Variablen in die Relation matrix_X ein.
-  SET @id = 0;
+-- Füge Werte der unabhängigen Variablen in die Relation matrix_X ein.
+SET @id = 0;
 
-  INSERT INTO matrix_X
-  SELECT
-    @id := (@id + 1) AS `row`,
-    1 AS `column`,
-    1 AS `value`
-  FROM sample
-  LIMIT number_datapoints;
+INSERT INTO matrix_X
+SELECT
+  @id := (@id + 1) AS `row`,
+  1 AS `column`,
+  1 AS `value`
+FROM sample
+LIMIT number_datapoints;
 
-  SET @id = 0;
+SET @id = 0;
 
-  INSERT INTO matrix_X
-  SELECT
-    @id := (@id + 1) AS `row`,
-    2 AS `column`,
-    purchases AS `value`
-  FROM sample
-  LIMIT number_datapoints;
+INSERT INTO matrix_X
+SELECT
+  @id := (@id + 1) AS `row`,
+  2 AS `column`,
+  purchases AS `value`
+FROM sample
+LIMIT number_datapoints;
 
-  SET @id = 0;
+SET @id = 0;
 
-  INSERT INTO matrix_X
-  SELECT
-    @id := (@id + 1) AS `row`,
-    3 AS `column`,
-    age AS `value`
-  FROM sample
-  LIMIT number_datapoints;
+INSERT INTO matrix_X
+SELECT
+  @id := (@id + 1) AS `row`,
+  3 AS `column`,
+  age AS `value`
+FROM sample
+LIMIT number_datapoints;
 
-  -- Füge Werte der abhängigen Variable in die Relation matrix_y ein.
-  SET @id = 0;
+-- Füge Werte der abhängigen Variable in die Relation matrix_y ein.
+SET @id = 0;
 
-  INSERT INTO matrix_y
-  SELECT
-    @id := (@id + 1) AS `row`,
-    1 AS `column`,
-    money AS `value`
-  FROM sample
-  LIMIT number_datapoints;
+INSERT INTO matrix_y
+SELECT
+  @id := (@id + 1) AS `row`,
+  1 AS `column`,
+  money AS `value`
+FROM sample
+LIMIT number_datapoints;
 
-  -- Berechne matrix_transposed.
-  INSERT INTO matrix_transposed
-  SELECT
-    `column` AS `row`,
-    `row` AS `column`,
-    `value` AS `value`
-  FROM matrix_X;
+-- Berechne matrix_transposed.
+INSERT INTO matrix_transposed
+SELECT
+  `column` AS `row`,
+  `row` AS `column`,
+  `value` AS `value`
+FROM matrix_X;
 
-  -- Berechne matrix_product_1. Iteriere dazu über alle Zeilen und Spalten der Ergebnismatrix.
-  SET counter_1 = 1;
+-- Berechne matrix_product_1. Iteriere dazu über alle Zeilen und Spalten der Ergebnismatrix.
+SET counter_1 = 1;
 
-  WHILE counter_1 <= n DO
+WHILE counter_1 <= n DO
 
-    SET counter_2 = 1;
+  SET counter_2 = 1;
 
-    WHILE counter_2 <= n DO
-
-      -- Berechne den Wert des aktuellen Matrixelements.
-      INSERT INTO matrix_product_1 VALUES (
-        counter_1,
-        counter_2,
-        (
-          SELECT SUM(matrix_X.`value` * matrix_transposed.`value`)
-          FROM matrix_X, matrix_transposed
-          WHERE matrix_X.`column` = counter_2
-            AND matrix_transposed.`row` = counter_1
-            AND matrix_transposed.`column` = matrix_X.`row`
-        )
-      );
-
-      SET counter_2 = counter_2 + 1;
-
-    END WHILE;
-
-    SET counter_1 = counter_1 + 1;
-
-  END WHILE;
-
-  -- Berechne matrix_inverse. Verwende dazu den in der Arbeit referenzierten Algorithmus.
-  INSERT INTO matrix_inverse
-  SELECT *
-  FROM matrix_product_1;
-
-  SET counter_1 = 0;
-
-  WHILE counter_1 < n DO
-
-    SET counter_1 = counter_1 + 1;
-
-    DROP TEMPORARY TABLE IF EXISTS pivot_row;
-    CREATE TEMPORARY TABLE pivot_row (
-        `column` INT(11),
-        `value` DECIMAL(65, 30)
-    );
-
-    INSERT INTO pivot_row
-    SELECT `column`, `value`
-    FROM matrix_inverse
-    WHERE `row` = counter_1;
-
-    SET pivot = (
-        SELECT `value`
-        FROM matrix_inverse
-        WHERE `row` = counter_1 AND `column` = counter_1
-    );
-
-    UPDATE matrix_inverse
-    SET `value` = `value` / pivot
-    WHERE `row` = counter_1 AND `column` <> counter_1;
-
-    UPDATE matrix_inverse
-    SET `value` = - `value` / pivot
-    WHERE `row` <> counter_1 AND `column` = counter_1;
-
-    SET counter_2 = 1;
-
-    WHILE counter_2 <= n DO
-
-      IF counter_2 <> counter_1 THEN
-
-        SET counter_3 = 1;
-
-        WHILE counter_3 <= n DO
-
-          IF counter_3 <> counter_1 THEN
-
-            SET pivot = (
-              SELECT `value`
-              FROM pivot_row
-              WHERE `column` = counter_3
-            ) * (
-              SELECT `value`
-              FROM matrix_inverse
-              WHERE `row` = counter_2 AND `column` = counter_1
-            );
-
-            UPDATE matrix_inverse
-            SET `value` = `value` + pivot
-            WHERE `row` = counter_2 AND `column` = counter_3;
-
-          END IF;
-
-          SET counter_3 = counter_3 + 1;
-
-        END WHILE;
-
-      END IF;
-
-      SET counter_2 = counter_2 + 1;
-
-    END WHILE;
-
-    UPDATE matrix_inverse
-    SET `value` = 1 / `value`
-    WHERE `row` = counter_1 AND `column` = counter_1;
-
-  END WHILE;
-
-  -- Berechne matrix_product_2. Iteriere dazu über alle Zeilen der Ergebnismatrix.
-  SET counter_1 = 1;
-
-  WHILE counter_1 <= n DO
+  WHILE counter_2 <= n DO
 
     -- Berechne den Wert des aktuellen Matrixelements.
-    INSERT INTO matrix_product_2 VALUES (
+    INSERT INTO matrix_product_1 VALUES (
       counter_1,
-      1,
+      counter_2,
       (
-        SELECT SUM(matrix_y.`value` * matrix_transposed.`value`)
-        FROM matrix_y, matrix_transposed
-        WHERE matrix_transposed.`row` = counter_1
-          AND matrix_transposed.`column` = matrix_y.`row`
+        SELECT SUM(matrix_X.`value` * matrix_transposed.`value`)
+        FROM matrix_X, matrix_transposed
+        WHERE matrix_X.`column` = counter_2
+          AND matrix_transposed.`row` = counter_1
+          AND matrix_transposed.`column` = matrix_X.`row`
       )
     );
 
-    SET counter_1 = counter_1 + 1;
+    SET counter_2 = counter_2 + 1;
 
   END WHILE;
 
-  -- Berechne matrix_result. Iteriere dazu über alle Zeilen der Ergebnismatrix.
-  SET counter_1 = 1;
+  SET counter_1 = counter_1 + 1;
 
-  WHILE counter_1 <= n DO
+END WHILE;
 
-    -- Berechne den Wert des aktuellen Matrixelements.
-    INSERT INTO matrix_result VALUES (
-      counter_1,
-      1,
-      (
-        SELECT SUM(matrix_product_2.`value` * matrix_inverse.`value`)
-        FROM matrix_product_2, matrix_inverse
-        WHERE matrix_inverse.`row` = counter_1
-          AND matrix_inverse.`column` = matrix_product_2.`row`
-      )
-    );
+-- Berechne matrix_inverse. Verwende dazu den in der Arbeit referenzierten Algorithmus.
+INSERT INTO matrix_inverse
+SELECT *
+FROM matrix_product_1;
 
-    SET counter_1 = counter_1 + 1;
+SET counter_1 = 0;
+
+WHILE counter_1 < n DO
+
+  SET counter_1 = counter_1 + 1;
+
+  DROP TEMPORARY TABLE IF EXISTS pivot_row;
+  CREATE TEMPORARY TABLE pivot_row (
+      `column` INT(11),
+      `value` DECIMAL(65, 30)
+  );
+
+  INSERT INTO pivot_row
+  SELECT `column`, `value`
+  FROM matrix_inverse
+  WHERE `row` = counter_1;
+
+  SET pivot = (
+      SELECT `value`
+      FROM matrix_inverse
+      WHERE `row` = counter_1 AND `column` = counter_1
+  );
+
+  UPDATE matrix_inverse
+  SET `value` = `value` / pivot
+  WHERE `row` = counter_1 AND `column` <> counter_1;
+
+  UPDATE matrix_inverse
+  SET `value` = - `value` / pivot
+  WHERE `row` <> counter_1 AND `column` = counter_1;
+
+  SET counter_2 = 1;
+
+  WHILE counter_2 <= n DO
+
+    IF counter_2 <> counter_1 THEN
+
+      SET counter_3 = 1;
+
+      WHILE counter_3 <= n DO
+
+        IF counter_3 <> counter_1 THEN
+
+          SET pivot = (
+            SELECT `value`
+            FROM pivot_row
+            WHERE `column` = counter_3
+          ) * (
+            SELECT `value`
+            FROM matrix_inverse
+            WHERE `row` = counter_2 AND `column` = counter_1
+          );
+
+          UPDATE matrix_inverse
+          SET `value` = `value` + pivot
+          WHERE `row` = counter_2 AND `column` = counter_3;
+
+        END IF;
+
+        SET counter_3 = counter_3 + 1;
+
+      END WHILE;
+
+    END IF;
+
+    SET counter_2 = counter_2 + 1;
 
   END WHILE;
 
-  -- Gib eine Relation mit Parameternamen und zugehörigen Werten zurück.
-  SELECT
-    CASE row
-      WHEN 1 THEN 'alpha'
-      WHEN 2 THEN 'beta_purchases'
-      WHEN 3 THEN 'beta_age'
-    END AS `variable`,
-    value
-  FROM matrix_result;
+  UPDATE matrix_inverse
+  SET `value` = 1 / `value`
+  WHERE `row` = counter_1 AND `column` = counter_1;
 
-  -- Lösche die temporären Relationen wieder.
-  DROP TEMPORARY TABLE IF EXISTS matrix_X;
-  DROP TEMPORARY TABLE IF EXISTS matrix_transposed;
-  DROP TEMPORARY TABLE IF EXISTS matrix_product_1;
-  DROP TEMPORARY TABLE IF EXISTS matrix_inverse;
-  DROP TEMPORARY TABLE IF EXISTS matrix_product_2;
-  DROP TEMPORARY TABLE IF EXISTS matrix_y;
-  DROP TEMPORARY TABLE IF EXISTS matrix_result;
+END WHILE;
 
-  END;;
+-- Berechne matrix_product_2. Iteriere dazu über alle Zeilen der Ergebnismatrix.
+SET counter_1 = 1;
 
-  DELIMITER ;
+WHILE counter_1 <= n DO
+
+  -- Berechne den Wert des aktuellen Matrixelements.
+  INSERT INTO matrix_product_2 VALUES (
+    counter_1,
+    1,
+    (
+      SELECT SUM(matrix_y.`value` * matrix_transposed.`value`)
+      FROM matrix_y, matrix_transposed
+      WHERE matrix_transposed.`row` = counter_1
+        AND matrix_transposed.`column` = matrix_y.`row`
+    )
+  );
+
+  SET counter_1 = counter_1 + 1;
+
+END WHILE;
+
+-- Berechne matrix_result. Iteriere dazu über alle Zeilen der Ergebnismatrix.
+SET counter_1 = 1;
+
+WHILE counter_1 <= n DO
+
+  -- Berechne den Wert des aktuellen Matrixelements.
+  INSERT INTO matrix_result VALUES (
+    counter_1,
+    1,
+    (
+      SELECT SUM(matrix_product_2.`value` * matrix_inverse.`value`)
+      FROM matrix_product_2, matrix_inverse
+      WHERE matrix_inverse.`row` = counter_1
+        AND matrix_inverse.`column` = matrix_product_2.`row`
+    )
+  );
+
+  SET counter_1 = counter_1 + 1;
+
+END WHILE;
+
+-- Gib eine Relation mit Parameternamen und zugehörigen Werten zurück.
+SELECT
+  CASE row
+    WHEN 1 THEN 'alpha'
+    WHEN 2 THEN 'beta_purchases'
+    WHEN 3 THEN 'beta_age'
+  END AS `variable`,
+  value
+FROM matrix_result;
+
+-- Lösche die temporären Relationen wieder.
+DROP TEMPORARY TABLE IF EXISTS matrix_X;
+DROP TEMPORARY TABLE IF EXISTS matrix_transposed;
+DROP TEMPORARY TABLE IF EXISTS matrix_product_1;
+DROP TEMPORARY TABLE IF EXISTS matrix_inverse;
+DROP TEMPORARY TABLE IF EXISTS matrix_product_2;
+DROP TEMPORARY TABLE IF EXISTS matrix_y;
+DROP TEMPORARY TABLE IF EXISTS matrix_result;
+
+END;;
+
+DELIMITER ;
 \end{minted}
 
 \section{Logistische Regression}
 \label{appendix:D:3}
 
 \begin{minted}[linenos,breaklines,frame=single]{sql}
-  -- Lösche die bestehenden Prozeduren, falls vorhanden.
-  DROP PROCEDURE IF EXISTS calculate_gradient;
-  DROP PROCEDURE IF EXISTS calculate_new_parameters;
-  DROP PROCEDURE IF EXISTS calculate_logit;
-  DROP PROCEDURE IF EXISTS logistic_regression;
+-- Lösche die bestehenden Prozeduren, falls vorhanden.
+DROP PROCEDURE IF EXISTS calculate_gradient;
+DROP PROCEDURE IF EXISTS calculate_new_parameters;
+DROP PROCEDURE IF EXISTS calculate_logit;
+DROP PROCEDURE IF EXISTS logistic_regression;
 
-  DELIMITER ;;
-  -- Erstelle eine Prozedur zur Berechnung der Werte der logistischen Funktion.
-  CREATE PROCEDURE `calculate_logit`()
-  BEGIN
+DELIMITER ;;
+-- Erstelle eine Prozedur zur Berechnung der Werte der logistischen Funktion.
+CREATE PROCEDURE `calculate_logit`()
+BEGIN
 
-  -- Deklariere die benötigten Variablen.
-  DECLARE alpha_old DECIMAL(65, 30);
-  DECLARE alpha_new DECIMAL(65, 30);
+-- Deklariere die benötigten Variablen.
+DECLARE alpha_old DECIMAL(65, 30);
+DECLARE alpha_new DECIMAL(65, 30);
 
-  -- Bestimme den alten und neuen Wert von alpha.
-  SET alpha_old = (
-    SELECT old
-    FROM parameters
-    WHERE variable = 'alpha'
-  );
-  SET alpha_new = (
-    SELECT new
-    FROM parameters
-    WHERE variable = 'alpha'
-  );
+-- Bestimme den alten und neuen Wert von alpha.
+SET alpha_old = (
+  SELECT old
+  FROM parameters
+  WHERE variable = 'alpha'
+);
+SET alpha_new = (
+  SELECT new
+  FROM parameters
+  WHERE variable = 'alpha'
+);
 
-  -- Berechne die Werte der logistischen Funktion für alle Datenpunkte.
-  DELETE FROM logits;
-  INSERT INTO logits
-    SELECT
-      d.id,
-      1 / (1 + exp(- SUM(d.value * p.old) - alpha_old)) AS `old`,
-      1 / (1 + exp(- SUM(d.value * p.new) - alpha_new)) AS `new`
-    FROM datapoints d
-    JOIN parameters p ON p.variable = d.variable
-    GROUP BY d.id;
-
-  END;;
-
-  -- Erstelle eine Prozedur zur Berechnung des Gradienten.
-  CREATE PROCEDURE `calculate_gradient`()
-  BEGIN
-
-  DELETE FROM gradient;
-
-  -- Berechne die partielle Ableitung nach alpha.
-  INSERT INTO gradient
-  SELECT 'alpha' AS `variable`, SUM(bv.value - l.old) AS `value`
-  FROM logits l
-  JOIN binary_values bv ON bv.id = l.id;
-
-  -- Berechne die partielle Ableitung nach allen beta-Parametern.
-  INSERT INTO gradient
-  SELECT d.variable, SUM(d.value * (bv.value - l.old)) AS `value`
-  FROM logits l
-  JOIN binary_values bv ON bv.id = l.id
-  JOIN datapoints d ON d.id = l.id
-  GROUP BY d.variable;
-
-  END;;
-
-  -- Erzeuge eine Prozedur zur Berechnung der neuen Parameter abhängig von der aktuellen Schrittweite.
-  CREATE PROCEDURE `calculate_new_parameters`(IN step DECIMAL(65, 30))
-  BEGIN
-
-  UPDATE parameters
-  JOIN gradient ON gradient.variable = parameters.variable
-  SET parameters.new = parameters.old + step * gradient.value;
-
-  END;;
-
-  -- Erstelle die Prozedur für logistische Regression.
-  CREATE PROCEDURE `logistic_regression`(IN number_datapoints INT(11), IN rounds INT(11), step DECIMAL(65, 30))
-  BEGIN
-
-  -- Deklariere die verwendeten Variablen.
-  DECLARE min INT(11);
-  DECLARE max INT(11);
-  DECLARE transform DECIMAL(65, 30);
-  DECLARE better INT(1);
-  DECLARE counter INT(11);
-
-  -- Erstelle eine temporäre Relation für die Werte der unabhängigen Variablen.
-  DROP TEMPORARY TABLE IF EXISTS datapoints;
-  CREATE TEMPORARY TABLE datapoints (
-    id INT(11),
-    variable VARCHAR(32),
-    value DECIMAL(65, 30),
-    PRIMARY KEY (id, variable)
-  );
-
-  -- Berechne Minimum und Maximum der unabhängigen Variable.
-  SET min = (SELECT MIN(money) FROM sample);
-  SET max = (SELECT MAX(money) FROM sample);
-
-  -- Füge die linear transformierten Werte der unabhängigen Variablen in die Relation datapoints ein.
-  SET @counter = 0;
-  INSERT INTO datapoints
+-- Berechne die Werte der logistischen Funktion für alle Datenpunkte.
+DELETE FROM logits;
+INSERT INTO logits
   SELECT
-    @counter := @counter + 1 AS `id`,
-    'beta_money' AS `variable`,
-    (money - min) / (max - min) AS `value`
-  FROM sample
-  LIMIT number_datapoints;
+    d.id,
+    1 / (1 + exp(- SUM(d.value * p.old) - alpha_old)) AS `old`,
+    1 / (1 + exp(- SUM(d.value * p.new) - alpha_new)) AS `new`
+  FROM datapoints d
+  JOIN parameters p ON p.variable = d.variable
+  GROUP BY d.id;
 
-  -- Erstelle eine temporäre Relation für die (binären) Werte der abhängigen Variablen.
-  DROP TEMPORARY TABLE IF EXISTS binary_values;
-  CREATE TEMPORARY TABLE binary_values (
-    id INT(11),
-    value INT(1),
-    PRIMARY KEY (id)
-  );
+END;;
 
-  -- Füge die Werte der abhängingen Variable ein.
-  SET @counter = 0;
-  INSERT INTO binary_values
-  SELECT
-    @counter := @counter + 1 AS `id`,
-    premium AS `value`
-  FROM sample
-  LIMIT number_datapoints;
+-- Erstelle eine Prozedur zur Berechnung des Gradienten.
+CREATE PROCEDURE `calculate_gradient`()
+BEGIN
 
-  -- Erstelle eine temporäre Relation für die alten und neuen Parameterwerte.
-  DROP TEMPORARY TABLE IF EXISTS parameters;
-  CREATE TEMPORARY TABLE parameters (
-    variable VARCHAR(32),
-    old DECIMAL(65, 30),
-    new DECIMAL(65, 30),
-    PRIMARY KEY (variable)
-  );
+DELETE FROM gradient;
 
-  -- Füge die Initialwerte der Parameter ein.
-  INSERT INTO parameters VALUES
-    ('alpha', 0, 0),
-    ('beta_money', 0, 0);
+-- Berechne die partielle Ableitung nach alpha.
+INSERT INTO gradient
+SELECT 'alpha' AS `variable`, SUM(bv.value - l.old) AS `value`
+FROM logits l
+JOIN binary_values bv ON bv.id = l.id;
 
-  -- Erstelle eine temporäre Relation für die Werte der logistischen Funktion für alle Datenpunkte.
-  DROP TEMPORARY TABLE IF EXISTS logits;
-  CREATE TEMPORARY TABLE logits (
-    id INT(11),
-    old DECIMAL(65, 30),
-    new DECIMAL(65, 30),
-    PRIMARY KEY (id)
-  );
+-- Berechne die partielle Ableitung nach allen beta-Parametern.
+INSERT INTO gradient
+SELECT d.variable, SUM(d.value * (bv.value - l.old)) AS `value`
+FROM logits l
+JOIN binary_values bv ON bv.id = l.id
+JOIN datapoints d ON d.id = l.id
+GROUP BY d.variable;
 
-  -- Befülle die Relation für die Werte der logistischen Funktion.
+END;;
+
+-- Erzeuge eine Prozedur zur Berechnung der neuen Parameter abhängig von der aktuellen Schrittweite.
+CREATE PROCEDURE `calculate_new_parameters`(IN step DECIMAL(65, 30))
+BEGIN
+
+UPDATE parameters
+JOIN gradient ON gradient.variable = parameters.variable
+SET parameters.new = parameters.old + step * gradient.value;
+
+END;;
+
+-- Erstelle die Prozedur für logistische Regression.
+CREATE PROCEDURE `logistic_regression`(IN number_datapoints INT(11), IN rounds INT(11), step DECIMAL(65, 30))
+BEGIN
+
+-- Deklariere die verwendeten Variablen.
+DECLARE min INT(11);
+DECLARE max INT(11);
+DECLARE transform DECIMAL(65, 30);
+DECLARE better INT(1);
+DECLARE counter INT(11);
+
+-- Erstelle eine temporäre Relation für die Werte der unabhängigen Variablen.
+DROP TEMPORARY TABLE IF EXISTS datapoints;
+CREATE TEMPORARY TABLE datapoints (
+  id INT(11),
+  variable VARCHAR(32),
+  value DECIMAL(65, 30),
+  PRIMARY KEY (id, variable)
+);
+
+-- Berechne Minimum und Maximum der unabhängigen Variable.
+SET min = (SELECT MIN(money) FROM sample);
+SET max = (SELECT MAX(money) FROM sample);
+
+-- Füge die linear transformierten Werte der unabhängigen Variablen in die Relation datapoints ein.
+SET @counter = 0;
+INSERT INTO datapoints
+SELECT
+  @counter := @counter + 1 AS `id`,
+  'beta_money' AS `variable`,
+  (money - min) / (max - min) AS `value`
+FROM sample
+LIMIT number_datapoints;
+
+-- Erstelle eine temporäre Relation für die (binären) Werte der abhängigen Variablen.
+DROP TEMPORARY TABLE IF EXISTS binary_values;
+CREATE TEMPORARY TABLE binary_values (
+  id INT(11),
+  value INT(1),
+  PRIMARY KEY (id)
+);
+
+-- Füge die Werte der abhängingen Variable ein.
+SET @counter = 0;
+INSERT INTO binary_values
+SELECT
+  @counter := @counter + 1 AS `id`,
+  premium AS `value`
+FROM sample
+LIMIT number_datapoints;
+
+-- Erstelle eine temporäre Relation für die alten und neuen Parameterwerte.
+DROP TEMPORARY TABLE IF EXISTS parameters;
+CREATE TEMPORARY TABLE parameters (
+  variable VARCHAR(32),
+  old DECIMAL(65, 30),
+  new DECIMAL(65, 30),
+  PRIMARY KEY (variable)
+);
+
+-- Füge die Initialwerte der Parameter ein.
+INSERT INTO parameters VALUES
+  ('alpha', 0, 0),
+  ('beta_money', 0, 0);
+
+-- Erstelle eine temporäre Relation für die Werte der logistischen Funktion für alle Datenpunkte.
+DROP TEMPORARY TABLE IF EXISTS logits;
+CREATE TEMPORARY TABLE logits (
+  id INT(11),
+  old DECIMAL(65, 30),
+  new DECIMAL(65, 30),
+  PRIMARY KEY (id)
+);
+
+-- Befülle die Relation für die Werte der logistischen Funktion.
+CALL calculate_logit();
+
+-- Erstelle eine teporäre Relation für den Gradienten.
+DROP TEMPORARY TABLE IF EXISTS gradient;
+CREATE TEMPORARY TABLE gradient (
+  variable VARCHAR(32),
+  value DECIMAL(65, 30),
+  PRIMARY KEY (variable)
+);
+
+-- Iteriere über die Anzahl der gewünschten Iterationen.
+SET counter = 0;
+WHILE counter < rounds AND step > 0.000000000000000000000000000001 DO
+
+  -- Berechne den Gradienten und die neuen Parameter mit der aktuellen Schrittweite.
+  CALL calculate_gradient();
+  CALL calculate_new_parameters(step);
   CALL calculate_logit();
 
-  -- Erstelle eine teporäre Relation für den Gradienten.
-  DROP TEMPORARY TABLE IF EXISTS gradient;
-  CREATE TEMPORARY TABLE gradient (
-    variable VARCHAR(32),
-    value DECIMAL(65, 30),
-    PRIMARY KEY (variable)
-  );
+  -- Verringere die Schrittweite solange, bis die neuen Parameter ein besseres Ergebnis liefern als die alten.
+  WHILE (
+    SELECT
+      SUM(LOG(bv.value * l.new + (1 - bv.value) * (1 - l.new))) >
+      SUM(LOG(bv.value * l.old + (1 - bv.value) * (1 - l.old)))
+    FROM logits l
+    JOIN binary_values bv ON bv.id = l.id
+  ) = 0 AND step > 0.000000000000000000000000000001 DO
 
-  -- Iteriere über die Anzahl der gewünschten Iterationen.
-  SET counter = 0;
-  WHILE counter < rounds AND step > 0.000000000000000000000000000001 DO
-
-    -- Berechne den Gradienten und die neuen Parameter mit der aktuellen Schrittweite.
-    CALL calculate_gradient();
+    SET step = step / 2;
     CALL calculate_new_parameters(step);
     CALL calculate_logit();
 
-    -- Verringere die Schrittweite solange, bis die neuen Parameter ein besseres Ergebnis liefern als die alten.
-    WHILE (
-      SELECT
-        SUM(LOG(bv.value * l.new + (1 - bv.value) * (1 - l.new))) >
-        SUM(LOG(bv.value * l.old + (1 - bv.value) * (1 - l.old)))
-      FROM logits l
-      JOIN binary_values bv ON bv.id = l.id
-    ) = 0 AND step > 0.000000000000000000000000000001 DO
-
-      SET step = step / 2;
-      CALL calculate_new_parameters(step);
-      CALL calculate_logit();
-
-    END WHILE;
-
-    -- Ersetze die alten Werte durch die neuen Werte.
-    UPDATE parameters
-    SET parameters.old = parameters.new;
-
-    UPDATE logits
-    SET logits.old = logits.new;
-
-    SET counter = counter + 1;
-
   END WHILE;
 
-  -- Transformiere die Parameter linear, um den originalen Daten zu entsprechen.
+  -- Ersetze die alten Werte durch die neuen Werte.
   UPDATE parameters
-  SET old = old / (max - min)
-  WHERE variable = 'beta_money';
+  SET parameters.old = parameters.new;
 
-  SET transform = (SELECT old FROM parameters WHERE variable = 'beta_money');
+  UPDATE logits
+  SET logits.old = logits.new;
 
-  UPDATE parameters
-  SET old = old - transform * min
-  WHERE variable = 'alpha';
+  SET counter = counter + 1;
 
-  -- Gib eine Relation mit Parametername und zugehörigem Wert zurück.
-  SELECT variable, old AS `value`
-  FROM parameters;
+END WHILE;
 
-  -- Lösche die temporären Relationen wieder.
-  DROP TEMPORARY TABLE IF EXISTS datapoints;
-  DROP TEMPORARY TABLE IF EXISTS binary_values;
-  DROP TEMPORARY TABLE IF EXISTS parameters;
-  DROP TEMPORARY TABLE IF EXISTS logits;
-  DROP TEMPORARY TABLE IF EXISTS gradient;
+-- Transformiere die Parameter linear, um den originalen Daten zu entsprechen.
+UPDATE parameters
+SET old = old / (max - min)
+WHERE variable = 'beta_money';
 
-  END;;
-  DELIMITER ;
+SET transform = (SELECT old FROM parameters WHERE variable = 'beta_money');
+
+UPDATE parameters
+SET old = old - transform * min
+WHERE variable = 'alpha';
+
+-- Gib eine Relation mit Parametername und zugehörigem Wert zurück.
+SELECT variable, old AS `value`
+FROM parameters;
+
+-- Lösche die temporären Relationen wieder.
+DROP TEMPORARY TABLE IF EXISTS datapoints;
+DROP TEMPORARY TABLE IF EXISTS binary_values;
+DROP TEMPORARY TABLE IF EXISTS parameters;
+DROP TEMPORARY TABLE IF EXISTS logits;
+DROP TEMPORARY TABLE IF EXISTS gradient;
+
+END;;
+DELIMITER ;
 \end{minted}
 
 \chapter{PostgreSQL-Skripte}
@@ -1293,69 +1292,69 @@
 \label{appendix:E:1}
 
 \begin{minted}[linenos,breaklines,frame=single]{sql}
-  -- Erstelle (oder ersetze falls vorhanden) die Prozedur für einfache lineare Regression.
-  CREATE OR REPLACE FUNCTION simple_linear_regression(number_datapoints INTEGER)
-  RETURNS TABLE (
-    variable VARCHAR(50),
-    value NUMERIC(65, 30)
-  ) AS $$
-  BEGIN
+-- Erstelle (oder ersetze falls vorhanden) die Prozedur für einfache lineare Regression.
+CREATE OR REPLACE FUNCTION simple_linear_regression(number_datapoints INTEGER)
+RETURNS TABLE (
+  variable VARCHAR(50),
+  value NUMERIC(65, 30)
+) AS $$
+BEGIN
 
-  -- Erstelle eine Relation für die zu verwendenden Datenpunkte.
-  DROP TABLE IF EXISTS datapoints;
-  CREATE TEMPORARY TABLE datapoints (
-    purchases INTEGER,
-    money INTEGER
-  );
+-- Erstelle eine Relation für die zu verwendenden Datenpunkte.
+DROP TABLE IF EXISTS datapoints;
+CREATE TEMPORARY TABLE datapoints (
+  purchases INTEGER,
+  money INTEGER
+);
 
-  -- Füge die gewünschte Anzahl der Datenpunkte in die temporäre Relation ein.
-  INSERT INTO datapoints
-  SELECT purchases, money
-  FROM sample
-  LIMIT number_datapoints;
+-- Füge die gewünschte Anzahl der Datenpunkte in die temporäre Relation ein.
+INSERT INTO datapoints
+SELECT purchases, money
+FROM sample
+LIMIT number_datapoints;
 
-  RETURN QUERY
-  WITH
-    -- Berechne die Mittelwerte der abhängigen und unabhängigen Variable.
-    means AS (
-      SELECT
-        AVG(purchases) AS mean_purchases,
-        AVG(money) AS mean_money
-      FROM datapoints
-    ),
-    -- Berechne die Summen im Nenner und Zähler der Formel für beta.
-    sums AS (
-      SELECT
-        SUM((purchases - mean_purchases) * (money - mean_money)) AS nominator,
-        SUM(POWER(purchases - mean_purchases, 2)) AS denominator
-      FROM datapoints, means
-    ),
-    -- Berechne beta.
-    beta AS (
-      SELECT
-        'beta'::VARCHAR(50) AS variable,
-        nominator / denominator AS value
-      FROM sums
-    ),
-    -- Berechne alpha.
-    alpha AS (
-      SELECT
-        'alpha'::VARCHAR(50) AS variable,
-        mean_money - beta.value * mean_purchases AS value
-      FROM means, beta
-    )
-  -- Gib eine Relation mit Parametername und zugehörigem Wert zurück.
-  SELECT *
-  FROM alpha
-  UNION
-  SELECT *
-  FROM beta;
+RETURN QUERY
+WITH
+  -- Berechne die Mittelwerte der abhängigen und unabhängigen Variable.
+  means AS (
+    SELECT
+      AVG(purchases) AS mean_purchases,
+      AVG(money) AS mean_money
+    FROM datapoints
+  ),
+  -- Berechne die Summen im Nenner und Zähler der Formel für beta.
+  sums AS (
+    SELECT
+      SUM((purchases - mean_purchases) * (money - mean_money)) AS nominator,
+      SUM(POWER(purchases - mean_purchases, 2)) AS denominator
+    FROM datapoints, means
+  ),
+  -- Berechne beta.
+  beta AS (
+    SELECT
+      'beta'::VARCHAR(50) AS variable,
+      nominator / denominator AS value
+    FROM sums
+  ),
+  -- Berechne alpha.
+  alpha AS (
+    SELECT
+      'alpha'::VARCHAR(50) AS variable,
+      mean_money - beta.value * mean_purchases AS value
+    FROM means, beta
+  )
+-- Gib eine Relation mit Parametername und zugehörigem Wert zurück.
+SELECT *
+FROM alpha
+UNION
+SELECT *
+FROM beta;
 
-  -- Lösche die temporäre Relation mit den Datenpunkten wieder.
-  DROP TABLE IF EXISTS datapoints;
+-- Lösche die temporäre Relation mit den Datenpunkten wieder.
+DROP TABLE IF EXISTS datapoints;
 
-  END;
-  $$ LANGUAGE plpgsql;
+END;
+$$ LANGUAGE plpgsql;
 \end{minted}
 
 \section{Multiple lineare Regression}
@@ -1553,218 +1552,218 @@ $$ LANGUAGE plpgsql;
 \label{appendix:E:3}
 
 \begin{minted}[linenos,breaklines,frame=single]{sql}
-  -- Erstelle (oder ersetzte falls vorhanden) eine Prozedur zur Berechnung der Werte der logistischen Funktion.
-  CREATE OR REPLACE FUNCTION calculate_logit()
-  RETURNS void AS $$
-  BEGIN
+-- Erstelle (oder ersetzte falls vorhanden) eine Prozedur zur Berechnung der Werte der logistischen Funktion.
+CREATE OR REPLACE FUNCTION calculate_logit()
+RETURNS void AS $$
+BEGIN
 
-  DELETE FROM logits;
+DELETE FROM logits;
 
-  WITH
-    -- Bestimme den alten und neuen Wert von alpha.
-    alpha_old AS (
-      SELECT old
-      FROM parameters
-      WHERE variable = 'alpha'
-    ),
-    alpha_new AS (
-      SELECT new
-      FROM parameters
-      WHERE variable = 'alpha'
-    )
-  -- Berechne die Werte der logistischen Funktion für alle Datenpunkte.
-  INSERT INTO logits
-    SELECT
-      d.id,
-      1 / (1 + EXP(- SUM(d.value * p.old) - (SELECT old FROM alpha_old))) AS old,
-      1 / (1 + EXP(- SUM(d.value * p.new) - (SELECT new FROM alpha_new))) AS new
-    FROM datapoints d
-    JOIN parameters p ON p.variable = d.variable
-    GROUP BY d.id;
-
-  RETURN;
-
-  END;
-  $$ LANGUAGE plpgsql;
-
-  -- Erstelle (oder ersetze falls vorhanden) eine Prozedur zur Berechnung des Gradienten.
-  CREATE OR REPLACE FUNCTION calculate_gradient()
-  RETURNS void AS $$
-  BEGIN
-
-  DELETE FROM gradient;
-
-  -- Berechne die partielle Ableitung nach alpha.
-  INSERT INTO gradient
-  SELECT 'alpha' AS variable, SUM(bv.value - l.old) AS value
-  FROM logits l
-  JOIN binary_values bv ON bv.id = l.id;
-
-  -- Berechne die partielle Ableitung nach allen beta-Parametern.
-  INSERT INTO gradient
-  SELECT d.variable, SUM(d.value * (bv.value - l.old)) AS value
-  FROM logits l
-  JOIN binary_values bv ON bv.id = l.id
-  JOIN datapoints d ON d.id = l.id
-  GROUP BY d.variable;
-
-  RETURN;
-
-  END;
-  $$ LANGUAGE plpgsql;
-
-  -- Erzeuge (oder ersetze falls vorhanden) eine Prozedur zur Berechnung der neuen Parameter abhängig von der aktuellen Schrittweite.
-  CREATE OR REPLACE FUNCTION calculate_new_parameters(step NUMERIC(65, 30))
-  RETURNS void AS $$
-  BEGIN
-
-  UPDATE parameters
-  SET new = old + step * gradient.value
-  FROM gradient
-  WHERE gradient.variable = parameters.variable;
-
-  RETURN;
-
-  END;
-  $$ LANGUAGE plpgsql;
-
-  -- Erstelle die Prozedur für logistische Regression.
-  CREATE OR REPLACE FUNCTION logistic_regression(number_datapoints INTEGER, rounds INTEGER, step NUMERIC(65, 30))
-  RETURNS TABLE (
-    variable VARCHAR(50),
-    value NUMERIC(65, 30)
-  ) AS $$
-  DECLARE
-    counter INTEGER;
-  BEGIN
-
-  -- Erstelle eine Relation für die Werte der unabhängigen Variablen.
-  DROP TABLE IF EXISTS datapoints;
-  CREATE TEMPORARY TABLE datapoints (
-    id INTEGER,
-    variable VARCHAR(50),
-    value NUMERIC(65, 30)
-  );
-
-  -- Füge die linear transformierten Werte der unabhängigen Variablen in die Relation datapoints ein.
-  INSERT INTO datapoints
+WITH
+  -- Bestimme den alten und neuen Wert von alpha.
+  alpha_old AS (
+    SELECT old
+    FROM parameters
+    WHERE variable = 'alpha'
+  ),
+  alpha_new AS (
+    SELECT new
+    FROM parameters
+    WHERE variable = 'alpha'
+  )
+-- Berechne die Werte der logistischen Funktion für alle Datenpunkte.
+INSERT INTO logits
   SELECT
-    row_number() OVER () AS id,
-    'beta_money' AS variable,
-    (money - (
-      SELECT MIN(money) FROM sample
-    ))::NUMERIC(65, 30) / ((
-      SELECT MAX(money) FROM sample
-    ) - (
-      SELECT MIN(money) FROM sample
-    ))::NUMERIC(65, 30) AS value
-  FROM sample
-  LIMIT number_datapoints;
+    d.id,
+    1 / (1 + EXP(- SUM(d.value * p.old) - (SELECT old FROM alpha_old))) AS old,
+    1 / (1 + EXP(- SUM(d.value * p.new) - (SELECT new FROM alpha_new))) AS new
+  FROM datapoints d
+  JOIN parameters p ON p.variable = d.variable
+  GROUP BY d.id;
 
-  -- Erstelle eine Relation für die (binären) Werte der abhängigen Variablen.
-  DROP TABLE IF EXISTS binary_values;
-  CREATE TEMPORARY TABLE binary_values (
-    id INTEGER,
-    value INTEGER
-  );
+RETURN;
 
-  -- Füge die Werte der abhängingen Variable ein.
-  INSERT INTO binary_values
-  SELECT
-    row_number() OVER () AS id,
-    premium AS value
-  FROM sample
-  LIMIT number_datapoints;
+END;
+$$ LANGUAGE plpgsql;
 
-  -- Erstelle eine Relation für die alten und neuen Parameterwerte.
-  DROP TABLE IF EXISTS parameters;
-  CREATE TEMPORARY TABLE parameters (
-    variable VARCHAR(50),
-    old NUMERIC(65, 30),
-    new NUMERIC(65, 30)
-  );
+-- Erstelle (oder ersetze falls vorhanden) eine Prozedur zur Berechnung des Gradienten.
+CREATE OR REPLACE FUNCTION calculate_gradient()
+RETURNS void AS $$
+BEGIN
 
-  -- Füge die Initialwerte der Parameter ein.
-  INSERT INTO parameters VALUES
-    ('alpha', 0, 0),
-    ('beta_money', 0, 0);
+DELETE FROM gradient;
 
-  -- Erstelle eine Relation für die Werte der logistischen Funktion für alle Datenpunkte.
-  DROP TABLE IF EXISTS logits;
-  CREATE TEMPORARY TABLE logits (
-    id INTEGER,
-    old NUMERIC(65, 30),
-    new NUMERIC(65, 30)
-  );
+-- Berechne die partielle Ableitung nach alpha.
+INSERT INTO gradient
+SELECT 'alpha' AS variable, SUM(bv.value - l.old) AS value
+FROM logits l
+JOIN binary_values bv ON bv.id = l.id;
 
-  -- Befülle die Relation für die Werte der logistischen Funktion.
+-- Berechne die partielle Ableitung nach allen beta-Parametern.
+INSERT INTO gradient
+SELECT d.variable, SUM(d.value * (bv.value - l.old)) AS value
+FROM logits l
+JOIN binary_values bv ON bv.id = l.id
+JOIN datapoints d ON d.id = l.id
+GROUP BY d.variable;
+
+RETURN;
+
+END;
+$$ LANGUAGE plpgsql;
+
+-- Erzeuge (oder ersetze falls vorhanden) eine Prozedur zur Berechnung der neuen Parameter abhängig von der aktuellen Schrittweite.
+CREATE OR REPLACE FUNCTION calculate_new_parameters(step NUMERIC(65, 30))
+RETURNS void AS $$
+BEGIN
+
+UPDATE parameters
+SET new = old + step * gradient.value
+FROM gradient
+WHERE gradient.variable = parameters.variable;
+
+RETURN;
+
+END;
+$$ LANGUAGE plpgsql;
+
+-- Erstelle die Prozedur für logistische Regression.
+CREATE OR REPLACE FUNCTION logistic_regression(number_datapoints INTEGER, rounds INTEGER, step NUMERIC(65, 30))
+RETURNS TABLE (
+  variable VARCHAR(50),
+  value NUMERIC(65, 30)
+) AS $$
+DECLARE
+  counter INTEGER;
+BEGIN
+
+-- Erstelle eine Relation für die Werte der unabhängigen Variablen.
+DROP TABLE IF EXISTS datapoints;
+CREATE TEMPORARY TABLE datapoints (
+  id INTEGER,
+  variable VARCHAR(50),
+  value NUMERIC(65, 30)
+);
+
+-- Füge die linear transformierten Werte der unabhängigen Variablen in die Relation datapoints ein.
+INSERT INTO datapoints
+SELECT
+  row_number() OVER () AS id,
+  'beta_money' AS variable,
+  (money - (
+    SELECT MIN(money) FROM sample
+  ))::NUMERIC(65, 30) / ((
+    SELECT MAX(money) FROM sample
+  ) - (
+    SELECT MIN(money) FROM sample
+  ))::NUMERIC(65, 30) AS value
+FROM sample
+LIMIT number_datapoints;
+
+-- Erstelle eine Relation für die (binären) Werte der abhängigen Variablen.
+DROP TABLE IF EXISTS binary_values;
+CREATE TEMPORARY TABLE binary_values (
+  id INTEGER,
+  value INTEGER
+);
+
+-- Füge die Werte der abhängingen Variable ein.
+INSERT INTO binary_values
+SELECT
+  row_number() OVER () AS id,
+  premium AS value
+FROM sample
+LIMIT number_datapoints;
+
+-- Erstelle eine Relation für die alten und neuen Parameterwerte.
+DROP TABLE IF EXISTS parameters;
+CREATE TEMPORARY TABLE parameters (
+  variable VARCHAR(50),
+  old NUMERIC(65, 30),
+  new NUMERIC(65, 30)
+);
+
+-- Füge die Initialwerte der Parameter ein.
+INSERT INTO parameters VALUES
+  ('alpha', 0, 0),
+  ('beta_money', 0, 0);
+
+-- Erstelle eine Relation für die Werte der logistischen Funktion für alle Datenpunkte.
+DROP TABLE IF EXISTS logits;
+CREATE TEMPORARY TABLE logits (
+  id INTEGER,
+  old NUMERIC(65, 30),
+  new NUMERIC(65, 30)
+);
+
+-- Befülle die Relation für die Werte der logistischen Funktion.
+PERFORM calculate_logit();
+
+-- Erstelle eine Relation für den Gradienten.
+DROP TABLE IF EXISTS gradient;
+CREATE TEMPORARY TABLE gradient (
+  variable VARCHAR(50),
+  value NUMERIC(65, 30)
+);
+
+-- Iteriere über die Anzahl der gewünschten Iterationen.
+counter := 0;
+WHILE counter < rounds AND step > 0.000000000000000000000000000001 LOOP
+
+  -- Berechne den Gradienten und die neuen Parameter mit der aktuellen Schrittweite.
+  PERFORM calculate_gradient();
+  PERFORM calculate_new_parameters(step);
   PERFORM calculate_logit();
 
-  -- Erstelle eine Relation für den Gradienten.
-  DROP TABLE IF EXISTS gradient;
-  CREATE TEMPORARY TABLE gradient (
-    variable VARCHAR(50),
-    value NUMERIC(65, 30)
-  );
+  -- Verringere die Schrittweite solange, bis die neuen Parameter ein besseres Ergebnis liefern als die alten.
+  WHILE NOT (
+    SELECT
+      SUM(LOG(bv.value * l.new + (1 - bv.value) * (1 - l.new))) >
+      SUM(LOG(bv.value * l.old + (1 - bv.value) * (1 - l.old)))
+    FROM logits l
+    JOIN binary_values bv ON bv.id = l.id
+  ) AND step > 0.000000000000000000000000000001 LOOP
 
-  -- Iteriere über die Anzahl der gewünschten Iterationen.
-  counter := 0;
-  WHILE counter < rounds AND step > 0.000000000000000000000000000001 LOOP
-
-    -- Berechne den Gradienten und die neuen Parameter mit der aktuellen Schrittweite.
-    PERFORM calculate_gradient();
+    step := step / 2;
     PERFORM calculate_new_parameters(step);
     PERFORM calculate_logit();
 
-    -- Verringere die Schrittweite solange, bis die neuen Parameter ein besseres Ergebnis liefern als die alten.
-    WHILE NOT (
-      SELECT
-        SUM(LOG(bv.value * l.new + (1 - bv.value) * (1 - l.new))) >
-        SUM(LOG(bv.value * l.old + (1 - bv.value) * (1 - l.old)))
-      FROM logits l
-      JOIN binary_values bv ON bv.id = l.id
-    ) AND step > 0.000000000000000000000000000001 LOOP
-
-      step := step / 2;
-      PERFORM calculate_new_parameters(step);
-      PERFORM calculate_logit();
-
-    END LOOP;
-
-    -- Ersetze die alten Werte durch die neuen Werte.
-    UPDATE parameters
-    SET old = new;
-
-    UPDATE logits
-    SET old = new;
-
-    counter := counter + 1;
-
   END LOOP;
 
-  -- Transformiere die Parameter linear, um den originalen Daten zu entsprechen.
+  -- Ersetze die alten Werte durch die neuen Werte.
   UPDATE parameters
-  SET old = old / ((SELECT MAX(money) FROM sample) - (SELECT MIN(money) FROM sample))
-  WHERE parameters.variable = 'beta_money';
+  SET old = new;
 
-  UPDATE parameters
-  SET old = old - (SELECT old FROM parameters p2 WHERE p2.variable = 'beta_money') * (SELECT MIN(money) FROM sample)
-  WHERE parameters.variable = 'alpha';
+  UPDATE logits
+  SET old = new;
 
-  -- Gib eine Relation mit Parametername und zugehörigem Wert zurück.
-  RETURN QUERY
-  SELECT parameters.variable::VARCHAR(50), old AS value
-  FROM parameters;
+  counter := counter + 1;
 
-  -- Lösche die Relationen wieder.
-  DROP TABLE IF EXISTS datapoints;
-  DROP TABLE IF EXISTS binary_values;
-  DROP TABLE IF EXISTS parameters;
-  DROP TABLE IF EXISTS logits;
-  DROP TABLE IF EXISTS gradient;
+END LOOP;
 
-  END;
-  $$ LANGUAGE plpgsql;
+-- Transformiere die Parameter linear, um den originalen Daten zu entsprechen.
+UPDATE parameters
+SET old = old / ((SELECT MAX(money) FROM sample) - (SELECT MIN(money) FROM sample))
+WHERE parameters.variable = 'beta_money';
+
+UPDATE parameters
+SET old = old - (SELECT old FROM parameters p2 WHERE p2.variable = 'beta_money') * (SELECT MIN(money) FROM sample)
+WHERE parameters.variable = 'alpha';
+
+-- Gib eine Relation mit Parametername und zugehörigem Wert zurück.
+RETURN QUERY
+SELECT parameters.variable::VARCHAR(50), old AS value
+FROM parameters;
+
+-- Lösche die Relationen wieder.
+DROP TABLE IF EXISTS datapoints;
+DROP TABLE IF EXISTS binary_values;
+DROP TABLE IF EXISTS parameters;
+DROP TABLE IF EXISTS logits;
+DROP TABLE IF EXISTS gradient;
+
+END;
+$$ LANGUAGE plpgsql;
 \end{minted}
 
 \chapter{Python-Skripte für das Benchmarking}
@@ -1774,502 +1773,504 @@ $$ LANGUAGE plpgsql;
 \label{appendix:F:1}
 
 \begin{minted}[linenos,breaklines,frame=single]{python}
-  from time import time
-  from subprocess import call
-  import os
-  import sys
-  import csv
-  import json
+from time import time
+from subprocess import call
+import os
+import sys
+import csv
+import json
 
-  # Erzeuge Funktion, um einen Fortschrittsbalken zu drucken.
-  def print_progessbar(iterations, progress):
-    sys.stdout.write("\033[100D")
-    for i in range(progress * 50 // iterations): sys.stdout.write("#")
-    for i in range(50 - (progress * 50 // iterations)): sys.stdout.write(".")
-    sys.stdout.write("  ||  %i%% / 100%%" % (progress * 100 // iterations))
-    sys.stdout.flush()
+# Erzeuge Funktion, um einen Fortschrittsbalken zu drucken.
+def print_progessbar(iterations, progress):
+  sys.stdout.write("\033[100D")
+  for i in range(progress * 50 // iterations): sys.stdout.write("#")
+  for i in range(50 - (progress * 50 // iterations)): sys.stdout.write(".")
+  sys.stdout.write("  ||  %i%% / 100%%" % (progress * 100 // iterations))
+  sys.stdout.flush()
 
-  # Erzeuge Funktion, die eine bestimme Anzahl an Laufzeiten für eine bestimmte Anzahl an Datenpunkten für eine bestimme Art der Regression in einer bestimmten Sprache berechnet.
-  def benchmark(type_regression, language, command, set_number_datapoints, file, iterations):
-    print("Evaluating %s in %s..." % (type_regression, language))
+# Erzeuge Funktion, die eine bestimme Anzahl an Laufzeiten für eine bestimmte Anzahl an Datenpunkten für eine bestimme Art der Regression in einer bestimmten Sprache berechnet.
+def benchmark(type_regression, language, command, set_number_datapoints, file, iterations):
+  print("Evaluating %s in %s..." % (type_regression, language))
 
-    # Iteriere über ein übergenenes Array mit den Anzahlen der zu verwendenden Datenpunkte.
-    for number_datapoints in set_number_datapoints:
-      print("Use %s datapoints:" % (number_datapoints))
+  # Iteriere über ein übergenenes Array mit den Anzahlen der zu verwendenden Datenpunkte.
+  for number_datapoints in set_number_datapoints:
+    print("Use %s datapoints:" % (number_datapoints))
 
-      # Erzeuge eine Datei, in die die Ausgaben aus stdout und stderr geschrieben werden.
-      logfile = open("logs/%s-%s-%i.txt" % (language, type_regression.replace(" ", "-"), number_datapoints), "a")
+    # Erzeuge eine Datei, in die die Ausgaben aus stdout und stderr geschrieben werden.
+    logfile = open("logs/%s-%s-%i.txt" % (language, type_regression.replace(" ", "-"), number_datapoints), "a")
 
-      # Füge die Anzahl der Datenpunkte in den Kommandozeilen-Befehl ein.
-      if command.count("%") == 2:
-        exec_command = command % (number_datapoints, 8 / number_datapoints)
-      else:
-        exec_command = command % number_datapoints
+    # Füge die Anzahl der Datenpunkte in den Kommandozeilen-Befehl ein.
+    if command.count("%") == 2:
+      exec_command = command % (number_datapoints, 8 / number_datapoints)
+    else:
+      exec_command = command % number_datapoints
 
-      # Iteriere über die Anzahl der gewünschten Iterationen.
-      for i in range(iterations):
-        # Drucke den Fortschrittsbalken
-        print_progessbar(iterations, i)
+    # Iteriere über die Anzahl der gewünschten Iterationen.
+    for i in range(iterations):
+      # Drucke den Fortschrittsbalken
+      print_progessbar(iterations, i)
 
-        # Speichere die Startzeit.
-        start_time = time()
+      # Speichere die Startzeit.
+      start_time = time()
 
-        # Führe den Kommandozeilen-Befehl aus.
-        call(exec_command, stdout = logfile, stderr = logfile, shell = True)
+      # Führe den Kommandozeilen-Befehl aus.
+      call(exec_command, stdout = logfile, stderr = logfile, shell = True)
 
-        # Speichere die Endzeit.
-        end_time = time()
+      # Speichere die Endzeit.
+      end_time = time()
 
-        # Füge eine neue Zeile in der Benchmark-Datei ein.
-        file.write("%s,%s,%i,%s\n" % (
-          language,
-          type_regression,
-          number_datapoints,
-          (end_time - start_time)
-        ))
+      # Füge eine neue Zeile in der Benchmark-Datei ein.
+      file.write("%s,%s,%i,%s\n" % (
+        language,
+        type_regression,
+        number_datapoints,
+        (end_time - start_time)
+      ))
 
-      # Schließe die Log-Datei.
-      logfile.close()
+    # Schließe die Log-Datei.
+    logfile.close()
 
-      # Drucke 100% im Forschrittbalken und eine leere Zeile.
-      print_progessbar(iterations, iterations)
-      print("")
-    return
+    # Drucke 100% im Forschrittbalken und eine leere Zeile.
+    print_progessbar(iterations, iterations)
+    print("")
+  return
 
-  def main(argv):
-    # Bestimme default-Werte.
-    iterations = 100
-    set_number_datapoints = [10, 100, 1000, 10000, 100000]
-    run_r = False
-    run_tensorflow = False
-    run_mysql = False
-    run_postgresql = False
-    run_simple_linear_regression = False
-    run_multiple_linear_regression = False
-    run_logistic_regression = False
+def main(argv):
+  # Bestimme default-Werte.
+  iterations = 100
+  set_number_datapoints = [10, 100, 1000, 10000, 100000]
+  run_r = False
+  run_tensorflow = False
+  run_mysql = False
+  run_postgresql = False
+  run_simple_linear_regression = False
+  run_multiple_linear_regression = False
+  run_logistic_regression = False
 
-    # Durchlaufe die übergebenen Argumente.
-    for arg in argv:
-      # Fixiere die Anzahl der Datenpunkte.
-      if "--datapoints=" in arg: set_number_datapoints = [int(arg.split("=")[1])]
+  # Durchlaufe die übergebenen Argumente.
+  for arg in argv:
+    # Fixiere die Anzahl der Datenpunkte.
+    if "--datapoints=" in arg: set_number_datapoints = [int(arg.split("=")[1])]
 
-      # Setzte die Anzahl der Iterationen.
-      if "--iterations=" in arg: iterations = int(arg.split("=")[1])
+    # Setzte die Anzahl der Iterationen.
+    if "--iterations=" in arg: iterations = int(arg.split("=")[1])
 
-      # Berechne Benchmarks für R.
-      if arg in ["--r", "-r"]: run_r = True
+    # Berechne Benchmarks für R.
+    if arg in ["--r", "-r"]: run_r = True
 
-      # Verwende TensorFlow.
-      if arg in ["--tensorflow", "-t"]: run_tensorflow = True
+    # Verwende TensorFlow.
+    if arg in ["--tensorflow", "-t"]: run_tensorflow = True
 
-      # Berechne Benchmarks für MySQL.
-      if arg in ["--mysql", "-m"]: run_mysql = True
+    # Berechne Benchmarks für MySQL.
+    if arg in ["--mysql", "-m"]: run_mysql = True
 
-      # Berechne Benchmarks für PostgreSQL.
-      if arg in ["--postgresql", "-p"]: run_postgresql = True
+    # Berechne Benchmarks für PostgreSQL.
+    if arg in ["--postgresql", "-p"]: run_postgresql = True
 
-      # Berechne Benchmarks für einfache lineare Regression.
-      if arg in ["--simple-linear", "-slr"]: run_simple_linear_regression = True
+    # Berechne Benchmarks für einfache lineare Regression.
+    if arg in ["--simple-linear", "-slr"]: run_simple_linear_regression = True
 
-      # Berechne Benchmarks für multiple lineare Regression.
-      if arg in ["--multiple-linear", "-mlr"]: run_multiple_linear_regression = True
+    # Berechne Benchmarks für multiple lineare Regression.
+    if arg in ["--multiple-linear", "-mlr"]: run_multiple_linear_regression = True
 
-      # Berechne Benchmarks für logistische Regression.
-      if arg in ["--logistic", "-lr"]: run_logistic_regression = True
+    # Berechne Benchmarks für logistische Regression.
+    if arg in ["--logistic", "-lr"]: run_logistic_regression = True
 
-    # Wenn keine Art der Regression und keine Sprache spezifiziert wurde, berechne alles.
-    if not ((
-      run_r or
-      run_tensorflow or
-      run_mysql or
-      run_postgresql
-    ) and (
-      run_simple_linear_regression or
-      run_multiple_linear_regression or
-      run_logistic_regression
-    )):
-      run_r = True
-      run_tensorflow = True
-      run_mysql = True
-      run_postgresql = True
-      run_simple_linear_regression = True
-      run_multiple_linear_regression = True
-      run_logistic_regression = True
+  # Wenn keine Art der Regression und keine Sprache spezifiziert wurde, berechne alles.
+  if not ((
+    run_r or
+    run_tensorflow or
+    run_mysql or
+    run_postgresql
+  ) and (
+    run_simple_linear_regression or
+    run_multiple_linear_regression or
+    run_logistic_regression
+  )):
+    run_r = True
+    run_tensorflow = True
+    run_mysql = True
+    run_postgresql = True
+    run_simple_linear_regression = True
+    run_multiple_linear_regression = True
+    run_logistic_regression = True
 
-    # Erzeuge eine Datei für die berechneten Laufzeiten und schreibe die erste Zeile.
-    file = open("benchmarks-%i.csv" % (time()), "w")
-    file.write("language,type,datapoints,time\n")
+  # Erzeuge eine Datei für die berechneten Laufzeiten und schreibe die erste Zeile.
+  file = open("benchmarks-%i.csv" % (time()), "w")
+  file.write("language,type,datapoints,time\n")
 
-    # Berechne einfache lineare Regression in R.
-    if run_r and run_simple_linear_regression:
-      benchmark(
-        "simple linear regression",
-        "r",
-        "Rscript r/simpleLinearRegression.R %i -",
-        set_number_datapoints,
-        file,
-        iterations
-      )
+  # Berechne einfache lineare Regression in R.
+  if run_r and run_simple_linear_regression:
+    benchmark(
+      "simple linear regression",
+      "r",
+      "Rscript r/simpleLinearRegression.R %i -",
+      set_number_datapoints,
+      file,
+      iterations
+    )
 
-    # Berechne multiple lineare Regression in R.
-    if run_r and run_multiple_linear_regression:
-      benchmark(
-        "multiple linear regression",
-        "r",
-        "Rscript r/multipleLinearRegression.R %i -",
-        set_number_datapoints,
-        file,
-        iterations
-      )
+  # Berechne multiple lineare Regression in R.
+  if run_r and run_multiple_linear_regression:
+    benchmark(
+      "multiple linear regression",
+      "r",
+      "Rscript r/multipleLinearRegression.R %i -",
+      set_number_datapoints,
+      file,
+      iterations
+    )
 
-    # Berechne logistische Regression in R.
-    if run_r and run_logistic_regression:
-      benchmark(
-        "logistic regression",
-        "r",
-        "Rscript r/logisticRegression.R %i -",
-        set_number_datapoints,
-        file,
-        iterations
-      )
+  # Berechne logistische Regression in R.
+  if run_r and run_logistic_regression:
+    benchmark(
+      "logistic regression",
+      "r",
+      "Rscript r/logisticRegression.R %i -",
+      set_number_datapoints,
+      file,
+      iterations
+    )
 
-    # Berechne einfache lineare Regression in TensorFlow.
-    if run_tensorflow and run_simple_linear_regression:
-      benchmark(
-        "simple linear regression",
-        "tensorflow",
-        "python3 tensorflow/simpleLinearRegression.py %i -",
-        set_number_datapoints,
-        file,
-        iterations
-      )
+  # Berechne einfache lineare Regression in TensorFlow.
+  if run_tensorflow and run_simple_linear_regression:
+    benchmark(
+      "simple linear regression",
+      "tensorflow",
+      "python3 tensorflow/simpleLinearRegression.py %i -",
+      set_number_datapoints,
+      file,
+      iterations
+    )
 
-    # Berechne multiple lineare Regression in TensorFlow.
-    if run_tensorflow and run_multiple_linear_regression:
-      benchmark(
-        "multiple linear regression",
-        "tensorflow",
-        "python3 tensorflow/multipleLinearRegression.py %i -",
-        set_number_datapoints,
-        file,
-        iterations
-      )
+  # Berechne multiple lineare Regression in TensorFlow.
+  if run_tensorflow and run_multiple_linear_regression:
+    benchmark(
+      "multiple linear regression",
+      "tensorflow",
+      "python3 tensorflow/multipleLinearRegression.py %i -",
+      set_number_datapoints,
+      file,
+      iterations
+    )
 
-    # Berechne logistische Regression in TensorFlow.
-    if run_tensorflow and run_logistic_regression:
-      benchmark(
-        "logistic regression",
-        "tensorflow",
-        "python3 tensorflow/logisticRegression.py %i -",
-        set_number_datapoints,
-        file,
-        iterations
-      )
+  # Berechne logistische Regression in TensorFlow.
+  if run_tensorflow and run_logistic_regression:
+    benchmark(
+      "logistic regression",
+      "tensorflow",
+      "python3 tensorflow/logisticRegression.py %i -",
+      set_number_datapoints,
+      file,
+      iterations
+    )
 
-    # Berechne einfache lineare Regression in MySQL.
-    if run_mysql and run_simple_linear_regression:
-      benchmark(
-        "simple linear regression",
-        "mysql",
-        "echo \"CALL regression.simple_linear_regression(%i)\" | " + "mysql -u %s -p%s" % (
-          json.loads(os.environ["MYSQL_CONFIG"])["user"],
-          json.loads(os.environ["MYSQL_CONFIG"])["password"]
-        ),
-        set_number_datapoints,
-        file,
-        iterations
-      )
+  # Berechne einfache lineare Regression in MySQL.
+  if run_mysql and run_simple_linear_regression:
+    benchmark(
+      "simple linear regression",
+      "mysql",
+      "echo \"CALL regression.simple_linear_regression(%i)\" | " + "mysql -u %s -p%s" % (
+        json.loads(os.environ["MYSQL_CONFIG"])["user"],
+        json.loads(os.environ["MYSQL_CONFIG"])["password"]
+      ),
+      set_number_datapoints,
+      file,
+      iterations
+    )
 
-    # Berechne multiple lineare Regression in MySQL.
-    if run_mysql and run_multiple_linear_regression:
-      benchmark(
-        "multiple linear regression",
-        "mysql",
-        "echo \"CALL regression.multiple_linear_regression(%i)\" | " + "mysql -u %s -p%s" % (
-          json.loads(os.environ["MYSQL_CONFIG"])["user"],
-          json.loads(os.environ["MYSQL_CONFIG"])["password"]
-        ),
-        set_number_datapoints,
-        file,
-        iterations
-      )
+  # Berechne multiple lineare Regression in MySQL.
+  if run_mysql and run_multiple_linear_regression:
+    benchmark(
+      "multiple linear regression",
+      "mysql",
+      "echo \"CALL regression.multiple_linear_regression(%i)\" | " + "mysql -u %s -p%s" % (
+        json.loads(os.environ["MYSQL_CONFIG"])["user"],
+        json.loads(os.environ["MYSQL_CONFIG"])["password"]
+      ),
+      set_number_datapoints,
+      file,
+      iterations
+    )
 
-    # Berechne logistische Regression in MySQL.
-    if run_mysql and run_logistic_regression:
-      benchmark(
-        "logistic regression",
-        "mysql",
-        "echo \"CALL regression.logistic_regression(%i, 1000, %f)\" | " + "mysql -u %s -p%s" % (
-          json.loads(os.environ["MYSQL_CONFIG"])["user"],
-          json.loads(os.environ["MYSQL_CONFIG"])["password"]
-        ),
-        set_number_datapoints,
-        file,
-        iterations
-      )
+  # Berechne logistische Regression in MySQL.
+  if run_mysql and run_logistic_regression:
+    benchmark(
+      "logistic regression",
+      "mysql",
+      "echo \"CALL regression.logistic_regression(%i, 1000, %f)\" | " + "mysql -u %s -p%s" % (
+        json.loads(os.environ["MYSQL_CONFIG"])["user"],
+        json.loads(os.environ["MYSQL_CONFIG"])["password"]
+      ),
+      set_number_datapoints,
+      file,
+      iterations
+    )
 
-    # Berechne einfache lineare Regression in PostgreSQL.
-    if run_postgresql and run_simple_linear_regression:
-      benchmark(
-        "simple linear regression",
-        "postgresql",
-        "echo \"SELECT simple_linear_regression(%i)\" | psql regression",
-        set_number_datapoints,
-        file,
-        iterations
-      )
+  # Berechne einfache lineare Regression in PostgreSQL.
+  if run_postgresql and run_simple_linear_regression:
+    benchmark(
+      "simple linear regression",
+      "postgresql",
+      "echo \"SELECT simple_linear_regression(%i)\" | psql regression",
+      set_number_datapoints,
+      file,
+      iterations
+    )
 
-    # Berechne multiple lineare Regression in PostgreSQL.
-    if run_postgresql and run_multiple_linear_regression:
-      benchmark(
-        "multiple linear regression",
-        "postgresql",
-        "echo \"SELECT multiple_linear_regression(%i)\" | psql regression",
-        set_number_datapoints,
-        file,
-        iterations
-      )
+  # Berechne multiple lineare Regression in PostgreSQL.
+  if run_postgresql and run_multiple_linear_regression:
+    benchmark(
+      "multiple linear regression",
+      "postgresql",
+      "echo \"SELECT multiple_linear_regression(%i)\" | psql regression",
+      set_number_datapoints,
+      file,
+      iterations
+    )
 
-    # Berechne logistische Regression in PostgreSQL.
-    if run_postgresql and run_logistic_regression:
-      benchmark(
-        "logistic regression",
-        "postgresql",
-        "echo \"SELECT logistic_regression(%i, 1000, %f)\" | psql regression",
-        set_number_datapoints,
-        file,
-        iterations
-      )
+  # Berechne logistische Regression in PostgreSQL.
+  if run_postgresql and run_logistic_regression:
+    benchmark(
+      "logistic regression",
+      "postgresql",
+      "echo \"SELECT logistic_regression(%i, 1000, %f)\" | psql regression",
+      set_number_datapoints,
+      file,
+      iterations
+    )
 
-    # Schließe die Benchmark-Datei.
-    file.close()
-    return
+  # Schließe die Benchmark-Datei.
+  file.close()
+  return
 
-  # Führe die main-Funktion aus.
-  if __name__ == "__main__":
-    main(sys.argv)
+# Führe die main-Funktion aus.
+if __name__ == "__main__":
+  main(sys.argv)
 \end{minted}
 
 \section{Auswertung der Benchmarks}
 \label{appendix:F:2}
 
 \begin{minted}[linenos,breaklines,frame=single]{python}
-  import sys
-  import os.path as p
-  import csv
-  import matplotlib.pyplot as plt
+import sys
+import os.path as p
+import csv
+import matplotlib.pyplot as plt
 
-  # Erzeuge Funktion, die die Benchmarks aus der csv-Datei einliest un gruppiert.
-  def calculate_benchmarks():
-    # Bestimme den Dateipfad der benchmark-Datei und öffne diese.
-    filename = p.abspath(p.join(p.dirname(p.realpath(__file__)), "benchmarks.csv"))
-    csvfile = open(filename, newline="")
-    csvreader = csv.reader(csvfile, delimiter=",", quotechar="|")
+# Erzeuge Funktion, die die Benchmarks aus der csv-Datei einliest un gruppiert.
+def calculate_benchmarks():
+  # Bestimme den Dateipfad der benchmark-Datei und öffne diese.
+  filename = p.abspath(p.join(p.dirname(p.realpath(__file__)), "benchmarks.csv"))
+  csvfile = open(filename, newline="")
+  csvreader = csv.reader(csvfile, delimiter=",", quotechar="|")
 
-    # Erstelle ein dictionary, in dem die Laufzeiten aggregiert werden sollen.
-    count = {
-      "simple linear regression": {
-        "10": {
-          "r": {"count": 0, "time": 0},
-          "tensorflow": {"count": 0, "time": 0},
-          "mysql": {"count": 0, "time": 0},
-          "postgresql": {"count": 0, "time": 0}
-        },
-        "100": {
-          "r": {"count": 0, "time": 0},
-          "tensorflow": {"count": 0, "time": 0},
-          "mysql": {"count": 0, "time": 0},
-          "postgresql": {"count": 0, "time": 0}
-        },
-        "1000": {
-          "r": {"count": 0, "time": 0},
-          "tensorflow": {"count": 0, "time": 0},
-          "mysql": {"count": 0, "time": 0},
-          "postgresql": {"count": 0, "time": 0}
-        },
-        "10000": {
-          "r": {"count": 0, "time": 0},
-          "tensorflow": {"count": 0, "time": 0},
-          "mysql": {"count": 0, "time": 0},
-          "postgresql": {"count": 0, "time": 0}
-        },
-        "100000": {
-          "r": {"count": 0, "time": 0},
-          "tensorflow": {"count": 0, "time": 0},
-          "mysql": {"count": 0, "time": 0},
-          "postgresql": {"count": 0, "time": 0}
-        }
+  # Erstelle ein dictionary, in dem die Laufzeiten aggregiert werden sollen.
+  count = {
+    "simple linear regression": {
+      "10": {
+        "r": {"count": 0, "time": 0},
+        "tensorflow": {"count": 0, "time": 0},
+        "mysql": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0}
       },
-      "multiple linear regression": {
-        "10": {
-          "r": {"count": 0, "time": 0},
-          "tensorflow": {"count": 0, "time": 0},
-          "mysql": {"count": 0, "time": 0},
-          "postgresql": {"count": 0, "time": 0}
-        },
-        "100": {
-          "r": {"count": 0, "time": 0},
-          "tensorflow": {"count": 0, "time": 0},
-          "mysql": {"count": 0, "time": 0},
-          "postgresql": {"count": 0, "time": 0}
-        },
-        "1000": {
-          "r": {"count": 0, "time": 0},
-          "tensorflow": {"count": 0, "time": 0},
-          "mysql": {"count": 0, "time": 0},
-          "postgresql": {"count": 0, "time": 0}
-        },
-        "10000": {
-          "r": {"count": 0, "time": 0},
-          "tensorflow": {"count": 0, "time": 0},
-          "mysql": {"count": 0, "time": 0},
-          "postgresql": {"count": 0, "time": 0}
-        },
-        "100000": {
-          "r": {"count": 0, "time": 0},
-          "tensorflow": {"count": 0, "time": 0},
-          "mysql": {"count": 0, "time": 0},
-          "postgresql": {"count": 0, "time": 0}
-        }
+      "100": {
+        "r": {"count": 0, "time": 0},
+        "tensorflow": {"count": 0, "time": 0},
+        "mysql": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0}
       },
-      "logistic regression": {
-        "10": {
-          "r": {"count": 0, "time": 0},
-          "tensorflow": {"count": 0, "time": 0},
-          "mysql": {"count": 0, "time": 0},
-          "postgresql": {"count": 0, "time": 0}
-        },
-        "100": {
-          "r": {"count": 0, "time": 0},
-          "tensorflow": {"count": 0, "time": 0},
-          "mysql": {"count": 0, "time": 0},
-          "postgresql": {"count": 0, "time": 0}
-        },
-        "1000": {
-          "r": {"count": 0, "time": 0},
-          "tensorflow": {"count": 0, "time": 0},
-          "mysql": {"count": 0, "time": 0},
-          "postgresql": {"count": 0, "time": 0}
-        },
-        "10000": {
-          "r": {"count": 0, "time": 0},
-          "tensorflow": {"count": 0, "time": 0},
-          "mysql": {"count": 0, "time": 0},
-          "postgresql": {"count": 0, "time": 0}
-        },
-        "100000": {
-          "r": {"count": 0, "time": 0},
-          "tensorflow": {"count": 0, "time": 0},
-          "mysql": {"count": 0, "time": 0},
-          "postgresql": {"count": 0, "time": 0}
-        }
+      "1000": {
+        "r": {"count": 0, "time": 0},
+        "tensorflow": {"count": 0, "time": 0},
+        "mysql": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0}
+      },
+      "10000": {
+        "r": {"count": 0, "time": 0},
+        "tensorflow": {"count": 0, "time": 0},
+        "mysql": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0}
+      },
+      "100000": {
+        "r": {"count": 0, "time": 0},
+        "tensorflow": {"count": 0, "time": 0},
+        "mysql": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0}
+      }
+    },
+    "multiple linear regression": {
+      "10": {
+        "r": {"count": 0, "time": 0},
+        "tensorflow": {"count": 0, "time": 0},
+        "mysql": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0}
+      },
+      "100": {
+        "r": {"count": 0, "time": 0},
+        "tensorflow": {"count": 0, "time": 0},
+        "mysql": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0}
+      },
+      "1000": {
+        "r": {"count": 0, "time": 0},
+        "tensorflow": {"count": 0, "time": 0},
+        "mysql": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0}
+      },
+      "10000": {
+        "r": {"count": 0, "time": 0},
+        "tensorflow": {"count": 0, "time": 0},
+        "mysql": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0}
+      },
+      "100000": {
+        "r": {"count": 0, "time": 0},
+        "tensorflow": {"count": 0, "time": 0},
+        "mysql": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0}
+      }
+    },
+    "logistic regression": {
+      "10": {
+        "r": {"count": 0, "time": 0},
+        "tensorflow": {"count": 0, "time": 0},
+        "mysql": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0}
+      },
+      "100": {
+        "r": {"count": 0, "time": 0},
+        "tensorflow": {"count": 0, "time": 0},
+        "mysql": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0}
+      },
+      "1000": {
+        "r": {"count": 0, "time": 0},
+        "tensorflow": {"count": 0, "time": 0},
+        "mysql": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0}
+      },
+      "10000": {
+        "r": {"count": 0, "time": 0},
+        "tensorflow": {"count": 0, "time": 0},
+        "mysql": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0}
+      },
+      "100000": {
+        "r": {"count": 0, "time": 0},
+        "tensorflow": {"count": 0, "time": 0},
+        "mysql": {"count": 0, "time": 0},
+        "postgresql": {"count": 0, "time": 0}
       }
     }
+  }
 
-    # Iteriere über alle Zeilen der csv-Datei.
-    for row in csvreader:
-      # Überspringe die erste Zeile.
-      if not row[0] == "language":
-        # Füge die Laufzeit in das dictionary ein.
-        count[row[1]][row[2]][row[0]]["count"] += 1
-        count[row[1]][row[2]][row[0]]["time"] += float(row[3])
+  # Iteriere über alle Zeilen der csv-Datei.
+  for row in csvreader:
+    # Überspringe die erste Zeile.
+    if not row[0] == "language":
+      # Füge die Laufzeit in das dictionary ein.
+      count[row[1]][row[2]][row[0]]["count"] += 1
+      count[row[1]][row[2]][row[0]]["time"] += float(row[3])
 
-    # Durchlaufe das dictionary (Typ der Regression).
-    for regression_type, obj1 in count.items():
-      print("benchmarks for %s:\n" % regression_type)
+  # Durchlaufe das dictionary (Typ der Regression).
+  for regression_type, obj1 in count.items():
+    print("benchmarks for %s:\n" % regression_type)
 
-      # Erzeuge ein neues dictionary, um eine Tabelle zu drucken.
-      table = {"header": [""], "r": ["r"], "tensorflow": ["tensorflow"], "mysql": ["mysql"], "postgresql": ["postresql"]}
+    # Erzeuge ein neues dictionary, um eine Tabelle zu drucken.
+    table = {"header": [""], "r": ["r"], "tensorflow": ["tensorflow"], "mysql": ["mysql"], "postgresql": ["postgresql"]}
 
-      # Iteriere über die im ersten dictionary enthalten dictionaries (Anzahl Datenpunkte).
-      for number_datapoints, obj2 in obj1.items():
-        # Ergänze die Anzahl der Datenpunkte als Spaltenbeschriftung.
-        table["header"].append(str(number_datapoints))
+    # Iteriere über die im ersten dictionary enthalten dictionaries (Anzahl Datenpunkte).
+    for number_datapoints, obj2 in obj1.items():
+      # Ergänze die Anzahl der Datenpunkte als Spaltenbeschriftung.
+      table["header"].append(str(number_datapoints))
 
-        # Iteriere über die im zweiten dictionary enthalten dictionaries (Sprache).
-        for language, data in obj2.items():
-          # Füge die durchschnittliche Laufzeit in die Tabelle ein (falls Lafzeiten vorhanden sind).
-          if data["count"] > 0:
-            table[language].append(str(data["time"] / data["count"])[:10])
-          else:
-            table[language].append("          ")
-
-      # Erzeuge die zu druckende Tabelle zeilenweise.
-      print_table = [
-        "|" + "-" * 89 + "|",
-        "|" + "  %s            |  %s          |  %s         |  %s        |  %s       |  %s      " % tuple(table["header"]) + "|",
-        "|" + "-" * 89 + "|",
-        "|" + "  %s           |  %s  |  %s  |  %s  |  %s  |  %s  " % tuple(table["r"]) + "|",
-        "|" + "-" * 89 + "|",
-        "|" + "  %s  |  %s  |  %s  |  %s  |  %s  |  %s  " % tuple(table["tensorflow"]) + "|",
-        "|" + "-" * 89 + "|",
-        "|" + "  %s       |  %s  |  %s  |  %s  |  %s  |  %s  " % tuple(table["mysql"]) + "|",
-        "|" + "-" * 89 + "|",
-        "|" + "  %s   |  %s  |  %s  |  %s  |  %s  |  %s  " % tuple(table["postgresql"]) + "|",
-        "|" + "-" * 89 + "|"
-      ]
-
-      # Drucke die Tabelle und eine Leerzeile danach.
-      print(str.join("\n", print_table))
-      print("\n")
-
-    # Gib das dictionary mit allen aggregierten Laufzeiten zurück.
-    return count
-
-  # Erzeuge Funktion, um die Laufzeiten für eine bestimmte Art der Regression zu plotten.
-  def plot(benchmarks, regression_type, plot_title):
-    # Definiere ein Array mit den Anzahlen der Datenpunkte für den Plot.
-    x = [10, 100, 1000, 10000, 100000]
-
-    # Erzeuge ein dictionary mit leeren Arrays für die durchschnittlichen Laufzeiten.
-    values = {
-      "r": [],
-      "tensorflow": [],
-      "mysql": [],
-      "postgresql": []
-    }
-
-    # Durchlaufe alle Sprachen.
-    for language in ["r", "tensorflow", "mysql", "postgresql"]:
-      # Durchlaufe die Anzahl der Datenpunkte.
-      for number_datapoints in x:
-        # Füge die durchschnittliche Laufzeit in das Array ein (falls Laufzeiten vorhanden sind).
-        if benchmarks[regression_type][str(number_datapoints)][language]["count"] > 0:
-          values[language].append(
-            benchmarks[regression_type][str(number_datapoints)][language]["time"] /
-            benchmarks[regression_type][str(number_datapoints)][language]["count"]
-          )
+      # Iteriere über die im zweiten dictionary enthalten dictionaries (Sprache).
+      for language, data in obj2.items():
+        # Füge die durchschnittliche Laufzeit in die Tabelle ein (falls Lafzeiten vorhanden sind).
+        if data["count"] > 0:
+          table[language].append(str(data["time"] / data["count"])[:10])
         else:
-          values[language].append(None)
+          table[language].append("          ")
 
-    # Erzeuge den Plot.
-    plt.loglog(x, values["r"], "r-", label="R")
-    plt.loglog(x, values["tensorflow"], "y-", label="TensorFlow")
-    plt.loglog(x, values["mysql"], "b-", label="MySQL")
-    plt.loglog(x, values["postgresql"], "g-", label="PostgreSQL")
-    plt.title(plot_title)
-    plt.legend()
-    plt.show()
+    # Erzeuge die zu druckende Tabelle zeilenweise.
+    print_table = [
+      "|" + "-" * 89 + "|",
+      "|" + "  %s            |  %s          |  %s         |  %s        |  %s       |  %s      " % tuple(table["header"]) + "|",
+      "|" + "-" * 89 + "|",
+      "|" + "  %s           |  %s  |  %s  |  %s  |  %s  |  %s  " % tuple(table["r"]) + "|",
+      "|" + "-" * 89 + "|",
+      "|" + "  %s  |  %s  |  %s  |  %s  |  %s  |  %s  " % tuple(table["tensorflow"]) + "|",
+      "|" + "-" * 89 + "|",
+      "|" + "  %s       |  %s  |  %s  |  %s  |  %s  |  %s  " % tuple(table["mysql"]) + "|",
+      "|" + "-" * 89 + "|",
+      "|" + "  %s  |  %s  |  %s  |  %s  |  %s  |  %s  " % tuple(table["postgresql"]) + "|",
+      "|" + "-" * 89 + "|"
+    ]
 
-  def main(argv):
-    # Erzeuge default-Wert, ob Plots erstellt werden sollen.
-    print_plots = True
+    # Drucke die Tabelle und eine Leerzeile danach.
+    print(str.join("\n", print_table))
+    print("\n")
 
-    # Überschreibe default-Wert, falls ein entsprechendes Argument übergeben wurde.
-    if len(argv) == 2:
-      if argv[1] == "-":
-        print_plots = False
+  # Gib das dictionary mit allen aggregierten Laufzeiten zurück.
+  return count
 
-    # Berechne und drucke die Benchmarks.
-    benchmarks = calculate_benchmarks()
+# Erzeuge Funktion, um die Laufzeiten für eine bestimmte Art der Regression zu plotten.
+def plot(benchmarks, regression_type, plot_title):
+  # Definiere ein Array mit den Anzahlen der Datenpunkte für den Plot.
+  x = [10, 100, 1000, 10000, 100000]
 
-    # Plote die Benchmarks (falls gewüscht).
-    if print_plots:
-      plot(benchmarks, "simple linear regression", "Einfache lineare Regression")
-      plot(benchmarks, "multiple linear regression", "Multiple lineare Regression")
-      plot(benchmarks, "logistic regression", "Logistische Regression")
+  # Erzeuge ein dictionary mit leeren Arrays für die durchschnittlichen Laufzeiten.
+  values = {
+    "r": [],
+    "tensorflow": [],
+    "mysql": [],
+    "postgresql": []
+  }
 
-  # Führe die main-Funktion aus.
-  if __name__ == "__main__":
-    main(sys.argv)
+  # Durchlaufe alle Sprachen.
+  for language in ["r", "tensorflow", "mysql", "postgresql"]:
+    # Durchlaufe die Anzahl der Datenpunkte.
+    for number_datapoints in x:
+      # Füge die durchschnittliche Laufzeit in das Array ein (falls Laufzeiten vorhanden sind).
+      if benchmarks[regression_type][str(number_datapoints)][language]["count"] > 0:
+        values[language].append(
+          benchmarks[regression_type][str(number_datapoints)][language]["time"] /
+          benchmarks[regression_type][str(number_datapoints)][language]["count"]
+        )
+      else:
+        values[language].append(None)
+
+  # Erzeuge den Plot.
+  plt.loglog(x, values["r"], "r-", label="R")
+  plt.loglog(x, values["tensorflow"], "y-", label="TensorFlow")
+  plt.loglog(x, values["mysql"], "b-", label="MySQL")
+  plt.loglog(x, values["postgresql"], "g-", label="PostgreSQL")
+  plt.title(plot_title)
+  plt.legend()
+  plt.xlabel("Anzahl der Datenpunkte")
+  plt.ylabel("Laufzeit in Sekunden")
+  plt.show()
+
+def main(argv):
+  # Erzeuge default-Wert, ob Plots erstellt werden sollen.
+  print_plots = True
+
+  # Überschreibe default-Wert, falls ein entsprechendes Argument übergeben wurde.
+  if len(argv) == 2:
+    if argv[1] == "-":
+      print_plots = False
+
+  # Berechne und drucke die Benchmarks.
+  benchmarks = calculate_benchmarks()
+
+  # Plote die Benchmarks (falls gewüscht).
+  if print_plots:
+    plot(benchmarks, "simple linear regression", "Einfache lineare Regression")
+    plot(benchmarks, "multiple linear regression", "Multiple lineare Regression")
+    plot(benchmarks, "logistic regression", "Logistische Regression")
+
+# Führe die main-Funktion aus.
+if __name__ == "__main__":
+  main(sys.argv)
 \end{minted}

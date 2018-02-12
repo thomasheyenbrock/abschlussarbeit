@@ -56,7 +56,7 @@ Die Lösung dieses Gleichungssystems (falls diese existiert) ist das gesuchte Mi
 \subsection{Einfache lineare Regression}
 \label{subsection:2:1:1}
 
-Man spricht von einfacher linearer Regression, wenn man mit nur eine unabhängige Variable arbeitet. Anschaulich möchte man hier die bestmögliche Schätzgerade durch eine gegebene Punktwolke legen.
+Man spricht von einfacher linearer Regression, wenn man mit nur einer unabhängigen Variable arbeitet. Anschaulich möchte man hier die bestmögliche Schätzgerade durch eine gegebene Punktwolke legen.
 
 Wir nennen die unabhängige Variable in diesem Kapitel statt $X_1$ einfach nur $X$. Ebenso schreiben wir $\beta := \beta_1$ und $x_i := x_{i, 1}$. Dann können wir das lineare Gleichungssystem zum Auffinden des Minimums wie folgt aufschreiben:
 \begin{align*}
@@ -72,8 +72,7 @@ Dabei bezeichnen $\bar x$ und $\bar y$ die Mittelwerte von $X$ respektive $Y$, a
 \begin{align*}
     \bar x = \dfrac{1}{m} \sum_{i=1}^m x_i ~~,~~~ \bar y &= \dfrac{1}{m} \sum_{i=1}^m y_i
 \end{align*}
-% TODO: zitieren
-Die Herleitung dieser Lösungen findet sich in [*zitiere ein Statistik-Buch*].
+Eine Herleitung dieser Lösung findet sich in Kapitel 3.6.2 in \cite{statistics}.
 
 \subsection{Multiple lineare Regression}
 \label{subsection:2:1:2}
@@ -101,13 +100,12 @@ Dabei ist $b$ der Vektor mit den gesuchten Parametern für die Minimierung der k
 \begin{align*}
     b = (X^T X)^{-1} X^T y
 \end{align*}
-% TODO: zitat
-Mehr dazu findet man auch in [...].
+Mehr dazu findet man auch in Kapitel 12.2.3 in \cite{statistics}.
 
 \section{Logistische Regression}
 \label{section:2:2}
 
-Die logistische Regression findet Anwendung im Falle, dass die abhängige Variable eine binäre Variable ist, also eine Variable, die nur zwei Werte annehmen kann. Oft handelt es sich um eine Eigenschaft oder einen Gegenstand, den man entweder besitzt oder nicht, wie zum Beispiel das Geschlecht einer Person, ein Premium-Abonnement für eine Web-Service oder der Besitz eines Auto. Wir bezeichnen die beiden möglichen Werte einer solchen Variablen mit $0$ und $1$. Die Zuordnung vom Merkmal zur Zahl ist frei wählbar.
+Die logistische Regression findet Anwendung im Falle, dass die abhängige Variable eine binäre Variable ist, also eine Variable, die nur zwei Werte annehmen kann. Oft handelt es sich um eine Eigenschaft oder einen Gegenstand, den man entweder besitzt oder nicht, wie zum Beispiel das Geschlecht einer Person, ein Premium-Abonnement für einen Web-Service oder der Besitz eines Autos. Wir bezeichnen die beiden möglichen Werte einer solchen Variablen mit $0$ und $1$. Die Zuordnung vom Merkmal zur Zahl ist frei wählbar.
 
 Lineare Regression eignet sich nicht zur Modellierung einer binären Variablen, da eine lineare Funktion entweder konstant oder unbeschränkt ist, in zweiten Fall also insbesondere Werte größer als 1 und kleiner als 0 annimmt. Um diesem Problem abzuhelfen, wählen wir zusätzlich zu der linearen Funktion eine weitere Funktion, die beliebige Zahlen auf das Interval $[0, 1]$ abbildet. Im Falle der logistischen Regression verwendet man die gleichnamige logistische Funktion:
 \begin{align*}
@@ -139,12 +137,16 @@ Man möchte die Parameter $\alpha$ und $\beta_k$ nun so schätzen, dass die Wahr
 \end{align*}
 Da alle $y_i$ entweder gleich $0$ oder gleich $1$ sind, ist immer nur einer der beiden Summanden in obigem Produkt nicht null. Diese Fallunterscheidung kann man auch in das Vorzeichen der Parameter verschieben, da sich die beiden möglichen Faktoren nur darin unterscheiden. Es gilt also:
 \begin{align*}
-    L(\alpha, \beta_1, \dots, \beta_n) = \prod_{i=1}^m \pi(&(2 \cdot y_i - 1) \cdot \alpha, \\
-    &(2 \cdot y_i - 1) \cdot \beta_1, \\
-    &\dots, \\
-    &(2 \cdot y_i - 1) \cdot \beta_n)
+    L(\alpha, \beta_1, \dots, \beta_n) = \prod_{i=1}^m \pi_i \big( (2 y_i - 1) \alpha, (2 y_i - 1) \beta_1, \dots, (2 y_i - 1) \beta_n \big)
 \end{align*}
-Das Verfahren der Maximierung dieser Wahrscheinlichkeit bezeichnet man auch als Maximum-Likelihood-Methode. Die Funktion $L$ nennt man Likelihoodfunktion. Oft maximiert man nicht $L$ direkt, sondern eher $L_{log} := \ln(L)$. Der Sinn ist, dass man das Produkt damit in eine Summe einzelner Logarithmen umwandeln kann, welche wiederum einfacher abzuleiten ist. Die Maximierung von $L$ ist äquivalent mit der von $L_{log}$, da der Logarithmus eine stetig wachsende Funktion ist. Die Werte von $L$ liegen stets zwischen $0$ und $1$, also ist $L_{log}$ wohldefiniert.
+Das Verfahren der Maximierung dieser Wahrscheinlichkeit bezeichnet man auch als \linebreak Maximum-Likelihood-Methode. Die Funktion $L$ nennt man Likelihoodfunktion. Oft maximiert man nicht $L$ direkt, sondern eher den natürlichen Logarithmus von $L$:
+
+\begin{align*}
+    L_{log}(\alpha, \beta_1, \dots, \beta_n) :=& \ln(L(\alpha, \beta_1, \dots, \beta_n)) \\
+    =& \sum_{i=1}^m \ln \Big( \pi_i \big( (2 y_i - 1) \alpha, (2 y_i - 1) \beta_1, \dots, (2 y_i - 1) \beta_n \big) \Big)
+\end{align*}
+
+Der Sinn ist, dass man das Produkt damit in eine Summe einzelner Logarithmen umwandeln kann, welche wiederum einfacher abzuleiten ist. Die Maximierung von $L$ ist äquivalent mit der von $L_{log}$, da der Logarithmus eine stetig wachsende Funktion ist. Die Werte von $L$ liegen stets zwischen $0$ und $1$, also ist $L_{log}$ wohldefiniert.
 
 Um dieses Regressionsproblem zu lösen, muss man also die Parameter $\hat\alpha$ und $\hat\beta_k$ finden, für die gilt:
 \begin{align*}
@@ -157,20 +159,20 @@ In diesem Fall kommt man nicht mehr an einer iterativen Lösung vorbei, da das l
 
 Das Gradientenverfahren ist ein iterativer Algorithmus zur Lösung von Optimierungsproblemen. Nachdem wir hier bei der logistischen Regression eine Funktion maximieren wollen, führen wir das Gradientenverfahren dementsprechend als Maximierungsalgorithmus ein. Man kann dasselbe Verfahren aber auch zur Lösung von Minimierungsproblemen einsetzen. Gegeben sei eine Funktion der folgenden Form, die maximiert werden soll:
 \begin{align*}
-    L: \mathbb{R}^{n+1} \rightarrow \mathbb{R},~~ (\alpha, \beta_1, \dots, \beta_n) \mapsto L(\alpha, \beta_1, \dots, \beta_n)
+    f: \mathbb{R}^{n+1} \rightarrow \mathbb{R},~~ (\alpha, \beta_1, \dots, \beta_n) \mapsto f(\alpha, \beta_1, \dots, \beta_n)
 \end{align*}
-Beim Gradientenverfahren beginnt man mit beliebigen Startwerten $\alpha^0$ und $\beta_k^0$ und einer Schrittweite $s \in \mathbb{R}^+$. Vom Startpunkt aus geht man nun etwas in die Richtung des steilsten Anstieges der Funktion und erhält dadurch neue Werte $\alpha^1$ und $\beta_k^1$. Diese Richtung ist der Gradient der Funktion $L$.
+Beim Gradientenverfahren beginnt man mit beliebigen Startwerten $\alpha^0$ und $\beta_k^0$ und einer Schrittweite $s \in \mathbb{R}^+$. Vom Startpunkt aus geht man nun etwas in die Richtung des steilsten Anstieges der Funktion und erhält dadurch neue Werte $\alpha^1$ und $\beta_k^1$. Diese Richtung ist der Gradient der Funktion $f$.
 
-Der Gradient ist ein Vektor, der sich aus den partiellen Ableitungen von $L$ nach jeweils einer Variablen zusammensetzt und wird wie folgt notiert:
+Der Gradient ist ein Vektor, der sich aus den partiellen Ableitungen von $f$ nach jeweils einer Variablen zusammensetzt und wird wie folgt notiert:
 \begin{align*}
-    \text{grad}(L) = \begin{pmatrix}
-        \partial L / \partial \alpha \\
-        \partial L / \partial \beta_1 \\
+    \nabla(f) = \begin{pmatrix}
+        \partial f / \partial \alpha \\
+        \partial f / \partial \beta_1 \\
         \vdots \\
-        \partial L / \partial \beta_n
+        \partial f / \partial \beta_n
     \end{pmatrix}
 \end{align*}
-Der Gradient von $L$ ist wieder eine Funktion, die Werte $\alpha$ und $\beta_k$ auf einen Vektor der Länge $n+1$ abbildet. Der iterative Schritt des Verfahrens definiert sich wie folgt:
+Der Gradient von $f$ ist wieder eine Funktion, die Werte $\alpha$ und $\beta_k$ auf einen Vektor der Länge $n+1$ abbildet. Der iterative Schritt des Verfahrens definiert sich wie folgt:
 \begin{align*}
     \begin{pmatrix}
         \alpha^{i + 1} \\
@@ -182,17 +184,18 @@ Der Gradient von $L$ ist wieder eine Funktion, die Werte $\alpha$ und $\beta_k$ 
         \beta_1^i \\
         \vdots \\
         \beta_n^i
-    \end{pmatrix} + s \cdot \text{grad}(L) (\alpha^i, \beta_1^i, \dots, \beta_n^i)
+    \end{pmatrix} + s \cdot \nabla(f) (\alpha^i, \beta_1^i, \dots, \beta_n^i)
 \end{align*}
+Will man ein Minimierungsproblem lösen, muss man nur das Vorzeichen des Gradienten vertauschen, also ein Minus statt einem Plus in der obigen Formel verwenden. Man geht also entgegengesetzt der Richtung des steilsten Anstiegs und damit in die Richtung des steilsten Abstiegs von $f$.
+
 Danach muss noch getestet werden, dass $L$ für die neuen Parameter auch wirklich einen größeren Wert annimmt also zuvor. Falls nicht, muss die Schrittweite $s$ verkleinert werden, zum Beispiel um einen festen, zuvor definierten Faktor.
-% TODO: Zitiere Schrittweitenstrategien usw aus geeignetem Buch.
 
 \subsection{Gradient bei logistischer Regression}
 \label{subsection:2:2:2}
 
 Um das Gradientenverfahren bei logistischer Regression einsetzen zu können, muss der Gradient für den Logarithmus der Likelihoodfunktion bekannt sein. In diesem Kapitel berechnen wir die partiellen Ableitungen nach allen Parametern.
 
-Um $L_{log} = \ln(L)$ partiell ableiten zu können, berechnen wir zuerst die partiellen Ableitungen aller $\pi_i$. Für die partielle Ableitung nach $\alpha$ ergibt sich mit der Kettenregel folgende Funktion:
+Um $L_{log} = \ln(L)$ partiell ableiten zu können, berechnen wir zuerst die partiellen Ableitungen aller $\pi_i$. Dazu notieren wir die natürliche Exponentialfunktion als $\exp$. Für die partielle Ableitung nach $\alpha$ ergibt sich mit der Kettenregel folgende Funktion:
 \begin{align*}
     \dfrac{\partial \pi_i}{\partial \alpha} &= - \left( 1 + \exp \left(- \alpha - \sum_{j=1}^n \beta_j \cdot x_{i, j} \right) \right)^{-2} \cdot \exp \left(- \alpha - \sum_{j=1}^n \beta_j \cdot x_{i, j} \right) \cdot (-1) \\
     &= \left( 1 + \exp \left(- \alpha - \sum_{j=1}^n \beta_j \cdot x_{i, j} \right) \right)^{-1} \cdot \left( 1 + \exp \left(\alpha + \sum_{j=1}^n \beta_j \cdot x_{i, j} \right) \right)^{-1} \\
@@ -205,7 +208,7 @@ Die partiellen Ableitungen nach einem der $\beta_k$ für $k = 1, \dots, n$ kann 
 Bevor wir $L_{log}$ ableiten, definieren wir Hilfsvariablen $\tilde\alpha := (2 y_i - 1) \alpha$ und $\tilde\beta_k := (2 y_i - 1) \beta_k$ für $k = 1, \dots, n$. Damit erhält man:
 \begin{align*}
     L_{log}(\alpha, \beta_1, \dots, \beta_n) &= \ln(L(\alpha, \beta_1, \dots, \beta_n)) \\
-    &= \sum_{i=1}^m \ln \left(y_i \cdot \pi_i(\tilde\alpha, \tilde\beta_1, \dots, \tilde\beta_n) \right)
+    &= \sum_{i=1}^m \ln \left(\pi_i(\tilde\alpha, \tilde\beta_1, \dots, \tilde\beta_n) \right)
 \end{align*}
 Leitet man nach $\alpha$ ab, so erhält man:
 \begin{align*}
@@ -224,7 +227,7 @@ Wir betrachten nun die einzelnen Summanden der partiellen Ableitungen getrennt f
     &= - 1 + \big(1 - \pi_i(\alpha, \beta_1, \dots, \beta_n) \big) \\
     &= - \pi_i(\alpha, \beta_1, \dots, \beta_n)
 \end{align*}
-Für $y_i = 1$ ergibt sich folgendes:
+Für $y_i = 1$ ergibt sich Folgendes:
 \begin{align*}
     \big(1 - \pi_i(\tilde\alpha, \tilde\beta_1, \dots, \tilde\beta_n) \big) \cdot (2 y_i - 1) &= \big(1 - \pi_i(\alpha, \beta_1, \dots, \beta_n) \big) \cdot (2 - 1) \\
     &= 1 - \pi_i(\alpha, \beta_1, \dots, \beta_n)
